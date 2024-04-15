@@ -1,13 +1,11 @@
-package com.greentea.findmydog;
+package com.greentea.findmydog.springboot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FindmydogApplication {
-
+public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(FindmydogApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
-
 }

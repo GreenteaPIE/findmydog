@@ -1,14 +1,21 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.4'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version '3.1.2'  //Spring Boot 플러그인을 추가
+    id 'io.spring.dependency-management' version '1.1.4' //Spring의 의존성 관리 플러그인을 추가
 }
 
 group = 'com.greentea'
 version = '0.0.1-SNAPSHOT'
+//프로젝트의 그룹과 버전을 정의
 
 java {
     sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor  //컴파일 전용 구성을 정의
+    }
 }
 
 repositories {
@@ -16,10 +23,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-web'  //프로젝트의 런타임 구현에 필요한 종속성을 추가
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compileOnly 'org.projectlombok:lombok'  //컴파일 시에만 필요한 종속성을 추가
+    annotationProcessor 'org.projectlombok:lombok'  //주석 처리기용 종속성을 추가
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  //테스트 실행에 필요한 종속성을 추가
+    runtimeOnly 'com.h2database:h2'  //런타임에만 필요한 종속성을 추가
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+//테스트 작업에 JUnit 플랫폼을 사용하도록 구성
