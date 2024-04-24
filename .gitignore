@@ -2,3 +2,4 @@
 .gradle
 HELP.md
 hs_*
+application-oauth.properties
