@@ -32,6 +32,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-mustache') //mustache 템플릿 엔진 등록
     implementation 'org.springframework.security:spring-security-oauth2-client' // 스프링시큐리티 관련 의존성 추가
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.session:spring-session-jdbc' //jdbc session 추가
 }
 
 tasks.named('test') {
