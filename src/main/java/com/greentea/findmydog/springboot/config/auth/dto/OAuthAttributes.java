@@ -5,7 +5,6 @@ import com.greentea.findmydog.springboot.domain.user.Users;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Getter
