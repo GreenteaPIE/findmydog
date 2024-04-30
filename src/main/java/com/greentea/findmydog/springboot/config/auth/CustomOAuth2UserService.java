@@ -2,6 +2,7 @@ package com.greentea.findmydog.springboot.config.auth;
 
 import com.greentea.findmydog.springboot.config.auth.dto.OAuthAttributes;
 import com.greentea.findmydog.springboot.config.auth.dto.SessionUser;
+import com.greentea.findmydog.springboot.domain.user.Role;
 import com.greentea.findmydog.springboot.domain.user.Users;
 import com.greentea.findmydog.springboot.domain.user.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -49,6 +50,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Users user = userRepository.findByEmail(attributes.getEmail())
                 .map(entity -> entity.update(attributes.getName(), attributes.getPicture()))
                 .orElse(attributes.toEntity());
+
 
         return userRepository.save(user);
     }
