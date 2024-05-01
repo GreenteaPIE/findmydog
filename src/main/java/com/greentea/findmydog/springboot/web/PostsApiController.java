@@ -1,11 +1,14 @@
 package com.greentea.findmydog.springboot.web;
 
 
+import com.greentea.findmydog.springboot.config.auth.LoginUser;
+import com.greentea.findmydog.springboot.config.auth.dto.SessionUser;
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
 import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
 import com.greentea.findmydog.springboot.web.dto.PostsSaveRequestDto;
 import com.greentea.findmydog.springboot.web.dto.PostsUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
