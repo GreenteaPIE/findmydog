@@ -26,7 +26,7 @@ public class IndexController {
             System.out.println("로그인 확인 "+ user.getName());
         }
         System.out.println("메인페이지 진입");
-        return "index";
+        return "index.html";
     }
 
     @GetMapping("/posts/save")
@@ -35,7 +35,7 @@ public class IndexController {
             model.addAttribute("userName", user.getName());
             System.out.println("글 등록 진입 " + user.getName());
         }
-        return "posts-save";
+        return "posts-save.html";
     }
 
     @GetMapping("/posts/update/{id}")
@@ -46,7 +46,7 @@ public class IndexController {
             model.addAttribute("userName", user.getName());
         }
         System.out.println("글 수정 진입");
-        return "posts-update";
+        return "posts-update.html";
     }
 
 }

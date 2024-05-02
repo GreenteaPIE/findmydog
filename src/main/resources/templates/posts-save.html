@@ -1,4 +1,8 @@
-{{>layout/header}}
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
+
+<body>
 
 <h1>게시글 등록</h1>
 <div class ="col-md-12">
@@ -11,7 +15,7 @@
 
             <div class="form-group">
                 <label for="author">작성자</label>
-                <input type="text" class="form-control" id="author" value="{{userName}}" readonly>
+                <input type="text" class="form-control" id="author" th:value="${userName}" readonly>
             </div>
 
             <div class="form-group">
@@ -23,4 +27,6 @@
         <button type ="button" class="btn btn-primary" id="btn-save">등록</button>
     </div>
 </div>
-{{>layout/footer}}
+<script th:src="@{/js/app/index.js}"></script>
+</body>
+</html>
