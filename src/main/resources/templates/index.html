@@ -12,6 +12,7 @@
             <a th:href="@{/posts/save}" role="button" class="btn btn-primary">글 등록</a>
             <div th:if="${userName}">
                 Logged in as: <span id="user" th:text="${userName}"></span>
+                <img th:src="${userPicture}" alt="userPicture">
                 <a href="/logout" class="btn btn-info active" role="button">Logout</a>
             </div>
             <div th:unless="${userName}">

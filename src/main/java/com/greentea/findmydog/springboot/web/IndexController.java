@@ -22,7 +22,7 @@ public class IndexController {
     public String index(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
         if(user != null) {
-            model.addAttribute("userName", user.getName());
+            model.addAttribute("userName", user.getName()).addAttribute("userPicture", user.getPicture());
             System.out.println("로그인 확인 "+ user.getName());
         }
         System.out.println("메인페이지 진입");
@@ -32,7 +32,7 @@ public class IndexController {
     @GetMapping("/posts/save")
     public String postsSave(Model model, @LoginUser SessionUser user){
         if(user != null) {
-            model.addAttribute("userName", user.getName());
+            model.addAttribute("userName", user.getName()).addAttribute("userPicture", user.getPicture());
             System.out.println("글 등록 진입 " + user.getName());
         }
         return "posts-save.html";
