@@ -2,9 +2,28 @@
 <th:block th:fragment="header">
     <title>Board List</title>
     <meta charset="UTF-8">
-    <h1>
-        헤더입니다.
-        <a href="/">홈</a>
-    </h1>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container px-5">
+            <a class="navbar-brand" href="#!">Find My Dog</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#!">게시판</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#!">유기견 입양</a></li>
+                    <li th:unless="${userName}">
+                        <a th:href="@{/oauth2/authorization/google}" class="btn btn-success active" role="button">Google Login</a>
+                        <a th:href="@{/oauth2/authorization/naver}" class="btn btn-secondary active" role="button">Naver Login</a>
+                    </li>
+                    <li th:if="${userName}">
+                        <span id="user" th:text="${userName + '님'}" style="color: white"></span>
+                        <img th:src="${userPicture}" alt="userPicture" height="40px;">
+                        <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
 </th:block>
