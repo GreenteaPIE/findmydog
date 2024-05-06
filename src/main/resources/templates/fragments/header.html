@@ -10,7 +10,7 @@
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#!">게시판</a></li>
+                    <li class="nav-item"> <a th:href="@{/posts/list}" role="button" class="nav-link">게시판</a></li>
                     <li class="nav-item"><a class="nav-link" href="#!">유기견 입양</a></li>
                     <li th:unless="${userName}">
                         <a th:href="@{/oauth2/authorization/google}" class="btn btn-success active" role="button">Google Login</a>
