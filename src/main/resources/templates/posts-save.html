@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
 
 <body>
 
 <h1>게시글 등록</h1>
-<div class ="col-md-12">
+<div class="col-md-12">
     <div class="col-md-4">
-        <form>
-            <div class ="form-group">
+        <!-- enctype을 추가하여 파일을 전송할 수 있는 폼 데이터 타입으로 설정 -->
+        <form enctype="multipart/form-data">
+            <div class="form-group">
                 <label for="title">제목</label>
                 <input type="text" class="form-control" id="title" placeholder="제목을 입력하세요">
             </div>
@@ -20,11 +20,17 @@
 
             <div class="form-group">
                 <label for="content">내용</label>
-                <textarea class ="form-control" id="content" placeholder="내용을 입력하세요"></textarea>
+                <textarea class="form-control" id="content" placeholder="내용을 입력하세요"></textarea>
+            </div>
+
+            <!-- 이미지 파일을 선택할 수 있는 input 필드 추가 -->
+            <div class="form-group">
+                <label for="image">이미지 파일</label>
+                <input type="file" class="form-control-file" id="image" name="image" multiple>
             </div>
         </form>
         <a href="/" role="button" class="btn btn-secondary">취소</a>
-        <button type ="button" class="btn btn-primary" id="btn-save">등록</button>
+        <button type="button" class="btn btn-primary" id="btn-save">등록</button>
     </div>
 </div>
 <script th:src="@{/js/app/index.js}"></script>

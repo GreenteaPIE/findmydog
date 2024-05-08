@@ -18,12 +18,21 @@ var main={
             content : $('#content').val()
         };
 
+        var formData = new FormData();
+        formData.append('post', new Blob([JSON.stringify(data)], {type: "application/json"}));
+
+        // 이미지 파일이 있다면 추가
+        var imageFiles = $('#image')[0].files;
+        for (var i = 0; i < imageFiles.length; i++) {
+            formData.append("images", imageFiles[i]);
+        }
+
         $.ajax({
             type: 'POST',
             url: '/api/v1/posts',
-            dataType: 'json',
-            contentType: 'application/json; charset=UTF-8',
-            data: JSON.stringify(data)
+            processData: false, // 필수
+            contentType: false, // 필수
+            data: formData
         }).done(function (){
             alert('글이 등록되었습니다.');
             window.location.href = '/posts/list';
@@ -31,6 +40,7 @@ var main={
             alert(JSON.stringify(error));
         });
     },
+
     update : function (){
         var data = {
             title : $('#title').val(),

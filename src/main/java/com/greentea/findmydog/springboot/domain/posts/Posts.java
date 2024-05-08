@@ -6,10 +6,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @Entity
 public class Posts extends BaseTimeEntity {
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +40,11 @@ public class Posts extends BaseTimeEntity {
         this.title = title;
         this.content = content;
     }
+    public void addImage(Image image) {
+        this.images.add(image);
+        if (image.getPost() != this) {
+            image.setPost(this);
+        }
+    }
+
 }
