@@ -6,7 +6,14 @@
 </head>
 <body>
 
-
+<div th:unless="${userName}">
+    <a th:href="@{/oauth2/authorization/google}" role="button">
+        <img src="img/web_neutral.png" alt="Google" style="height: 30px; width: 120px;">
+    </a>
+    <a th:href="@{/oauth2/authorization/naver}" role="button">
+        <img src="img/btnG.png" alt="Naver" style="height: 30px; width: 120px;">
+    </a>
+</div>
 <!-- Page Content-->
 <div class="container px-4 px-lg-5">
     <!-- Heading Row-->

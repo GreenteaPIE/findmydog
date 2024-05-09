@@ -12,10 +12,6 @@
                     <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
                     <li class="nav-item"> <a th:href="@{/posts/list}" role="button" class="nav-link">게시판</a></li>
                     <li class="nav-item"><a class="nav-link" href="#!">유기견 입양</a></li>
-                    <li th:unless="${userName}">
-                        <a th:href="@{/oauth2/authorization/google}" class="btn btn-success active" role="button">Google Login</a>
-                        <a th:href="@{/oauth2/authorization/naver}" class="btn btn-secondary active" role="button">Naver Login</a>
-                    </li>
                     <li th:if="${userName}">
                         <span id="user" th:text="${userName + '님'}" style="color: white"></span>
                         <img th:src="${userPicture}" alt="userPicture" height="40px;">

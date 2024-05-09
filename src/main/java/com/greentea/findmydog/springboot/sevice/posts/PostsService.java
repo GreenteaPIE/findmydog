@@ -30,31 +30,36 @@ public class PostsService {
     private final ImageRepository imageRepository;
 
     @Value("${file.upload-dir}")
-    private String uploadDir; // 수정된 부분
+    private String uploadDir;
 
     public Long save(PostsSaveRequestDto requestDto, List<MultipartFile> imageFiles) throws IOException {
         Posts post = postsRepository.save(requestDto.toEntity());
 
-        Path folderPath = Paths.get(uploadDir); // 수정된 부분
+        Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize(); // 절대 경로로 정규화
         if (!Files.exists(folderPath)) {
-            Files.createDirectories(folderPath); // 폴더가 없다면 생성. 읽기/쓰기 권한 확인 포함
+            Files.createDirectories(folderPath);
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS"); // 밀리초까지 포함하여 더욱 고유한 파일명 생성
 
         for (MultipartFile file : imageFiles) {
+            // 파일 확장자 검사 (예시: JPEG, PNG 파일만 허용)
             String originalFileName = file.getOriginalFilename();
-            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-            String storedFileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + "_" + sdf.format(new Date()) + extension; // 생성 시간을 포함한 파일명
-            Path filePath = folderPath.resolve(storedFileName); // 수정된 부분
+            String extension = originalFileName.substring(originalFileName.lastIndexOf(".")).toLowerCase();
+            if (!extension.equals(".jpeg") && !extension.equals(".jpg") && !extension.equals(".png")) {
+                throw new IOException("Unsupported file type: " + extension); // 지원하지 않는 파일 형식 예외 처리
+            }
 
-            file.transferTo(filePath.toFile()); // 파일 저장
+            String storedFileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + "_" + sdf.format(new Date()) + extension;
+            Path filePath = folderPath.resolve(storedFileName);
+
+            file.transferTo(filePath.toFile());
 
             Image image = new Image();
             image.setOriginalFileName(originalFileName);
             image.setStoredFileName(storedFileName);
-            image.setPost(post); // Image 엔티티에 Post 엔티티 연결
-            imageRepository.save(image); // Image 엔티티 저장
+            image.setPost(post);
+            imageRepository.save(image);
         }
 
         return post.getId();
