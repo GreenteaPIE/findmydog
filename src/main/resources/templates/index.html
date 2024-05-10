@@ -6,43 +6,51 @@
 </head>
 <body>
 
-<div th:unless="${userName}">
-    <a th:href="@{/oauth2/authorization/google}" role="button">
-        <img src="img/web_neutral.png" alt="Google" style="height: 30px; width: 120px;">
-    </a>
-    <a th:href="@{/oauth2/authorization/naver}" role="button">
-        <img src="img/btnG.png" alt="Naver" style="height: 30px; width: 120px;">
-    </a>
-</div>
 <!-- Page Content-->
 <div class="container px-4 px-lg-5">
     <!-- Heading Row-->
     <div class="row gx-4 gx-lg-5 align-items-center my-5">
-        <div class="col-lg-7"><img class="img-fluid rounded mb-4 mb-lg-0" src="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="..." /></div>
         <div class="col-lg-5">
-            <h1 class="font-weight-light">Business Name or Tagline</h1>
-            <p>This is a template that is great for small businesses. It doesn't have too much fancy flare to it, but it makes a great use of the standard Bootstrap core components. Feel free to use this template for any project you want!</p>
-            <a class="btn btn-primary" href="#!">Call to Action!</a>
+            <img class="img-fluid rounded mb-4 mb-lg-0" src="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="..." />
         </div>
-        <div class="loginLayout">
-            <li class="nav-item" th:if="${userName}">
-                <span id="user" th:text="${userName + '님'}" style="color: white"></span>
-                <img th:src="${userPicture}" alt="userPicture" height="40px;">
-                <a href="/logout" class="btn btn-info active" role="button">Logout</a>
-            </li>
+        <div class="col-lg-4">
+            <h1 class="font-weight-light">강아지 분실글 Title</h1>
+            <p>강아지 분실글 내용</p>
+            <a class="btn btn-primary" href="#!">게시글 이동</a>
+        </div>
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                        <div class="mb-3">
+                            <div th:unless="${userName}">
+                                <a th:href="@{/oauth2/authorization/google}" role="button">
+                                    <img src="img/web_neutral.png" alt="Google" style="height: 40px; width: 170px;">
+                                </a>
+                                <a th:href="@{/oauth2/authorization/naver}" role="button">
+                                    <img src="img/btnG.png" alt="Naver" style="height: 40px; width: 170px;">
+                                </a>
+                            </div>
+                                    <div class="nav-item" th:if="${userName}">
+                                        <span id="user" th:text="${userName + '님'}" style="color: black"></span>
+                                        <img th:src="${userPicture}" alt="userPicture" height="40px;">
+                                        <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+                                    </div>
+                        </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Call to Action-->
     <div class="card text-white bg-secondary my-5 py-4 text-center">
-        <div class="card-body"><p class="text-white m-0">This call to action card is a great place to showcase some important information or display a clever tagline!</p></div>
+        <div class="card-body"><p class="text-white m-0">광고 내용</p></div>
     </div>
     <!-- Content Row-->
     <div class="row gx-4 gx-lg-5">
         <div class="col-md-4 mb-5">
             <div class="card h-100">
                 <div class="card-body">
-                    <h2 class="card-title">Card One</h2>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni quas ex numquam, maxime minus quam molestias corporis quod, ea minima accusamus.</p>
+                    <h2 class="card-title">유기견 공고</h2>
+                    <p class="card-text">공고 내용</p>
                 </div>
                 <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
             </div>
@@ -50,8 +58,8 @@
         <div class="col-md-4 mb-5">
             <div class="card h-100">
                 <div class="card-body">
-                    <h2 class="card-title">Card Two</h2>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod tenetur ex natus at dolorem enim! Nesciunt pariatur voluptatem sunt quam eaque, vel, non in id dolore voluptates quos eligendi labore.</p>
+                    <h2 class="card-title">유기견 공고2</h2>
+                    <p class="card-text">공고 내용</p>
                 </div>
                 <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
             </div>
@@ -59,8 +67,8 @@
         <div class="col-md-4 mb-5">
             <div class="card h-100">
                 <div class="card-body">
-                    <h2 class="card-title">Card Three</h2>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni quas ex numquam, maxime minus quam molestias corporis quod, ea minima accusamus.</p>
+                    <h2 class="card-title">유기견 공고3</h2>
+                    <p class="card-text">공고 내용</p>
                 </div>
                 <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
             </div>
