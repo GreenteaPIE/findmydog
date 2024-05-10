@@ -24,6 +24,13 @@
             <p>This is a template that is great for small businesses. It doesn't have too much fancy flare to it, but it makes a great use of the standard Bootstrap core components. Feel free to use this template for any project you want!</p>
             <a class="btn btn-primary" href="#!">Call to Action!</a>
         </div>
+        <div class="loginLayout">
+            <li class="nav-item" th:if="${userName}">
+                <span id="user" th:text="${userName + '님'}" style="color: white"></span>
+                <img th:src="${userPicture}" alt="userPicture" height="40px;">
+                <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+            </li>
+        </div>
     </div>
     <!-- Call to Action-->
     <div class="card text-white bg-secondary my-5 py-4 text-center">
