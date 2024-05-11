@@ -90,8 +90,30 @@ public class PostsService {
 
     @Transactional
     public void delete(Long id){
+        // 해당 게시글 찾기
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+
+        // 해당 게시글에 연관된 이미지 정보 조회
+        List<Image> images = imageRepository.findByPost(posts);
+
+        // 파일 시스템에서 이미지 파일 삭제
+        if (images != null && !images.isEmpty()) {
+            for (Image image : images) {
+                Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+                Path filePath = folderPath.resolve(image.getStoredFileName());
+                try {
+                    Files.deleteIfExists(filePath); // 파일이 존재할 경우 삭제
+                } catch (IOException e) {
+                    e.printStackTrace(); // 오류 처리
+                }
+            }
+        }
+
+        // 데이터베이스에서 이미지 정보 삭제
+        imageRepository.deleteAll(images);
+
+        // 데이터베이스에서 게시글 정보 삭제
         postsRepository.delete(posts);
     }
 }
