@@ -8,38 +8,47 @@
 
 <!-- Page Content-->
 <div class="container px-4 px-lg-5">
+
     <!-- Heading Row-->
     <div class="row gx-4 gx-lg-5 align-items-center my-5">
-        <div class="col-lg-5">
-            <img class="img-fluid rounded mb-4 mb-lg-0" src="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="..." />
-        </div>
-        <div class="col-lg-4">
-            <h1 class="font-weight-light">강아지 분실글 Title</h1>
-            <p>강아지 분실글 내용</p>
-            <a class="btn btn-primary" href="#!">게시글 이동</a>
-        </div>
+            <div class="col-lg-9">
+                <div class="slide_div">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <img class="img-fluid rounded mb-4 mb-lg-0" src="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="..." />
+                    </div>
+                    <div class="col-lg-6">
+                        <h1 class="font-weight-light">강아지 분실글 Title</h1>
+                        <p>강아지 분실글 내용</p>
+                        <a class="btn btn-primary" href="#!">게시글 이동</a>
+                    </div>
+                </div>
+                    <div><h>1</h></div>
+                </div>
+            </div>
         <div class="col-lg-3">
             <div class="card">
                 <div class="card-body">
-                        <div class="mb-3">
-                            <div th:unless="${userName}">
-                                <a th:href="@{/oauth2/authorization/google}" role="button">
-                                    <img src="img/web_neutral.png" alt="Google" style="height: 40px; width: 170px;">
-                                </a>
-                                <a th:href="@{/oauth2/authorization/naver}" role="button">
-                                    <img src="img/btnG.png" alt="Naver" style="height: 40px; width: 170px;">
-                                </a>
-                            </div>
-                                    <div class="nav-item" th:if="${userName}">
-                                        <span id="user" th:text="${userName + '님'}" style="color: black"></span>
-                                        <img th:src="${userPicture}" alt="userPicture" height="40px;">
-                                        <a href="/logout" class="btn btn-info active" role="button">Logout</a>
-                                    </div>
+                    <div class="mb-3">
+                        <div th:unless="${userName}">
+                            <a th:href="@{/oauth2/authorization/google}" role="button">
+                                <img src="img/web_neutral.png" alt="Google" style="height: 40px; width: 170px;">
+                            </a>
+                            <a th:href="@{/oauth2/authorization/naver}" role="button">
+                                <img src="img/btnG.png" alt="Naver" style="height: 40px; width: 170px;">
+                            </a>
                         </div>
+                        <div class="nav-item" th:if="${userName}">
+                            <span id="user" th:text="${userName + '님'}" style="color: black"></span>
+                            <img th:src="${userPicture}" alt="userPicture" height="40px;">
+                            <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
     <!-- Call to Action-->
     <div class="card text-white bg-secondary my-5 py-4 text-center">
         <div class="card-body"><p class="text-white m-0">광고 내용</p></div>
@@ -76,4 +85,16 @@
     </div>
 </div>
 </body>
+<script>
+    $(document).ready(function(){
+        $(".slide_div").slick(
+            {
+                dots: true,
+                autoplay : true,
+                autoplaySpeed: 5000
+            }
+        );
+
+    });
+</script>
 </html>
