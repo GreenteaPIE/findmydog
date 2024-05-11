@@ -13,17 +13,16 @@
     <div class="row gx-4 gx-lg-5 align-items-center my-5">
             <div class="col-lg-9">
                 <div class="slide_div">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <img class="img-fluid rounded mb-4 mb-lg-0" src="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" alt="..." />
+                <div class="row" th:each="post : ${posts}">
+                    <div class="col-lg-6" th:if="${not #lists.isEmpty(post.images)}">
+                        <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" style="width: 100px; height: auto;"/>
                     </div>
                     <div class="col-lg-6">
-                        <h1 class="font-weight-light">강아지 분실글 Title</h1>
-                        <p>강아지 분실글 내용</p>
+                        <h1 class="font-weight-light" th:text="${post.title}"></h1>
+                        <p th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></p>
                         <a class="btn btn-primary" href="#!">게시글 이동</a>
                     </div>
                 </div>
-                    <div><h>1</h></div>
                 </div>
             </div>
         <div class="col-lg-3">
