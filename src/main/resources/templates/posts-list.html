@@ -19,6 +19,7 @@
     <table class="table table-horizontal table-bordered">
         <thead class="thead-strong">
         <tr>
+            <th>분류</th>
             <th>게시글번호</th>
             <th>제목</th>
             <th>작성자</th>
@@ -27,6 +28,7 @@
         </thead>
         <tbody id="tbody">
         <tr th:each="post : ${posts}">
+            <td th:text="${post.kind}"></td>
             <td th:text="${post.id}"></td>
             <td><a th:href="@{/posts/update/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
             <td th:text="${post.author}"></td>

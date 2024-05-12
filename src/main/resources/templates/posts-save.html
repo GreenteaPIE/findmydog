@@ -3,36 +3,62 @@
 
 <body>
 
-<h1>게시글 등록</h1>
-<div class="col-md-12">
-    <div class="col-md-4">
-        <!-- enctype을 추가하여 파일을 전송할 수 있는 폼 데이터 타입으로 설정 -->
-        <form enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="title">제목</label>
-                <input type="text" class="form-control" id="title" placeholder="제목을 입력하세요">
-            </div>
+<div class="container mt-5">
+    <h1 class="mb-4">분실된 강아지 찾기 게시판</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <form enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="kind">종류</label>
+                    <select class="form-control" id="kind">
+                        <option value="분실">분실</option>
+                        <option value="발견">발견</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="author">작성자</label>
-                <input type="text" class="form-control" id="author" th:value="${userName}" readonly>
-            </div>
+                <div class="form-group">
+                    <label for="title">제목</label>
+                    <input type="text" class="form-control" id="title" placeholder="견종-나이-특징-위치">
+                </div>
 
-            <div class="form-group">
-                <label for="content">내용</label>
-                <textarea class="form-control" id="content" placeholder="내용을 입력하세요"></textarea>
-            </div>
+                <div class="form-group">
+                    <label for="author">작성자</label>
+                    <input type="text" class="form-control" id="author" th:value="${userName}" readonly>
+                </div>
 
-            <!-- 이미지 파일을 선택할 수 있는 input 필드 추가 -->
-            <div class="form-group">
-                <label for="image">이미지 파일</label>
-                <input type="file" class="form-control-file" id="image" name="image" multiple>
-            </div>
-        </form>
-        <a href="/" role="button" class="btn btn-secondary">취소</a>
-        <button type="button" class="btn btn-primary" id="btn-save">등록</button>
+                <div class="form-group">
+                    <label for="content">내용</label>
+                    <textarea class="form-control" id="content" placeholder="1. 지도 2. 견종 3. 나이 4. 특징 5. 시간 6. 견주 정보"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">이미지 파일</label>
+                    <input type="file" class="form-control-file" id="image" name="image" multiple>
+                    <!-- 이미지 미리보기를 위한 div 추가 -->
+                    <div id="image-preview"></div>
+                </div>
+
+                <a href="/" role="button" class="btn btn-secondary">취소</a>
+                <button type="button" class="btn btn-primary" id="btn-save">등록</button>
+            </form>
+        </div>
     </div>
 </div>
 <script th:src="@{/js/app/index.js}"></script>
 </body>
+<script>
+    // 이미지 미리보기 기능
+    $('#image').on('change', function(){
+        var fileInput = this;
+        if (fileInput.files && fileInput.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                $('#image-preview').html('<img src="' + e.target.result + '" class="img-fluid mt-3" />');
+            }
+
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+    });
+</script>
 </html>

@@ -10,9 +10,10 @@
 <div class="container px-4 px-lg-5">
 
     <!-- Heading Row-->
-    <div class="row gx-4 gx-lg-5 align-items-center my-5">
+    <div class="row gx-4 gx-lg-5 align-items-stretch my-5">
             <div class="col-lg-9">
                 <div class="slide_div">
+
                 <div class="row" th:each="post : ${posts}">
                     <div class="col-lg-6" th:if="${not #lists.isEmpty(post.images)}">
                         <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" style="width: 100px; height: auto;"/>
@@ -23,11 +24,14 @@
                         <a class="btn btn-primary" href="#!">게시글 이동</a>
                     </div>
                 </div>
+                    <div th:if="${#lists.isEmpty(posts)}">
+                        <p>등록된 포스트가 없습니다.</p>
+                    </div>
                 </div>
             </div>
         <div class="col-lg-3">
-            <div class="card">
-                <div class="card-body">
+            <div>
+                <div>
                     <div class="mb-3">
                         <div th:unless="${userName}">
                             <a th:href="@{/oauth2/authorization/google}" role="button">
@@ -38,9 +42,8 @@
                             </a>
                         </div>
                         <div class="nav-item" th:if="${userName}">
-                            <span id="user" th:text="${userName + '님'}" style="color: black"></span>
-                            <img th:src="${userPicture}" alt="userPicture" height="40px;">
-                            <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+                            <img th:src="${userPicture}" alt="userPicture" height="40px;" th:text="${userName + '님'}" style="color: black">
+                            <a href="/logout" class="btn" role="button">Logout</a>
                         </div>
                     </div>
                 </div>

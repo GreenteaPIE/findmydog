@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 @Getter
 public class PostsListResponseDto {
     private Long id;
+    private String kind;
     private String title;
     private String author;
     private List<ImageDto> images;
@@ -17,6 +18,7 @@ public class PostsListResponseDto {
 
     public PostsListResponseDto(Posts entity){
         this.id = entity.getId();
+        this.kind = entity.getKind();
         this.title = entity.getTitle();
         this.author = entity.getAuthor();
         this.modifiedDate = entity.getModifiedDate();
