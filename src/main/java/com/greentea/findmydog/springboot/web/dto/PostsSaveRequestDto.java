@@ -12,13 +12,17 @@ public class PostsSaveRequestDto {
     private String title;
     private String content;
     private String author;
+    private Double latitude;
+    private Double longitude;
 
     @Builder
-    public PostsSaveRequestDto(String kind, String title, String content, String author) {
+    public PostsSaveRequestDto(String kind, String title, String content, String author, Double latitude, Double longitude) {
         this.kind = kind;
         this.title = title;
         this.content = content;
         this.author = author;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public Posts toEntity(){
@@ -27,6 +31,8 @@ public class PostsSaveRequestDto {
                 .title(title)
                 .content(content)
                 .author(author)
+                .latitude(latitude)
+                .longitude(longitude)
                 .build();
     }
 }

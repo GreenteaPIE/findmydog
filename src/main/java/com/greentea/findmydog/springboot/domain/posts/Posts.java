@@ -32,12 +32,17 @@ public class Posts extends BaseTimeEntity {
 
     private String author;
 
+    private double latitude;  // 위도
+    private double longitude; // 경도
+
     @Builder
-    public Posts(String kind, String title, String content, String author) {
+    public Posts(String kind, String title, String content, String author, Double latitude, Double longitude) {
         this.kind = kind;
         this.title = title;
         this.content = content;
         this.author = author;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public void update(String title, String content) {

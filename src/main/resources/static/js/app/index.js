@@ -23,7 +23,9 @@ var main = {
             kind: $('#kind').val(),
             title: $('#title').val(),
             author: $('#author').val(),
-            content: $('#content').val()
+            content: $('#content').val(),
+            latitude: $('#latitude').val(), // 위도 추가
+            longitude: $('#longitude').val() // 경도 추가
         };
 
         var formData = new FormData();
