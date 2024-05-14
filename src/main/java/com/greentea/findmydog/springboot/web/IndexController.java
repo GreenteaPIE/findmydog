@@ -22,7 +22,7 @@ public class IndexController {
     public String index(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
         if(user != null) {
-            model.addAttribute("userName", user.getName()).addAttribute("userPicture", user.getPicture());
+            model.addAttribute("userName", user.getName());
             System.out.println("로그인 확인 "+ user.getName());
         }
         System.out.println("메인페이지 진입");
@@ -39,7 +39,7 @@ public class IndexController {
     public String postsList(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
         if (user != null) {
-            model.addAttribute("userName", user.getName()).addAttribute("userPicture", user.getPicture());
+            model.addAttribute("userName", user.getName());
         }
         System.out.println("글 리스트 진입");
         return "posts-list.html";
@@ -48,7 +48,7 @@ public class IndexController {
     @GetMapping("/posts/save")
     public String postsSave(Model model, @LoginUser SessionUser user){
         if(user != null) {
-            model.addAttribute("userName", user.getName()).addAttribute("userPicture", user.getPicture());
+            model.addAttribute("userName", user.getName());
             System.out.println("글 등록 진입 " + user.getName());
         }
         return "posts-save.html";

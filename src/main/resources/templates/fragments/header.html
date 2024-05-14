@@ -1,6 +1,7 @@
 <!-- header.html -->
 <th:block th:fragment="header">
     <title>Board List</title>
+
     <meta charset="UTF-8">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container px-5">
@@ -17,7 +18,8 @@
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item" th:unless="${userName}"><a class="nav-link" role="button" th:href="@{/loginPage}">로그인</a></li>
-                    <li class="nav-item" th:if="${userName}">
+                    <li class="nav-item d-flex align-items-center" th:if="${userName}">
+                        <span class="navbar-text mr-2" th:text="${userName + '님'}"></span>
                         <a class="nav-link" href="/logout" role="button">로그아웃</a>
                     </li>
                 </ul>

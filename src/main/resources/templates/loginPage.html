@@ -1,27 +1,36 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
+<head>
+    <title>Login Page</title>
+    <style>
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-buttons {
+            text-align: center;
+        }
+        .login-buttons a {
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
 <body>
-<div class="col-lg-3">
-    <div>
-        <div>
-            <div class="mb-3">
-                <div th:unless="${userName}">
-                    <a th:href="@{/oauth2/authorization/google}" role="button">
-                        <img src="img/web_neutral.png" alt="Google" style="height: 40px; width: 170px;">
-                    </a>
-                    <a th:href="@{/oauth2/authorization/naver}" role="button">
-                        <img src="img/btnG.png" alt="Naver" style="height: 40px; width: 170px;">
-                    </a>
-                </div>
-                <div class="nav-item" th:if="${userName}">
-                    <img th:src="${userPicture}" alt="userPicture" height="40px;" th:text="${userName + '님'}" style="color: black">
-                    <a href="/logout" class="btn" role="button">Logout</a>
-                </div>
-            </div>
+<div class="login-container">
+    <div class="login-buttons">
+        <div th:unless="${userName}">
+            <a th:href="@{/oauth2/authorization/google}" role="button">
+                <img src="img/web_neutral.png" alt="Google" style="height: 50px; width: 250px;">
+            </a>
+            <a th:href="@{/oauth2/authorization/naver}" role="button">
+                <img src="img/btnG.png" alt="Naver" style="height: 50px; width: 250px;">
+            </a>
         </div>
+
     </div>
 </div>
 </body>
-
 </html>
