@@ -16,7 +16,7 @@
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item" th:unless="${userName}"><a class="nav-link" href="#!">로그인</a></li>
+                    <li class="nav-item" th:unless="${userName}"><a class="nav-link" role="button" th:href="@{/loginPage}">로그인</a></li>
                     <li class="nav-item" th:if="${userName}">
                         <a class="nav-link" href="/logout" role="button">로그아웃</a>
                     </li>

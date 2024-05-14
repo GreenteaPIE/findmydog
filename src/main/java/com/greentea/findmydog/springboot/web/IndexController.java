@@ -29,12 +29,19 @@ public class IndexController {
         return "index.html";
     }
 
+    @GetMapping("/loginPage")
+    public String login(){
+        System.out.println("로그인 페이지 진입");
+        return "loginPage.html";
+    }
+
     @GetMapping("/posts/list")
     public String postsList(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
         if (user != null) {
             model.addAttribute("userName", user.getName()).addAttribute("userPicture", user.getPicture());
         }
+        System.out.println("글 리스트 진입");
         return "posts-list.html";
     }
 
