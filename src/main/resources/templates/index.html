@@ -10,17 +10,52 @@
         }
 
         .post-content {
-            width: 100%; /* 포스트 컨텐트의 너비를 조정하여 여백 조절 */
+            display: flex;
+            align-items: center;
+            width: 100%;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .post-image-container {
+            width: 300px; /* 이미지 컨테이너의 고정 너비 */
+            height: 300px; /* 이미지 컨테이너의 고정 높이 */
+            flex-shrink: 0; /* 컨테이너가 줄어들지 않도록 설정 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
         .post-image {
-            width: 90%; /* 이미지가 post-content의 너비에 맞게 조절되도록 설정 */
-            max-height: 300px; /* 이미지의 비율을 유지하면서 높이 조절 */
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 이미지가 컨테이너에 맞게 조절되도록 설정 */
+            border-radius: 5px;
+        }
+
+        .post-text {
+            flex: 1;
+            padding-left: 20px;
+            text-align: left;
         }
 
         @media (max-width: 768px) {
-            .post-container {
-                flex-direction: column; /* 화면이 작아지면 포스트를 세로로 나열 */
+            .post-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .post-image-container, .post-text {
+                width: 100%; /* 이미지와 텍스트 컨테이너가 차지하는 최대 너비를 100%로 설정 */
+                height: auto;
+                padding-left: 0;
+            }
+
+            .post-image {
+                height: auto; /* 이미지의 높이를 자동으로 설정 */
             }
         }
     </style>
@@ -32,11 +67,15 @@
     <!-- Slide Wrapper -->
     <div class="row gx-4 gx-lg-5 align-items-stretch my-5 slide_div">
         <div th:each="post : ${posts}" class="slide-item">
-            <div th:if="${not #lists.isEmpty(post.images)}" class="post-content text-center">
-                <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" class="post-image"/>
-                <h1 class="font-weight-light" th:text="${post.title}"></h1>
-                <p th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></p>
-                <a class="btn btn-primary" href="#!">게시글 이동</a>
+            <div th:if="${not #lists.isEmpty(post.images)}" class="post-content">
+                <div class="post-image-container">
+                    <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" class="post-image"/>
+                </div>
+                <div class="post-text">
+                    <h1 class="font-weight-light" th:text="${post.title}"></h1>
+                    <p th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></p>
+                    <a class="btn btn-primary" href="#!">게시글 이동</a>
+                </div>
             </div>
         </div>
         <div th:if="${#lists.isEmpty(posts)}" class="col-12">
@@ -45,40 +84,40 @@
     </div>
 </div>
 
-    <!-- Call to Action-->
-    <div class="card text-white bg-secondary my-5 py-4 text-center">
-        <div class="card-body"><p class="text-white m-0">광고 내용</p></div>
-    </div>
-    <!-- Content Row-->
-    <div class="row gx-4 gx-lg-5">
-        <div class="col-md-4 mb-5">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h2 class="card-title">유기견 공고</h2>
-                    <p class="card-text">공고 내용</p>
-                </div>
-                <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+<!-- Call to Action-->
+<div class="card text-white bg-secondary my-5 py-4 text-center">
+    <div class="card-body"><p class="text-white m-0">광고 내용</p></div>
+</div>
+<!-- Content Row-->
+<div class="row gx-4 gx-lg-5">
+    <div class="col-md-4 mb-5">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="card-title">유기견 공고</h2>
+                <p class="card-text">공고 내용</p>
             </div>
-        </div>
-        <div class="col-md-4 mb-5">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h2 class="card-title">유기견 공고2</h2>
-                    <p class="card-text">공고 내용</p>
-                </div>
-                <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-5">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h2 class="card-title">유기견 공고3</h2>
-                    <p class="card-text">공고 내용</p>
-                </div>
-                <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
-            </div>
+            <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
         </div>
     </div>
+    <div class="col-md-4 mb-5">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="card-title">유기견 공고2</h2>
+                <p class="card-text">공고 내용</p>
+            </div>
+            <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-5">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="card-title">유기견 공고3</h2>
+                <p class="card-text">공고 내용</p>
+            </div>
+            <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+        </div>
+    </div>
+</div>
 </div>
 </body>
 <script>
@@ -87,13 +126,13 @@
             dots: true,
             autoplay: true,
             autoplaySpeed: 5000,
-            slidesToShow: 2, // 한 번에 보여줄 슬라이드 수를 2로 설정
-            slidesToScroll: 2, // 한 번에 스크롤할 슬라이드 수를 2로 설정
-            responsive: [ // 반응형 디자인 옵션 추가
+            slidesToShow: 2,
+            slidesToScroll: 2,
+            responsive: [
                 {
-                    breakpoint: 768, // 화면 크기가 768px 이하일 때
+                    breakpoint: 768,
                     settings: {
-                        slidesToShow: 1, // 한 번에 1개의 슬라이드만 보이도록 설정
+                        slidesToShow: 1,
                         slidesToScroll: 1,
                     }
                 }
