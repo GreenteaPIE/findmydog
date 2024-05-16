@@ -27,28 +27,25 @@ public class Posts extends BaseTimeEntity {
     @Column(length = 500, nullable = false)
     private String title;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
-
     private String author;
 
-    private double latitude;  // 위도
-    private double longitude; // 경도
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "content_id")
+    private Content content;
 
     @Builder
-    public Posts(String kind, String title, String content, String author, Double latitude, Double longitude) {
+    public Posts(String kind, String title, Content content, String author) {
         this.kind = kind;
         this.title = title;
         this.content = content;
         this.author = author;
-        this.latitude = latitude;
-        this.longitude = longitude;
+
     }
 
-    public void update(String title, String content) {
+    public void update(String title) {
         this.title = title;
-        this.content = content;
     }
+
     public void addImage(Image image) {
         this.images.add(image);
         if (image.getPost() != this) {

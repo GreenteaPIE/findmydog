@@ -35,19 +35,18 @@ public class PostsService {
     public Long save(PostsSaveRequestDto requestDto, List<MultipartFile> imageFiles) throws IOException {
         Posts post = postsRepository.save(requestDto.toEntity());
 
-        Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize(); // 절대 경로로 정규화
+        Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         if (!Files.exists(folderPath)) {
             Files.createDirectories(folderPath);
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS"); // 밀리초까지 포함하여 더욱 고유한 파일명 생성
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
         for (MultipartFile file : imageFiles) {
-            // 파일 확장자 검사 (예시: JPEG, PNG 파일만 허용)
             String originalFileName = file.getOriginalFilename();
             String extension = originalFileName.substring(originalFileName.lastIndexOf(".")).toLowerCase();
             if (!extension.equals(".jpeg") && !extension.equals(".jpg") && !extension.equals(".png")) {
-                throw new IOException("Unsupported file type: " + extension); // 지원하지 않는 파일 형식 예외 처리
+                throw new IOException("Unsupported file type: " + extension);
             }
 
             String storedFileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + "_" + sdf.format(new Date()) + extension;
@@ -70,7 +69,7 @@ public class PostsService {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id="+ id));
 
-        posts.update(requestDto.getTitle(), requestDto.getContent());
+        posts.update(requestDto.getTitle());
 
         return id;
     }

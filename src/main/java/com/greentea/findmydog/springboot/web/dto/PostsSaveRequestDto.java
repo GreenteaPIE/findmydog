@@ -10,29 +10,24 @@ import lombok.NoArgsConstructor;
 public class PostsSaveRequestDto {
     private String kind;
     private String title;
-    private String content;
+    private ContentDto content;
     private String author;
-    private Double latitude;
-    private Double longitude;
+
 
     @Builder
-    public PostsSaveRequestDto(String kind, String title, String content, String author, Double latitude, Double longitude) {
+    public PostsSaveRequestDto(String kind, String title, ContentDto content, String author) {
         this.kind = kind;
         this.title = title;
         this.content = content;
         this.author = author;
-        this.latitude = latitude;
-        this.longitude = longitude;
     }
 
     public Posts toEntity(){
         return Posts.builder()
                 .kind(kind)
                 .title(title)
-                .content(content)
+                .content(content.toEntity())
                 .author(author)
-                .latitude(latitude)
-                .longitude(longitude)
                 .build();
     }
 }

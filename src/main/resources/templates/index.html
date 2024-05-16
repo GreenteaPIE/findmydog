@@ -20,7 +20,7 @@
         }
 
         .post-image-container {
-            width: 300px; /* 이미지 컨테이너의 고정 너비 */
+            width: 270px; /* 이미지 컨테이너의 고정 너비 */
             height: 300px; /* 이미지 컨테이너의 고정 높이 */
             flex-shrink: 0; /* 컨테이너가 줄어들지 않도록 설정 */
             display: flex;
@@ -30,7 +30,7 @@
         }
 
         .post-image {
-            width: 100%;
+            width: auto;
             height: 100%;
             object-fit: cover; /* 이미지가 컨테이너에 맞게 조절되도록 설정 */
             border-radius: 5px;
@@ -72,6 +72,7 @@
                     <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" class="post-image"/>
                 </div>
                 <div class="post-text">
+                    <h1 class="" th:text="${post.kind}"></h1>
                     <h1 class="font-weight-light" th:text="${post.title}"></h1>
                     <p th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></p>
                     <a class="btn btn-primary" href="#!">게시글 이동</a>

@@ -12,26 +12,35 @@ var main = {
         });
     },
     save: function() {
-        // 이미지 파일의 개수 확인
         var imageFiles = $('#image')[0].files;
         if (imageFiles.length < 1) {
             alert('이미지 파일을 한 장 이상 올려주세요.');
-            return; // 함수 실행 중단
+            return;
         }
 
         var data = {
             kind: $('#kind').val(),
             title: $('#title').val(),
             author: $('#author').val(),
-            content: $('#content').val(),
-            latitude: $('#latitude').val(), // 위도 추가
-            longitude: $('#longitude').val() // 경도 추가
+            content: {
+                reporterName: $('#reporterName').val(),
+                contact: $('#contact').val(),
+                lostDate: $('#lostDate').val(),
+                landmark: $('#landmark').val(),
+                breed: $('#breed').val(),
+                color: $('#color').val(),
+                gender: $('#gender').val(),
+                age: $('#age').val(),
+                features: $('#features').val(),
+                hasMicrochip: $('#hasMicrochip').val() === 'true',
+                latitude: $('#latitude').val(),
+                longitude: $('#longitude').val()
+            }
         };
 
         var formData = new FormData();
         formData.append('post', new Blob([JSON.stringify(data)], { type: "application/json" }));
 
-        // 이미지 파일 추가
         for (var i = 0; i < imageFiles.length; i++) {
             formData.append("images", imageFiles[i]);
         }

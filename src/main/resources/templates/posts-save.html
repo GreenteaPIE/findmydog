@@ -27,8 +27,56 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="content">내용</label>
-                    <textarea class="form-control" id="content" placeholder="1. 지도 2. 견종 3. 나이 4. 특징 5. 시간 6. 견주 정보"></textarea>
+                    <label for="reporterName">신고자 이름</label>
+                    <input type="text" class="form-control" id="reporterName">
+                </div>
+
+                <div class="form-group">
+                    <label for="contact">연락처</label>
+                    <input type="text" class="form-control" id="contact">
+                </div>
+
+                <div class="form-group">
+                    <label for="lostDate">분실일자</label>
+                    <input type="datetime-local" class="form-control" id="lostDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="landmark">주위 대표건물</label>
+                    <input type="text" class="form-control" id="landmark">
+                </div>
+
+                <div class="form-group">
+                    <label for="breed">품종</label>
+                    <input type="text" class="form-control" id="breed">
+                </div>
+
+                <div class="form-group">
+                    <label for="color">색상</label>
+                    <input type="text" class="form-control" id="color">
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">성별</label>
+                    <input type="text" class="form-control" id="gender">
+                </div>
+
+                <div class="form-group">
+                    <label for="age">나이</label>
+                    <input type="number" class="form-control" id="age">
+                </div>
+
+                <div class="form-group">
+                    <label for="features">특징</label>
+                    <textarea class="form-control" id="features"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="hasMicrochip">내장칩 유무</label>
+                    <select class="form-control" id="hasMicrochip">
+                        <option value="true">있음</option>
+                        <option value="false">없음</option>
+                    </select>
                 </div>
 
                 <h1>분실위치</h1>
@@ -42,10 +90,10 @@
                     <label for="longitude">경도</label>
                     <input type="text" class="form-control" id="longitude" name="longitude" readonly>
                 </div>
+
                 <div class="form-group">
                     <label for="image">이미지 파일</label>
                     <input type="file" class="form-control-file" id="image" name="image" multiple>
-                    <!-- 이미지 미리보기를 위한 div 추가 -->
                     <div id="image-preview"></div>
                 </div>
 
