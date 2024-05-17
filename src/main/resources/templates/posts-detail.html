@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
+<head>
+    <title>게시글 상세보기</title>
+</head>
+<body>
+<h1>게시글 상세보기</h1>
+<div class="col-md-12">
+    <div class="col-md-8">
+        <div>
+            <label>등록일자</label>
+            <p th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></p>
+        </div>
+        <div class="form-group">
+            <label for="id">글 번호</label>
+            <p id="id" class="form-control-static" th:text="${post.id}"></p>
+        </div>
+        <div class="form-group">
+            <label for="kind">종류</label>
+            <p id="kind" class="form-control-static" th:text="${post.kind}"></p>
+        </div>
+        <div class="form-group">
+            <label for="title">제목</label>
+            <p id="title" class="form-control-static" th:text="${post.title}"></p>
+        </div>
+        <div class="form-group">
+            <label for="author">작성자</label>
+            <p id="author" class="form-control-static" th:text="${post.author}"></p>
+        </div>
+        <h2>분실 신고 정보</h2>
+        <div class="form-group">
+            <label for="reporterName">분실신고자 이름</label>
+            <p id="reporterName" class="form-control-static" th:text="${post.content.reporterName}"></p>
+        </div>
+        <div class="form-group">
+            <label for="contact">연락처</label>
+            <p id="contact" class="form-control-static" th:text="${post.content.contact}"></p>
+        </div>
+        <div class="form-group">
+            <label for="lostDate">분실일자</label>
+            <p id="lostDate" class="form-control-static" th:text="${#temporals.format(post.content.lostDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></p>
+        </div>
+        <div class="form-group">
+            <label for="landmark">주위 대표건물</label>
+            <p id="landmark" class="form-control-static" th:text="${post.content.landmark}"></p>
+        </div>
+        <div class="form-group">
+            <label for="breed">품종</label>
+            <p id="breed" class="form-control-static" th:text="${post.content.breed}"></p>
+        </div>
+        <div class="form-group">
+            <label for="color">색상</label>
+            <p id="color" class="form-control-static" th:text="${post.content.color}"></p>
+        </div>
+        <div class="form-group">
+            <label for="gender">성별</label>
+            <p id="gender" class="form-control-static" th:text="${post.content.gender}"></p>
+        </div>
+        <div class="form-group">
+            <label for="age">나이</label>
+            <p id="age" class="form-control-static" th:text="${post.content.age}"></p>
+        </div>
+        <div class="form-group">
+            <label for="features">특징</label>
+            <p id="features" class="form-control-static" th:text="${post.content.features}"></p>
+        </div>
+        <div class="form-group">
+            <label for="hasMicrochip">내장칩 유무</label>
+            <p id="hasMicrochip" class="form-control-static" th:text="${post.content.hasMicrochip ? '예' : '아니오'}"></p>
+        </div>
+        <div class="form-group">
+            <label for="latitude">위도</label>
+            <p id="latitude" class="form-control-static" th:text="${post.content.latitude}"></p>
+        </div>
+        <div class="form-group">
+            <label for="longitude">경도</label>
+            <p id="longitude" class="form-control-static" th:text="${post.content.longitude}"></p>
+        </div>
+        <div class="form-group">
+            <label for="images">이미지</label>
+            <div th:each="image : ${post.images}">
+                <img th:src="@{'/images/' + ${image.storedFileName}}" alt="Post Image" style="width: 100px; height: auto;"/>
+            </div>
+        </div>
+    </div>
+</div>
+<a th:href="@{/posts/update/{id}(id=${post.id})}" th:if="${post.author == userName}">수정</a>
+<a href="/posts/list" role="button" class="btn btn-secondary">목록으로</a>
+<script th:src="@{/js/app/index.js}"></script>
+</body>
+</html>

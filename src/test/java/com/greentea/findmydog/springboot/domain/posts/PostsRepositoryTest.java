@@ -32,7 +32,6 @@ public class PostsRepositoryTest {
 
         postsRepository.save(Posts.builder()
                 .title(title)
-                .content(content)
                 .author("jojoldu@gmail.com")
                 .build());
 
@@ -42,7 +41,6 @@ public class PostsRepositoryTest {
         //then
         Posts posts = postsList.get(0);
         assertThat(posts.getTitle()).isEqualTo(title);
-        assertThat(posts.getContent()).isEqualTo(content);
 
     }
 
@@ -52,7 +50,6 @@ public class PostsRepositoryTest {
         LocalDateTime now = LocalDateTime.of(2024,4,18,0,0,0);
         postsRepository.save(Posts.builder()
                 .title("title")
-                .content("content")
                 .author("author")
                 .build());
 

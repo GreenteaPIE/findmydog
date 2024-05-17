@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class ContentDto {
+    private Long id;
     private String reporterName;
     private String contact;
     private LocalDateTime lostDate;
@@ -22,6 +23,22 @@ public class ContentDto {
     private boolean hasMicrochip;
     private double latitude;
     private double longitude;
+
+    public ContentDto(Content entity) {
+        this.id = entity.getId();
+        this.reporterName = entity.getReporterName();
+        this.contact = entity.getContact();
+        this.lostDate = entity.getLostDate();
+        this.landmark = entity.getLandmark();
+        this.breed = entity.getBreed();
+        this.color = entity.getColor();
+        this.gender = entity.getGender();
+        this.age = entity.getAge();
+        this.features = entity.getFeatures();
+        this.hasMicrochip = entity.isHasMicrochip();
+        this.latitude = entity.getLatitude();
+        this.longitude = entity.getLongitude();
+    }
 
     @Builder
     public ContentDto(String reporterName, String contact, LocalDateTime lostDate, String landmark, String breed, String color, String gender, int age, String features, boolean hasMicrochip, double latitude, double longitude) {

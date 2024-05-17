@@ -53,14 +53,20 @@ public class IndexController {
         }
         return "posts-save.html";
     }
-
-    @GetMapping("/posts/update/{id}")
-    public String postsUpdate(@PathVariable Long id, Model model, @LoginUser SessionUser user){
-        PostsResponseDto dto= postsService.findById(id);
+    @GetMapping("/posts/detail/{id}")
+    public String postsDetail(Model model, @LoginUser SessionUser user, @PathVariable Long id){
+        PostsResponseDto dto =postsService.findById(id);
         model.addAttribute("post", dto);
         if(user != null) {
             model.addAttribute("userName", user.getName());
         }
+        return "posts-detail.html";
+    }
+
+    @GetMapping("/posts/update/{id}")
+    public String postsUpdate(@PathVariable Long id, Model model){
+        PostsResponseDto dto= postsService.findById(id);
+        model.addAttribute("post", dto);
         System.out.println("글 수정 진입");
         return "posts-update.html";
     }

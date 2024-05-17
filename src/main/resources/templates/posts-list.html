@@ -30,7 +30,7 @@
         <tr th:each="post : ${posts}">
             <td th:text="${post.kind}"></td>
             <td th:text="${post.id}"></td>
-            <td><a th:href="@{/posts/update/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
+            <td><a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
             <td th:text="${post.author}"></td>
             <td>
                 <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
