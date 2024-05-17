@@ -60,6 +60,7 @@ public class IndexController {
         if(user != null) {
             model.addAttribute("userName", user.getName());
         }
+        System.out.println("게시글 디테일 진입");
         return "posts-detail.html";
     }
 

@@ -5,25 +5,16 @@
 <body>
 
 <div class="col-md-12">
-
-    <div class="row">
-        <div class="col-md-6" th:if="${userName == null}">
-            <a th:href="@{/}" role="button" class="btn btn-primary" onclick="showLoginAlert(); return false;">글 등록</a>
-        </div>
-        <div class="col-md-6" th:if="${userName != null}">
-            <a th:href="@{/posts/save}" role="button" class="btn btn-primary">글 등록</a>
-        </div>
-    </div>
     <br>
     <!-- 목록 출력 영역 -->
     <table class="table table-horizontal table-bordered">
         <thead class="thead-strong">
         <tr>
             <th>분류</th>
-            <th>게시글번호</th>
+            <th>NO</th>
             <th>제목</th>
             <th>작성자</th>
-            <th>최종수정일</th>
+            <th>최종작성시간</th>
         </tr>
         </thead>
         <tbody id="tbody">
@@ -38,6 +29,14 @@
         </tr>
         </tbody>
     </table>
+    <div class="row">
+        <div class="col-md-6" th:if="${userName == null}">
+            <a th:href="@{/}" role="button" class="btn btn-primary" onclick="showLoginAlert(); return false;">글 등록</a>
+        </div>
+        <div class="col-md-6" th:if="${userName != null}">
+            <a th:href="@{/posts/save}" role="button" class="btn btn-primary">글 등록</a>
+        </div>
+    </div>
 </div>
 <script th:src="@{/js/app/index.js}"></script>
 <script>

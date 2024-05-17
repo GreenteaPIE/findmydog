@@ -30,7 +30,7 @@
                 </div>
             </div>
         </form>
-        <a href="/posts/list" role="button" class="btn btn-secondary">취소</a>
+        <a th:href="@{/posts/detail/{id}(id=${post.id})}" role="button" class="btn btn-secondary" >취소</a>
         <!-- 수정 완료 버튼 -->
         <button type="button" class="btn btn-primary" id="btn-update">수정 완료</button>
         <!-- 삭제 버튼 -->
