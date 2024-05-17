@@ -16,6 +16,7 @@ public class ContentDto {
     private LocalDateTime lostDate;
     private String landmark;
     private String breed;
+    private String pname;
     private String color;
     private String gender;
     private int age;
@@ -31,6 +32,7 @@ public class ContentDto {
         this.lostDate = entity.getLostDate();
         this.landmark = entity.getLandmark();
         this.breed = entity.getBreed();
+        this.pname = entity.getPname();
         this.color = entity.getColor();
         this.gender = entity.getGender();
         this.age = entity.getAge();
@@ -41,12 +43,13 @@ public class ContentDto {
     }
 
     @Builder
-    public ContentDto(String reporterName, String contact, LocalDateTime lostDate, String landmark, String breed, String color, String gender, int age, String features, boolean hasMicrochip, double latitude, double longitude) {
+    public ContentDto(String reporterName, String contact, LocalDateTime lostDate, String landmark, String breed,String pname, String color, String gender, int age, String features, boolean hasMicrochip, double latitude, double longitude) {
         this.reporterName = reporterName;
         this.contact = contact;
         this.lostDate = lostDate;
         this.landmark = landmark;
         this.breed = breed;
+        this.pname = pname;
         this.color = color;
         this.gender = gender;
         this.age = age;
@@ -63,6 +66,7 @@ public class ContentDto {
                 .lostDate(lostDate)
                 .landmark(landmark)
                 .breed(breed)
+                .pname(pname)
                 .color(color)
                 .gender(gender)
                 .age(age)

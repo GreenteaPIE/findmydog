@@ -24,6 +24,7 @@ public class Content extends BaseTimeEntity {
     private LocalDateTime lostDate; // 분실일자
     private String landmark;        // 주위 대표건물
     private String breed;           // 품종
+    private String pname;           // 반려동물 이름
     private String color;           // 색상
     private String gender;          // 성별
     private int age;                // 나이
@@ -36,12 +37,13 @@ public class Content extends BaseTimeEntity {
     private Posts post;
 
     @Builder
-    public Content(String reporterName, String contact, LocalDateTime lostDate, String landmark, String breed, String color, String gender, int age, String features, boolean hasMicrochip, double latitude, double longitude) {
+    public Content(String reporterName, String contact, LocalDateTime lostDate, String landmark, String breed,String pname, String color, String gender, int age, String features, boolean hasMicrochip, double latitude, double longitude) {
         this.reporterName = reporterName;
         this.contact = contact;
         this.lostDate = lostDate;
         this.landmark = landmark;
         this.breed = breed;
+        this.pname = pname;
         this.color = color;
         this.gender = gender;
         this.age = age;

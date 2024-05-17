@@ -62,8 +62,8 @@
         <tr>
             <th>품종</th>
             <td th:text="${post.content.breed}"></td>
-            <th>색상</th>
-            <td th:text="${post.content.color}"></td>
+            <th>이름</th>
+            <td th:text="${post.content.pname}"></td>
         </tr>
         <tr>
             <th>성별</th>
@@ -72,12 +72,14 @@
             <td th:text="${post.content.age}"></td>
         </tr>
         <tr>
-            <th>특징</th>
-            <td colspan="3" th:text="${post.content.features}"></td>
+            <th>색상</th>
+            <td th:text="${post.content.color}"></td>
+            <th>내장칩 유무</th>
+            <td th:text="${post.content.hasMicrochip ? '예' : '아니오'}"></td>
         </tr>
         <tr>
-            <th>내장칩 유무</th>
-            <td colspan="3" th:text="${post.content.hasMicrochip ? '예' : '아니오'}"></td>
+            <th>특징</th>
+            <td colspan="3" th:text="${post.content.features}"></td>
         </tr>
         </tbody>
     </table>
@@ -85,7 +87,7 @@
     <div>
         <p>사진</p>
         <div th:each="image : ${post.images}">
-            <img th:src="@{'/images/' + ${image.storedFileName}}" alt="Post Image"/>
+            <img th:src="@{'/images/' + ${image.storedFileName}}" alt="Post Image" style="width: 250px; height: auto;"/>
         </div>
     </div>
 

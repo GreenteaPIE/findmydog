@@ -21,6 +21,7 @@ public class IndexController {
     @GetMapping("/")
     public String index(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
+        model.addAttribute("mapinfo",postsService.findAllMap());
         if(user != null) {
             model.addAttribute("userName", user.getName());
             System.out.println("로그인 확인 "+ user.getName());

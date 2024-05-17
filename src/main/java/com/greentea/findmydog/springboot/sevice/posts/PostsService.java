@@ -87,6 +87,13 @@ public class PostsService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<PostsResponseDto> findAllMap(){
+        return postsRepository.findAllDesc().stream()
+                .map(PostsResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void delete(Long id){
         // 해당 게시글 찾기

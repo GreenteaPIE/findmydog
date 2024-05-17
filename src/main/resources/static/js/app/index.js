@@ -21,6 +21,7 @@ var main = {
         var lostDate = $('#lostDate').val();
         var landmark = $('#landmark').val();
         var breed = $('#breed').val();
+        var pname = $('#pname').val();
         var color = $('#color').val();
         var gender = $('#gender').val();
         var age = $('#age').val();
@@ -31,7 +32,7 @@ var main = {
         var imageFiles = $('#image')[0].files;
 
         // 각 항목의 유효성을 검사합니다.
-        if (!kind || !title || !author || !reporterName || !contact || !lostDate || !landmark || !breed || !color || !gender || !age || !features || !latitude || !longitude || imageFiles.length < 1) {
+        if (!kind || !title || !author || !reporterName || !contact || !lostDate || !landmark || !breed || !pname || !color || !gender || !age || !features || !latitude || !longitude || imageFiles.length < 1) {
             alert('모든 항목을 입력해주세요.');
             return;
         }
@@ -76,6 +77,7 @@ var main = {
                 lostDate: lostDate,
                 landmark: landmark,
                 breed: breed,
+                pname: pname,
                 color: color,
                 gender: gender,
                 age: age,
