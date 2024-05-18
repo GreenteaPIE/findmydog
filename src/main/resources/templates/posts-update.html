@@ -11,7 +11,7 @@
             <form enctype="multipart/form-data">
                 <fieldset>
                     <legend>기본 정보</legend>
-                    <div class="form-group">
+                    <div class="form-group" style="display: none;">
                         <label for="id">글 번호</label>
                         <input type="text" class="form-control" id="id" th:value="${post.id}" readonly>
                     </div>
@@ -46,7 +46,7 @@
                     <legend>분실일시 및 장소</legend>
                     <div class="form-group">
                         <label for="lostDate">분실일자</label>
-                        <input type="datetime-local" class="form-control" id="lostDate" th:value="${#temporals.format(post.content.lostDate, 'yyyy년 MM월 dd일 HH시 mm분')}">
+                        <input type="datetime-local" class="form-control" id="lostDate" th:value="${(post.content.lostDate)}">
                     </div>
                     <div class="form-group">
                         <label for="landmark">주위 대표건물</label>
