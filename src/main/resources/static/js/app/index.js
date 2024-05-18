@@ -130,8 +130,11 @@ var main = {
         var longitude = $('#longitude').val();
         var imageFiles = $('#image')[0].files;
 
+        // 이미지가 변경되었는지 확인
+        var imageChanged = imageFiles.length > 0;
+
         // 각 항목의 유효성을 검사합니다.
-        if (!kind || !title || !reporterName || !contact || !lostDate || !landmark || !breed || !pname || !color || !gender || !age || !features || !latitude || !longitude || imageFiles.length < 1) {
+        if (!kind || !title || !reporterName || !contact || !lostDate || !landmark || !breed || !pname || !color || !gender || !age || !features || !latitude || !longitude) {
             alert('모든 항목을 입력해주세요.');
             return;
         }
@@ -155,12 +158,14 @@ var main = {
         }
 
         // 이미지 파일 유효성 검사
-        var maxSizeInBytes = 10e6; // 10MB
-        for (var i = 0; i < imageFiles.length; i++) {
-            var fileSize = imageFiles[i].size;
-            if (fileSize > maxSizeInBytes) {
-                alert('이미지 파일 크기는 10MB 이하여야 합니다.');
-                return;
+        if (imageChanged) {
+            var maxSizeInBytes = 10e6; // 10MB
+            for (var i = 0; i < imageFiles.length; i++) {
+                var fileSize = imageFiles[i].size;
+                if (fileSize > maxSizeInBytes) {
+                    alert('이미지 파일 크기는 10MB 이하여야 합니다.');
+                    return;
+                }
             }
         }
 
@@ -188,8 +193,11 @@ var main = {
         var formData = new FormData();
         formData.append('post', new Blob([JSON.stringify(data)], { type: "application/json" }));
 
-        for (var i = 0; i < imageFiles.length; i++) {
-            formData.append("images", imageFiles[i]);
+        // 이미지가 변경되었을 경우에만 새 이미지 추가
+        if (imageChanged) {
+            for (var i = 0; i < imageFiles.length; i++) {
+                formData.append("images", imageFiles[i]);
+            }
         }
 
         $.ajax({
@@ -205,6 +213,7 @@ var main = {
             alert(JSON.stringify(error));
         });
     },
+
     delete: function() {
         var id = $('#id').val();
 
