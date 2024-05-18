@@ -4,10 +4,12 @@ import com.greentea.findmydog.springboot.domain.posts.Content;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class ContentDto {
     private Long id;

@@ -24,8 +24,8 @@ public class PostsApiController {
     }
 
     @PutMapping("/api/v1/posts/{id}")
-    public Long update(@PathVariable Long id, @RequestBody PostsUpdateRequestDto requestDto){
-        return postsService.update(id, requestDto);
+    public Long update(@PathVariable Long id, @RequestPart("post") PostsUpdateRequestDto requestDto, @RequestPart("images") List<MultipartFile> files) throws IOException {
+        return postsService.update(id, requestDto, files);
     }
 
     @GetMapping("/api/v1/posts/{id}")

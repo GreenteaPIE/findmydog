@@ -5,38 +5,186 @@
 </head>
 <body>
 <h1>게시글 수정</h1>
-<div class="col-md-12">
-    <div class="col-md-4">
-        <form>
-            <div class="form-group">
-                <label for="id">글 번호</label>
-                <input type="text" class="form-control" id="id" th:value="${post.id}" readonly>
-            </div>
-            <div class="form-group">
-                <label for="title">제목</label>
-                <input type="text" class="form-control" id="title" th:value="${post.title}">
-            </div>
-            <div class="form-group">
-                <label for="author">작성자</label>
-                <input type="text" class="form-control" id="author" th:value="${post.author}" readonly>
-            </div>
-            <div class="form-group">
-                <label for="content">내용</label>
-                <textarea class="form-control" id="content" th:text="${post.content}"></textarea>
-            </div>
-            <div class="form-group">
-                <div th:each="image : ${post.images}">
-                    <img th:src="@{'/images/' + ${image.storedFileName}}" alt="Post Image" style="width: 100px; height: auto;"/>
-                </div>
-            </div>
-        </form>
-        <a th:href="@{/posts/detail/{id}(id=${post.id})}" role="button" class="btn btn-secondary" >취소</a>
-        <!-- 수정 완료 버튼 -->
-        <button type="button" class="btn btn-primary" id="btn-update">수정 완료</button>
-        <!-- 삭제 버튼 -->
-        <button type="button" class="btn btn-danger" id="btn-delete">삭제</button>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <form enctype="multipart/form-data">
+                <fieldset>
+                    <legend>기본 정보</legend>
+                    <div class="form-group">
+                        <label for="id">글 번호</label>
+                        <input type="text" class="form-control" id="id" th:value="${post.id}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="kind">종류</label>
+                        <select class="form-control" id="kind" th:value="${post.kind}">
+                            <option value="분실" th:selected="${post.kind == '분실'}">분실</option>
+                            <option value="발견" th:selected="${post.kind == '발견'}">발견</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">제목</label>
+                        <input type="text" class="form-control" id="title" th:value="${post.title}">
+                    </div>
+                    <div class="form-group" style="display: none;">
+                        <label for="author">작성자</label>
+                        <input type="text" class="form-control" id="author" th:value="${post.author}" readonly>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>분실신고자 정보</legend>
+                    <div class="form-group">
+                        <label for="reporterName">신고자 이름</label>
+                        <input type="text" class="form-control" id="reporterName" th:value="${post.content.reporterName}">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact">연락처</label>
+                        <input type="text" class="form-control" id="contact" th:value="${post.content.contact}">
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>분실일시 및 장소</legend>
+                    <div class="form-group">
+                        <label for="lostDate">분실일자</label>
+                        <input type="datetime-local" class="form-control" id="lostDate" th:value="${#temporals.format(post.content.lostDate, 'yyyy년 MM월 dd일 HH시 mm분')}">
+                    </div>
+                    <div class="form-group">
+                        <label for="landmark">주위 대표건물</label>
+                        <input type="text" class="form-control" id="landmark" th:value="${post.content.landmark}">
+                    </div>
+                    <h4><strong>분실위치</strong> 분실한 위치를 지도에서 선택해주세요.</h4>
+                    <div id="map" style="width:100%;height:350px;"></div>
+                    <div class="form-group" style="display: none;">
+                        <label for="latitude">위도</label>
+                        <input type="text" class="form-control" id="latitude" name="latitude" th:value="${post.content.latitude}" readonly>
+                    </div>
+                    <div class="form-group" style="display: none;">
+                        <label for="longitude">경도</label>
+                        <input type="text" class="form-control" id="longitude" name="longitude" th:value="${post.content.longitude}" readonly>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>분실동물 정보</legend>
+                    <div class="form-group">
+                        <label for="breed">품종</label>
+                        <input type="text" class="form-control" id="breed" th:value="${post.content.breed}">
+                    </div>
+                    <div class="form-group">
+                        <label for="pname">반려동물 이름</label>
+                        <input type="text" class="form-control" id="pname" th:value="${post.content.pname}">
+                    </div>
+                    <div class="form-group">
+                        <label for="color">색상</label>
+                        <input type="text" class="form-control" id="color" th:value="${post.content.color}">
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">성별</label>
+                        <input type="text" class="form-control" id="gender" th:value="${post.content.gender}">
+                    </div>
+                    <div class="form-group">
+                        <label for="age">나이</label>
+                        <input type="number" class="form-control" id="age" th:value="${post.content.age}">
+                    </div>
+                    <div class="form-group">
+                        <label for="features">특징</label>
+                        <textarea class="form-control" id="features" placeholder="예) 검은색 옷을 입고있고 귀가 짧음" th:text="${post.content.features}"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="hasMicrochip">내장칩 유무</label>
+                        <select class="form-control" id="hasMicrochip" th:value="${post.content.hasMicrochip}">
+                            <option value="true" th:selected="${post.content.hasMicrochip} == true">있음</option>
+                            <option value="false" th:selected="${post.content.hasMicrochip} == false">없음</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="image">사진 업로드</label>
+                        <input type="file" class="form-control-file" id="image" name="image" multiple>
+                        <div id="image-preview">
+                            <div th:each="image : ${post.images}">
+                                <img th:src="@{'/images/' + ${image.storedFileName}}" alt="Post Image" style="max-width: 250px; max-height: 250px;" class="img-fluid mt-3"/>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <a th:href="@{/posts/detail/{id}(id=${post.id})}" role="button" class="btn btn-secondary">취소</a>
+                <button type="button" class="btn btn-primary" id="btn-update">수정 완료</button>
+                <button type="button" class="btn btn-danger" id="btn-delete">삭제</button>
+            </form>
+        </div>
     </div>
 </div>
 <script th:src="@{/js/app/index.js}"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=54b2cd781663af1c76944546233135db"></script>
+<script>
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+        };
+
+    // 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    // 현재 위치를 가져와 지도의 중심으로 설정하고 마커를 생성하는 함수입니다.
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude, // 위도
+                    lon = position.coords.longitude; // 경도
+                var locPosition = new kakao.maps.LatLng(lat, lon); // 현재 위치를 좌표 객체로 생성
+
+                // 지도 중심을 현재 위치로 이동합니다.
+                map.setCenter(locPosition);
+
+                // 사용자가 지도를 클릭하는 위치에 마커를 생성합니다.
+                kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+                    var latlng = mouseEvent.latLng;
+
+                    // 마커를 클릭한 위치로 이동합니다.
+                    marker.setPosition(latlng);
+
+                    // 위도와 경도 입력 필드에 값을 설정합니다.
+                    document.getElementById('latitude').value = latlng.getLat();
+                    document.getElementById('longitude').value = latlng.getLng();
+                });
+
+                // 현재 위치에 마커를 생성합니다.
+                var marker = new kakao.maps.Marker({
+                    position: locPosition,
+                    map: map
+                });
+
+            }, function(error) {
+                console.error("Geolocation error: ", error);
+                alert('현재 위치를 가져올 수 없습니다. 위치 정보 사용을 허용해주세요.');
+            }, {
+                maximumAge: 0,
+                timeout: 10000,
+                enableHighAccuracy: true
+            });
+        } else {
+            alert('이 브라우저에서는 Geolocation이 지원되지 않습니다.');
+        }
+    }
+
+    // 페이지 로딩 시 현재 위치를 가져오도록 합니다.
+    window.onload = function() {
+        getCurrentLocation();
+    };
+</script>
+<script>
+    $('#image').on('change', function(){
+        var fileInput = this;
+        if (fileInput.files && fileInput.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                $('#image-preview').html('<img src="' + e.target.result + '" style="max-width: 250px; max-height: 250px;" class="img-fluid mt-3" />');
+            }
+
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+    });
+</script>
 </body>
 </html>

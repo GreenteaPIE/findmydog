@@ -1,13 +1,7 @@
 package com.greentea.findmydog.springboot.sevice.posts;
 
-import com.greentea.findmydog.springboot.domain.posts.Image;
-import com.greentea.findmydog.springboot.domain.posts.ImageRepository;
-import com.greentea.findmydog.springboot.domain.posts.Posts;
-import com.greentea.findmydog.springboot.domain.posts.PostsRepository;
-import com.greentea.findmydog.springboot.web.dto.PostsListResponseDto;
-import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
-import com.greentea.findmydog.springboot.web.dto.PostsSaveRequestDto;
-import com.greentea.findmydog.springboot.web.dto.PostsUpdateRequestDto;
+import com.greentea.findmydog.springboot.domain.posts.*;
+import com.greentea.findmydog.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -65,14 +59,76 @@ public class PostsService {
     }
 
     @Transactional
-    public Long update(Long id, PostsUpdateRequestDto requestDto){
-        Posts posts = postsRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id="+ id));
+    public Long update(Long id, PostsUpdateRequestDto requestDto, List<MultipartFile> imageFiles) throws IOException {
+        Posts post = postsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
 
-        posts.update(requestDto.getTitle());
+        post.update(requestDto.getTitle());
 
-        return id;
+        Content content = post.getContent();
+        ContentDto contentDto = requestDto.getContent();
+        content.setReporterName(contentDto.getReporterName());
+        content.setContact(contentDto.getContact());
+        content.setLostDate(contentDto.getLostDate());
+        content.setLandmark(contentDto.getLandmark());
+        content.setBreed(contentDto.getBreed());
+        content.setPname(contentDto.getPname());
+        content.setColor(contentDto.getColor());
+        content.setGender(contentDto.getGender());
+        content.setAge(contentDto.getAge());
+        content.setFeatures(contentDto.getFeatures());
+        content.setHasMicrochip(contentDto.isHasMicrochip());
+        content.setLatitude(contentDto.getLatitude());
+        content.setLongitude(contentDto.getLongitude());
+
+        if (imageFiles != null && !imageFiles.isEmpty()) {
+            // 기존 이미지 삭제
+            List<Image> existingImages = post.getImages();
+            if (existingImages != null && !existingImages.isEmpty()) {
+                for (Image image : existingImages) {
+                    Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+                    Path filePath = folderPath.resolve(image.getStoredFileName());
+                    try {
+                        Files.deleteIfExists(filePath); // 파일이 존재할 경우 삭제
+                    } catch (IOException e) {
+                        e.printStackTrace(); // 오류 처리
+                    }
+                }
+            }
+            imageRepository.deleteAll(existingImages);
+            post.getImages().clear();
+
+            // 새 이미지 저장
+            Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+            if (!Files.exists(folderPath)) {
+                Files.createDirectories(folderPath);
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+
+            for (MultipartFile file : imageFiles) {
+                String originalFileName = file.getOriginalFilename();
+                String extension = originalFileName.substring(originalFileName.lastIndexOf(".")).toLowerCase();
+                if (!extension.equals(".jpeg") && !extension.equals(".jpg") && !extension.equals(".png")) {
+                    throw new IOException("Unsupported file type: " + extension);
+                }
+
+                String storedFileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + "_" + sdf.format(new Date()) + extension;
+                Path filePath = folderPath.resolve(storedFileName);
+
+                file.transferTo(filePath.toFile());
+
+                Image image = new Image();
+                image.setOriginalFileName(originalFileName);
+                image.setStoredFileName(storedFileName);
+                image.setPost(post);
+                post.addImage(image);
+            }
+        }
+
+        return post.getId();
     }
+
     public PostsResponseDto findById(Long id){
         Posts entity = postsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
