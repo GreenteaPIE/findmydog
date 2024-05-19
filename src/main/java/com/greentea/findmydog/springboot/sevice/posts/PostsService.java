@@ -81,7 +81,7 @@ public class PostsService {
         content.setLatitude(contentDto.getLatitude());
         content.setLongitude(contentDto.getLongitude());
 
-        if (imageFiles != null && !imageFiles.isEmpty()) {
+        if (requestDto.isImageChanged() && imageFiles != null && !imageFiles.isEmpty()) {
             // 기존 이미지 삭제
             List<Image> existingImages = post.getImages();
             if (existingImages != null && !existingImages.isEmpty()) {

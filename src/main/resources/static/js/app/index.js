@@ -111,7 +111,6 @@ var main = {
 
     update: function() {
         var id = $('#id').val();
-
         var kind = $('#kind').val();
         var title = $('#title').val();
         var author = $('#author').val();
@@ -187,7 +186,8 @@ var main = {
                 hasMicrochip: hasMicrochip,
                 latitude: latitude,
                 longitude: longitude
-            }
+            },
+            imageChanged: imageChanged // Add this line
         };
 
         var formData = new FormData();
