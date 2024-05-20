@@ -25,8 +25,8 @@
         }
 
         .post-image {
-            width: auto;
-            height: 100%;
+            width: 100%;
+            height: auto;
             object-fit: cover; /* 이미지가 컨테이너에 맞게 조절되도록 설정 */
             border-radius: 5px;
         }
@@ -56,6 +56,17 @@
         .slide-item {
             margin-right: 20px; /* 포스트 사이의 간격을 20px로 설정 */
         }
+
+        #map {
+            width: 100%;
+            height: 350px;
+        }
+
+        @media (max-width: 768px) {
+            #map {
+                height: 250px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -82,7 +93,7 @@
     </div>
 </div>
 <h1>신고 지도</h1>
-<div id="map" style="width:80%;height:350px;"></div>
+<div id="map"></div>
 <!-- Call to Action-->
 <div class="card text-white bg-secondary my-5 py-4 text-center">
     <div class="card-body"><p class="text-white m-0">광고 내용</p></div>
@@ -224,7 +235,5 @@
     }
 </script>
 
-
 </body>
-
 </html>

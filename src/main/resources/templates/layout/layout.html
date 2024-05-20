@@ -24,32 +24,37 @@
         .header {
             height: 50px;
             background-color: #f0f0f0; /* 헤더 배경색 */
+            position: fixed; /* 고정 위치 */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
         }
 
         .content {
             min-height: 500px;
             background-color: #ffffff; /* 콘텐츠 배경색 */
+            margin-top: 70px; /* 헤더의 높이만큼 간격 추가 */
         }
 
         .footer {
             min-height: 70px;
             background-color: #f0f0f0; /* 푸터 배경색 */
         }
-
     </style>
 </head>
 <body>
 <!-- 헤더 영역 -->
 <div class="header">
-<div th:replace="~{fragments/header :: header}"></div>
+    <div th:replace="~{fragments/header :: header}"></div>
 </div>
 <!-- 콘텐츠 영역 -->
 <div class="content">
-<div layout:fragment="content"></div>
+    <div layout:fragment="content"></div>
 </div>
 <!-- 푸터 영역 -->
 <div class="footer">
-<div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 </div>
 </body>
 </html>
