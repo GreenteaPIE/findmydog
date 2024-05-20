@@ -14,9 +14,14 @@
                     <li class="nav-item"><a th:href="@{/posts/list}" role="button" class="nav-link">게시판</a></li>
                     <li class="nav-item"><a class="nav-link" href="#!">유기견 입양</a></li>
                     <li class="nav-item" th:unless="${userName}"><a class="nav-link" role="button" th:href="@{/loginPage}">로그인</a></li>
-                    <li class="nav-item d-flex align-items-center" th:if="${userName}">
-                        <span class="navbar-text mr-2" th:text="${userName + '님'}"></span>
-                        <a class="nav-link" href="/logout" role="button">로그아웃</a>
+                    <li class="nav-item dropdown" th:if="${userName}">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${userName + '님'}"></a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" th:href="@{/user/profile}">내 정보</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/posts}">내가 쓴 글</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout" role="button">로그아웃</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
