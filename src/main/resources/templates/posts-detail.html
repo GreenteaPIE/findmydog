@@ -25,10 +25,11 @@
 </head>
 <body>
 <div class="detail-view">
+    <hr>
     <h2 th:text="${post.title}"></h2>
     <p><strong>작성자:</strong> <span th:text="${post.author}"></span></p>
     <p><strong>작성일자:</strong> <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span></p>
-
+    <hr>
     <h3>분실신고자 정보</h3>
     <table class="table">
         <tbody>
@@ -40,7 +41,7 @@
         </tr>
         </tbody>
     </table>
-
+    <hr>
     <h3>분실일시 및 장소</h3>
     <table class="table">
         <tbody>
@@ -55,7 +56,7 @@
         </tbody>
     </table>
     <div id="map"></div> <!-- 지도 표시 -->
-
+    <hr>
     <h3>분실동물 정보</h3>
     <table class="table">
         <tbody>

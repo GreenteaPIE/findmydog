@@ -24,6 +24,7 @@ public class UserController {
         if (user != null && registrationId != null && accessToken != null) {
             userService.deleteUser(user.getId(), registrationId, accessToken);
             httpSession.invalidate();  // 세션 무효화
+            System.out.println("회원탈퇴 동작");
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(400).build();

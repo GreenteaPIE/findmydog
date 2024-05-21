@@ -8,6 +8,7 @@
         <div class="col-md-8">
             <form enctype="multipart/form-data">
                 <fieldset>
+                    <hr>
                     <legend>기본 정보</legend>
                 <div class="form-group">
                     <label for="kind">종류</label>
@@ -25,6 +26,7 @@
                     <input type="hidden" id="userId" th:value="${userId}">
                 </fieldset>
                 <fieldset>
+                    <hr>
                     <legend>분실신고자 정보</legend>
                 <div class="form-group">
                     <label for="reporterName">신고자 이름</label>
@@ -37,6 +39,7 @@
                 </div>
                 </fieldset>
                 <fieldset>
+                    <hr>
                     <legend>분실일시 및 장소</legend>
                 <div class="form-group">
                     <label for="lostDate">분실일자</label>
@@ -47,8 +50,8 @@
                     <label for="landmark">주위 대표건물</label>
                     <input type="text" class="form-control" id="landmark" placeholder="예) xx동 다이소">
                 </div>
-
-                <h4><strong>분실위치</strong> 분실한 위치를 지도에서 선택해주세요.</h4>
+<br>
+                <h6><strong>분실위치</strong> 분실한 위치를 지도에서 선택해주세요.</h6>
                 <div id="map" style="width:100%;height:350px;"></div>
                 <div class="form-group" style="display: none;">
                     <label for="latitude">위도</label>
@@ -61,6 +64,7 @@
                 </div>
                 </fieldset>
                 <fieldset>
+                    <hr>
                     <legend>분실동물 정보</legend>
 
                 <div class="form-group">
@@ -80,7 +84,10 @@
 
                 <div class="form-group">
                     <label for="gender">성별</label>
-                    <input type="text" class="form-control" id="gender">
+                    <select class="form-control" id="gender">
+                        <option value="true">암컷</option>
+                        <option value="false">수컷</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -100,12 +107,13 @@
                         <option value="false">없음</option>
                     </select>
                 </div>
-
+<br>
                 <div class="form-group">
                     <label for="image">사진 업로드</label>
                     <input type="file" class="form-control-file" id="image" name="image" multiple>
                     <div id="image-preview"></div>
                 </div>
+                    <hr>
                 </fieldset>
                 <a href="/" role="button" class="btn btn-secondary">취소</a>
                 <button type="button" class="btn btn-primary" id="btn-save">등록</button>
