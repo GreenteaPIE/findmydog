@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class PostsResponseDto {
 
     private Long id;
+    private Long user_id;
     private String kind;
     private String title;
     private String author;
@@ -20,6 +21,7 @@ public class PostsResponseDto {
 
     public PostsResponseDto(Posts entity){
         this.id = entity.getId();
+        this.user_id = entity.getUser().getId();
         this.kind = entity.getKind();
         this.title = entity.getTitle();
         this.author = entity.getAuthor();

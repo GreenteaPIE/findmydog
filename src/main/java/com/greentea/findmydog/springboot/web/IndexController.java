@@ -61,6 +61,7 @@ public class IndexController {
         model.addAttribute("post", dto);
         if(user != null) {
             model.addAttribute("userName", user.getName());
+            model.addAttribute("userId", user.getId());
         }
         System.out.println("게시글 디테일 진입");
         return "posts-detail.html";
