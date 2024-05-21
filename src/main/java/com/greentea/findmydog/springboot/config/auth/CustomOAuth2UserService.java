@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 
 
-
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -38,6 +37,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Users user = saveOrUpdate(attributes);
 
         httpSession.setAttribute("user", new SessionUser(user));
+        httpSession.setAttribute("accessToken", userRequest.getAccessToken().getTokenValue());
+        httpSession.setAttribute("registrationId", registrationId);
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
