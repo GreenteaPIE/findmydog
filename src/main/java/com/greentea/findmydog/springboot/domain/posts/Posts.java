@@ -1,6 +1,7 @@
 package com.greentea.findmydog.springboot.domain.posts;
 
 import com.greentea.findmydog.springboot.domain.BaseTimeEntity;
+import com.greentea.findmydog.springboot.domain.user.Users;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,12 +34,17 @@ public class Posts extends BaseTimeEntity {
     @JoinColumn(name = "content_id")
     private Content content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Users user;
+
     @Builder
-    public Posts(String kind, String title, Content content, String author) {
+    public Posts(String kind, String title, Content content, String author, Users user) {
         this.kind = kind;
         this.title = title;
         this.content = content;
         this.author = author;
+        this.user = user;
 
     }
 
@@ -51,6 +57,11 @@ public class Posts extends BaseTimeEntity {
         if (image.getPost() != this) {
             image.setPost(this);
         }
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
+        user.getPosts().add(this);
     }
 
 }

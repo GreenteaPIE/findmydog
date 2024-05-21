@@ -50,6 +50,7 @@ public class IndexController {
     public String postsSave(Model model, @LoginUser SessionUser user){
         if(user != null) {
             model.addAttribute("userName", user.getName());
+            model.addAttribute("userId", user.getId());
             System.out.println("글 등록 진입 " + user.getName());
         }
         return "posts-save.html";

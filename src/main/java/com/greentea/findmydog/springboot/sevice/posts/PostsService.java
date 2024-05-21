@@ -1,6 +1,8 @@
 package com.greentea.findmydog.springboot.sevice.posts;
 
 import com.greentea.findmydog.springboot.domain.posts.*;
+import com.greentea.findmydog.springboot.domain.user.UserRepository;
+import com.greentea.findmydog.springboot.domain.user.Users;
 import com.greentea.findmydog.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,13 +24,17 @@ import java.text.SimpleDateFormat;
 public class PostsService {
     private final PostsRepository postsRepository;
     private final ImageRepository imageRepository;
+    private final UserRepository userRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     public Long save(PostsSaveRequestDto requestDto, List<MultipartFile> imageFiles) throws IOException {
-        Posts post = postsRepository.save(requestDto.toEntity());
+        Users user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found. ID: " + requestDto.getUserId()));
 
+        Posts post = requestDto.toEntity(user);
+        postsRepository.save(post);
         Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         if (!Files.exists(folderPath)) {
             Files.createDirectories(folderPath);

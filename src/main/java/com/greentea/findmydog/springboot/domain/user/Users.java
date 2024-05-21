@@ -1,10 +1,14 @@
 package com.greentea.findmydog.springboot.domain.user;
 
 import com.greentea.findmydog.springboot.domain.BaseTimeEntity;
+import com.greentea.findmydog.springboot.domain.posts.Posts;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -23,6 +27,9 @@ public class Users extends BaseTimeEntity {
 
     @Column
     private String picture;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Posts> posts = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

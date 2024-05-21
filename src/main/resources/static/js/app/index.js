@@ -13,6 +13,7 @@ var main = {
     },
     save: function() {
         // 각 입력 필드의 값을 가져옵니다.
+        var userId = $('#userId').val();
         var kind = $('#kind').val();
         var title = $('#title').val();
         var author = $('#author').val();
@@ -71,6 +72,7 @@ var main = {
             kind: kind,
             title: title,
             author: author,
+            userId: userId,
             content: {
                 reporterName: reporterName,
                 contact: contact,

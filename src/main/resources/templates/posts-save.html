@@ -21,11 +21,8 @@
                     <label for="title">제목</label>
                     <input type="text" class="form-control" id="title" placeholder="예) xx구 xx동 찾아주세요">
                 </div>
-
-                <div class="form-group" style="display: none;" >
-                    <label for="author">작성자</label>
-                    <input type="text" class="form-control" id="author" th:value="${userName}" readonly>
-                </div>
+                    <input type="hidden" id="author" th:value="${userName}">
+                    <input type="hidden" id="userId" th:value="${userId}">
                 </fieldset>
                 <fieldset>
                     <legend>분실신고자 정보</legend>
