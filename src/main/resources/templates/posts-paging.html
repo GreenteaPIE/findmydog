@@ -28,30 +28,36 @@
     </table>
 
     <!-- 페이징 네비게이션 -->
-    <div th:if="${postsPages.totalPages > 1}">
+    <div>
         <!-- 첫번째 페이지로 이동 -->
-        <a th:href="@{/posts/paging(page=1)}">첫 페이지 </a>
+        <a th:href="@{/posts/paging(page=1)}"
+           th:classappend="${postsPages.totalElements == 0 || postsPages.totalPages == 1 || postsPages.number == 0} ? ' disabled' : ''"
+           class="btn btn-primary btn-sm">첫 페이지</a>
 
         <!-- 이전 링크 활성화 비활성화 -->
-        <a th:href="${postsPages.first} ? '#' : @{/posts/paging(page=${postsPages.number})}"> 이전 </a>
+        <a th:href="${postsPages.number == 0 || postsPages.totalElements == 0 || postsPages.totalPages == 1} ? '#' : @{/posts/paging(page=${postsPages.number})}"
+           th:classappend="${postsPages.number == 0 || postsPages.totalElements == 0 || postsPages.totalPages == 1} ? ' disabled' : ''"
+           class="btn btn-secondary btn-sm">이전</a>
 
-        <!-- 페이지 번호 링크(현재 페이지는 숫자만)
-                for(int page=startPage; page<=endPage; page++)-->
-        <span th:each="page: ${#numbers.sequence(startPage, endPage)}">
-
+        <!-- 페이지 번호 링크(현재 페이지는 숫자만) -->
+        <span th:each="page: ${#numbers.sequence(1, postsPages.totalPages)}">
             <!-- 현재페이지는 링크 없이 숫자만 -->
-            <span th:if="${page == postsPages.number + 1}" th:text="${page}"></span>
+            <span th:if="${page == postsPages.number + 1}" th:text="${page}" class="btn btn-light btn-sm"></span>
             <!-- 현재페이지 링크 X, 다른 페이지번호에는 링크를 보여준다 -->
             <span th:unless="${page == postsPages.number + 1}">
-                <a th:href="@{/posts/paging(page=${page})}" th:text="${page}"></a>
+                <a th:href="@{/posts/paging(page=${page})}" th:text="${page}" class="btn btn-secondary btn-sm"></a>
             </span>
         </span>
 
         <!-- 다음 링크 활성화 비활성화 -->
-        <a th:href="${postsPages.last} ? '#' : @{/posts/paging(page=${postsPages.number + 2})}"> 다음 </a>
+        <a th:href="${postsPages.number == postsPages.totalPages - 1 || postsPages.totalElements == 0 || postsPages.totalPages == 1} ? '#' : @{/posts/paging(page=${postsPages.number + 2})}"
+           th:classappend="${postsPages.number == postsPages.totalPages - 1 || postsPages.totalElements == 0 || postsPages.totalPages == 1} ? ' disabled' : ''"
+           class="btn btn-secondary btn-sm">다음</a>
 
         <!-- 마지막 페이지로 이동 -->
-        <a th:href="@{/posts/paging(page=${postsPages.totalPages})}"> 마지막 페이지</a>
+        <a th:href="@{/posts/paging(page=${postsPages.totalPages})}"
+           th:classappend="${postsPages.totalElements == 0 || postsPages.totalPages == 1 || postsPages.number == postsPages.totalPages - 1} ? ' disabled' : ''"
+           class="btn btn-primary btn-sm">마지막 페이지</a>
     </div>
 
     <div class="row">

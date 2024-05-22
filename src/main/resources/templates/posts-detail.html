@@ -95,7 +95,7 @@
     <!-- 버튼 -->
     <div class="btn-group">
         <a th:href="@{/posts/update/{id}(id=${post.id})}" th:if="${post.user_id == userId}" class="btn btn-primary">수정</a>
-        <a href="/posts/list" class="btn btn-secondary" role="button">목록으로</a>
+        <a href="/posts/paging" class="btn btn-secondary" role="button">목록으로</a>
     </div>
 </div>
 <script th:src="@{/js/app/index.js}"></script>
