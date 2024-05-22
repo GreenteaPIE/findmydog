@@ -105,7 +105,7 @@ var main = {
             data: formData
         }).done(function() {
             alert('글이 등록되었습니다.');
-            window.location.href = '/posts/list';
+            window.location.href = '/posts/paging';
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });
@@ -226,7 +226,7 @@ var main = {
             contentType: 'application/json; charset=UTF-8',
         }).done(function() {
             alert('글이 삭제되었습니다.');
-            window.location.href = '/';
+            window.location.href = '/posts/paging';
         }).fail(function(error) {
             alert(JSON.stringify(error));
         });

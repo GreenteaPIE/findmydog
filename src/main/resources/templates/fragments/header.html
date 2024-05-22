@@ -11,7 +11,7 @@
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-                    <li class="nav-item"><a th:href="@{/posts/list}" role="button" class="nav-link">게시판</a></li>
+                    <li class="nav-item"><a th:href="@{/posts/paging}" role="button" class="nav-link">게시판</a></li>
                     <li class="nav-item"><a class="nav-link" href="#!">유기견 입양</a></li>
                     <li class="nav-item" th:unless="${userName}"><a class="nav-link" role="button" th:href="@{/loginPage}">로그인</a></li>
                     <li class="nav-item dropdown" th:if="${userName}">

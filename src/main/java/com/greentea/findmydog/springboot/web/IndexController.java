@@ -4,8 +4,10 @@ import com.greentea.findmydog.springboot.config.auth.LoginUser;
 import com.greentea.findmydog.springboot.config.auth.dto.SessionUser;
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
 import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class IndexController {
 
     private final PostsService postsService;
-    private final HttpSession httpSession;
 
+    // 인덱스 페이지
     @GetMapping("/")
     public String index(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
@@ -30,22 +32,38 @@ public class IndexController {
         return "index.html";
     }
 
+    // 로그인 페이지
     @GetMapping("/loginPage")
     public String login(){
         System.out.println("로그인 페이지 진입");
         return "loginPage.html";
     }
 
-    @GetMapping("/posts/list")
-    public String postsList(Model model, @LoginUser SessionUser user) {
-        model.addAttribute("posts", postsService.findAllDesc());
+    // 게시글 리스트 @PageableDefault(page = 1) : page는 기본으로 1페이지를 보여준다.
+    @GetMapping("/posts/paging")
+    public String paging(@PageableDefault(page = 1) Pageable pageable, @LoginUser SessionUser user, Model model) {
+        Page<PostsResponseDto> postsPages = postsService.paging(pageable);
+
         if (user != null) {
             model.addAttribute("userName", user.getName());
         }
-        System.out.println("글 리스트 진입");
-        return "posts-list.html";
+
+        /**
+         * blockLimit : page 개수 설정
+         * 현재 사용자가 선택한 페이지 앞 뒤로 3페이지씩만 보여준다.
+         * ex : 현재 사용자가 4페이지라면 2, 3, (4), 5, 6
+         */
+        int blockLimit = 3;
+        int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
+        int endPage = Math.min((startPage + blockLimit - 1), postsPages.getTotalPages());
+
+        model.addAttribute("postsPages", postsPages);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+        return "posts-paging";
     }
 
+    // 게시글 작성폼
     @GetMapping("/posts/save")
     public String postsSave(Model model, @LoginUser SessionUser user){
         if(user != null) {
@@ -55,6 +73,8 @@ public class IndexController {
         }
         return "posts-save.html";
     }
+    
+    // 게시글 디테일 페이지
     @GetMapping("/posts/detail/{id}")
     public String postsDetail(Model model, @LoginUser SessionUser user, @PathVariable Long id){
         PostsResponseDto dto =postsService.findById(id);
@@ -67,6 +87,7 @@ public class IndexController {
         return "posts-detail.html";
     }
 
+    // 게시글 수정 페이지
     @GetMapping("/posts/update/{id}")
     public String postsUpdate(@PathVariable Long id, Model model){
         PostsResponseDto dto= postsService.findById(id);

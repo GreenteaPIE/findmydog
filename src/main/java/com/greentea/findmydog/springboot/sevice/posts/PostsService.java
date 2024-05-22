@@ -6,6 +6,10 @@ import com.greentea.findmydog.springboot.domain.user.Users;
 import com.greentea.findmydog.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +33,7 @@ public class PostsService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    // 게시글 저장
     public Long save(PostsSaveRequestDto requestDto, List<MultipartFile> imageFiles) throws IOException {
         Users user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found. ID: " + requestDto.getUserId()));
@@ -64,6 +69,7 @@ public class PostsService {
         return post.getId();
     }
 
+    // 게시글 업데이트
     @Transactional
     public Long update(Long id, PostsUpdateRequestDto requestDto, List<MultipartFile> imageFiles) throws IOException {
         Posts post = postsRepository.findById(id)
@@ -134,28 +140,8 @@ public class PostsService {
 
         return post.getId();
     }
-
-    public PostsResponseDto findById(Long id){
-        Posts entity = postsRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
-
-        return new PostsResponseDto(entity);
-    }
-
-    @Transactional(readOnly = true)
-    public List<PostsListResponseDto> findAllDesc(){
-        return postsRepository.findAllDesc().stream()
-                .map(PostsListResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<PostsResponseDto> findAllMap(){
-        return postsRepository.findAllDesc().stream()
-                .map(PostsResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
+    
+    // 게시글 삭제
     @Transactional
     public void delete(Long id){
         // 해당 게시글 찾기
@@ -183,5 +169,44 @@ public class PostsService {
 
         // 데이터베이스에서 게시글 정보 삭제
         postsRepository.delete(posts);
+    }
+
+    // 게시글 페이징
+    public Page<PostsResponseDto> paging(Pageable pageable) {
+        int page = pageable.getPageNumber() - 1; // page 위치에 있는 값은 0부터 시작한다.
+        int pageLimit = 15; // 한페이지에 보여줄 글 개수
+
+        // 한 페이지당 3개식 글을 보여주고 정렬 기준은 ID기준으로 내림차순
+        Page<Posts> postsPages = postsRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+
+        // 목록 : kind, id, title, content, author, modifiedDate, images
+        Page<PostsResponseDto> postsResponseDtos = postsPages.map(
+                postPage -> new PostsResponseDto(postPage));
+
+        return postsResponseDtos;
+    }
+
+    // 게시글 디테일
+    public PostsResponseDto findById(Long id) {
+        Posts entity = postsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+
+        return new PostsResponseDto(entity);
+    }
+
+    // 게시글 리스트
+    @Transactional(readOnly = true)
+    public List<PostsListResponseDto> findAllDesc() {
+        return postsRepository.findAllDesc().stream()
+                .map(PostsListResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    // 게시글 전체 지도
+    @Transactional(readOnly = true)
+    public List<PostsResponseDto> findAllMap() {
+        return postsRepository.findAllDesc().stream()
+                .map(PostsResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
