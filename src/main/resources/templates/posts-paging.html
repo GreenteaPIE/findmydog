@@ -1,34 +1,58 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .table-container {
+            min-height: 400px; /* 게시글이 없을 경우 충분한 공간 확보 */
+        }
+        .pagination-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .write-button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            white-space: nowrap;
+        }
+        .table .title-column {
+            width: 100%;
+        }
+    </style>
+</head>
 <body>
-<div class="col-md-12">
-    <br>
-    <!-- 목록 출력 영역 -->
-    <table class="table table-horizontal table-bordered">
-        <thead class="thead-strong">
-        <tr>
-            <th>분류</th>
-            <th>NO</th>
-            <th>제목</th>
-            <th>작성자</th>
-            <th>최종작성시간</th>
-        </tr>
-        </thead>
-        <tbody id="tbody">
-        <tr th:each="post : ${postsPages}">
-            <td th:text="${post.kind}"></td>
-            <td th:text="${post.id}"></td>
-            <td><a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
-            <td th:text="${post.author}"></td>
-            <td>
-                <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div class="container">
+    <div class="table-container">
+        <br>
+        <!-- 목록 출력 영역 -->
+        <table class="table table-bordered">
+            <thead class="thead-light">
+            <tr>
+                <th style="width: 10%;">분류</th>
+                <th style="width: 5%;">NO</th>
+                <th class="title-column">제목</th>
+                <th style="width: 10%;">작성자</th>
+                <th style="width: 20%;">최종작성시간</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            <tr th:each="post : ${postsPages}">
+                <td th:text="${post.kind}"></td>
+                <td th:text="${post.id}"></td>
+                <td class="title-column"><a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
+                <td th:text="${post.author}"></td>
+                <td>
+                    <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
     <!-- 페이징 네비게이션 -->
-    <div>
+    <div class="pagination-container">
         <!-- 첫번째 페이지로 이동 -->
         <a th:href="@{/posts/paging(page=1)}"
            th:classappend="${postsPages.totalElements == 0 || postsPages.totalPages == 1 || postsPages.number == 0} ? ' disabled' : ''"
@@ -60,15 +84,17 @@
            class="btn btn-primary btn-sm">마지막 페이지</a>
     </div>
 
-    <div class="row">
-        <div class="col-md-6" th:if="${userName == null}">
+    <!-- 글쓰기 버튼 -->
+    <div class="write-button-container">
+        <div th:if="${userName == null}">
             <a th:href="@{/}" role="button" class="btn btn-primary" onclick="showLoginAlert(); return false;">글 등록</a>
         </div>
-        <div class="col-md-6" th:if="${userName != null}">
+        <div th:if="${userName != null}">
             <a th:href="@{/posts/save}" role="button" class="btn btn-primary">글 등록</a>
         </div>
     </div>
 </div>
+
 <script th:src="@{/js/app/index.js}"></script>
 <script>
     function showLoginAlert() {
