@@ -11,6 +11,17 @@ var main = {
             _this.delete();
         });
     },
+    validateFields: function(fields) {
+        var invalidFields = [];
+
+        fields.forEach(function(field) {
+            if (!field.value) {
+                invalidFields.push(field.name);
+            }
+        });
+
+        return invalidFields;
+    },
     save: function() {
         // 각 입력 필드의 값을 가져옵니다.
         var userId = $('#userId').val();
@@ -32,9 +43,29 @@ var main = {
         var longitude = $('#longitude').val();
         var imageFiles = $('#image')[0].files;
 
-        // 각 항목의 유효성을 검사합니다.
-        if (!kind || !title || !author || !reporterName || !contact || !lostDate || !landmark || !breed || !pname || !color || !gender || !age || !features || !latitude || !longitude || imageFiles.length < 1) {
-            alert('모든 항목을 입력해주세요.');
+        var fields = [
+            {name: '분류', value: kind},
+            {name: '제목', value: title},
+            {name: '작성자', value: author},
+            {name: '신고자 이름', value: reporterName},
+            {name: '연락처', value: contact},
+            {name: '분실 날짜', value: lostDate},
+            {name: '주변건물', value: landmark},
+            {name: '품종', value: breed},
+            {name: '이름', value: pname},
+            {name: '색상', value: color},
+            {name: '성별', value: gender},
+            {name: '나이', value: age},
+            {name: '특징', value: features},
+            {name: '위도', value: latitude},
+            {name: '경도', value: longitude},
+            {name: '이미지 파일', value: imageFiles.length > 0}
+        ];
+
+        var invalidFields = this.validateFields(fields);
+
+        if (invalidFields.length > 0) {
+            alert(invalidFields.join(', ') + ' 입력을 해주세요.');
             return;
         }
 
@@ -65,7 +96,6 @@ var main = {
                 return;
             }
         }
-
 
         // 유효성 검사를 통과하면 글을 저장합니다.
         var data = {
@@ -131,12 +161,28 @@ var main = {
         var longitude = $('#longitude').val();
         var imageFiles = $('#image')[0].files;
 
-        // 이미지가 변경되었는지 확인
-        var imageChanged = imageFiles.length > 0;
+        var fields = [
+            {name: '분류', value: kind},
+            {name: '제목', value: title},
+            {name: '작성자', value: author},
+            {name: '신고자 이름', value: reporterName},
+            {name: '연락처', value: contact},
+            {name: '분실 날짜', value: lostDate},
+            {name: '주변건물', value: landmark},
+            {name: '품종', value: breed},
+            {name: '이름', value: pname},
+            {name: '색상', value: color},
+            {name: '성별', value: gender},
+            {name: '나이', value: age},
+            {name: '특징', value: features},
+            {name: '위도', value: latitude},
+            {name: '경도', value: longitude}
+        ];
 
-        // 각 항목의 유효성을 검사합니다.
-        if (!kind || !title || !reporterName || !contact || !lostDate || !landmark || !breed || !pname || !color || !gender || !age || !features || !latitude || !longitude) {
-            alert('모든 항목을 입력해주세요.');
+        var invalidFields = this.validateFields(fields);
+
+        if (invalidFields.length > 0) {
+            alert(invalidFields.join(', ') + ' 입력을 해주세요.');
             return;
         }
 
@@ -159,6 +205,7 @@ var main = {
         }
 
         // 이미지 파일 유효성 검사
+        var imageChanged = imageFiles.length > 0;
         if (imageChanged) {
             var maxSizeInBytes = 10e6; // 10MB
             for (var i = 0; i < imageFiles.length; i++) {
@@ -189,13 +236,12 @@ var main = {
                 latitude: latitude,
                 longitude: longitude
             },
-            imageChanged: imageChanged // Add this line
+            imageChanged: imageChanged // 이미지가 변경되었는지 여부 추가
         };
 
         var formData = new FormData();
         formData.append('post', new Blob([JSON.stringify(data)], { type: "application/json" }));
 
-        // 이미지가 변경되었을 경우에만 새 이미지 추가
         if (imageChanged) {
             for (var i = 0; i < imageFiles.length; i++) {
                 formData.append("images", imageFiles[i]);
