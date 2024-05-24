@@ -30,11 +30,11 @@
     <p><strong>작성자:</strong> <span th:text="${post.author}"></span></p>
     <p><strong>작성일자:</strong> <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span></p>
     <hr>
-    <h3>분실신고자 정보</h3>
+    <h3>분실/발견 신고자 정보</h3>
     <table class="table">
         <tbody>
         <tr>
-            <th>분실신고자 이름</th>
+            <th>분실/발견 신고자 이름</th>
             <td th:text="${post.content.reporterName}"></td>
             <th>연락처</th>
             <td th:text="${post.content.contact}"></td>
@@ -42,11 +42,11 @@
         </tbody>
     </table>
     <hr>
-    <h3>분실일시 및 장소</h3>
+    <h3>분실/발견 일시 및 장소</h3>
     <table class="table">
         <tbody>
         <tr>
-            <th>분실일자</th>
+            <th>분실/발견 일자</th>
             <td th:text="${#temporals.format(post.content.lostDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></td>
         </tr>
         <tr>
@@ -57,7 +57,7 @@
     </table>
     <div id="map"></div> <!-- 지도 표시 -->
     <hr>
-    <h3>분실동물 정보</h3>
+    <h3>분실/발견 동물 정보</h3>
     <table class="table">
         <tbody>
         <tr>

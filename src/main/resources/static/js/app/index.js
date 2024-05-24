@@ -52,10 +52,7 @@ var main = {
             {name: '분실 날짜', value: lostDate},
             {name: '주변건물', value: landmark},
             {name: '품종', value: breed},
-            {name: '이름', value: pname},
             {name: '색상', value: color},
-            {name: '성별', value: gender},
-            {name: '나이', value: age},
             {name: '특징', value: features},
             {name: '위도', value: latitude},
             {name: '경도', value: longitude},
@@ -75,11 +72,6 @@ var main = {
             return;
         }
 
-        // 나이 유효성 검사
-        if (isNaN(age) || age <= 0) {
-            alert('유효하지 않은 나이입니다.');
-            return;
-        }
 
         // 위도, 경도 유효성 검사
         if (isNaN(latitude) || isNaN(longitude)) {
@@ -170,10 +162,7 @@ var main = {
             {name: '분실 날짜', value: lostDate},
             {name: '주변건물', value: landmark},
             {name: '품종', value: breed},
-            {name: '이름', value: pname},
             {name: '색상', value: color},
-            {name: '성별', value: gender},
-            {name: '나이', value: age},
             {name: '특징', value: features},
             {name: '위도', value: latitude},
             {name: '경도', value: longitude}
@@ -192,11 +181,6 @@ var main = {
             return;
         }
 
-        // 나이 유효성 검사
-        if (isNaN(age) || age <= 0) {
-            alert('유효하지 않은 나이입니다.');
-            return;
-        }
 
         // 위도, 경도 유효성 검사
         if (isNaN(latitude) || isNaN(longitude)) {

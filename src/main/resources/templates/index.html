@@ -81,7 +81,8 @@
                     <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" class="post-image"/>
                 </div>
                 <div class="post-text">
-                    <h1 class="" th:text="${post.kind}"></h1>
+                    <h1 th:style="'color: ' + (${post.kind} == '발견' ? 'blue' : (${post.kind} == '분실' ? 'red' : 'black'))"
+                        th:text="${post.kind}"></h1>
                     <a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.title}"></a>
                     <p th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></p>
                 </div>
