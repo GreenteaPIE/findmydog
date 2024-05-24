@@ -191,6 +191,16 @@
 
         var map = new kakao.maps.Map(container, options);
 
+        // 마커 이미지 URL 설정
+        var blueMarkerImage = new kakao.maps.MarkerImage(
+            'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+            new kakao.maps.Size(24, 35)
+        );
+        var redMarkerImage = new kakao.maps.MarkerImage(
+            'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png',
+            new kakao.maps.Size(24, 35)
+        );
+
         // 마커 생성 및 클러스터 설정
         var mapData = document.getElementById('mapData');
         var positions = [];
@@ -206,8 +216,10 @@
         }
 
         var markers = positions.map(function(position) {
+            var markerImage = position.knd === "발견" ? blueMarkerImage : redMarkerImage;
             var marker = new kakao.maps.Marker({
-                position: new kakao.maps.LatLng(position.lat, position.lng)
+                position: new kakao.maps.LatLng(position.lat, position.lng),
+                image: markerImage
             });
 
             // 마커에 클릭 이벤트 추가
