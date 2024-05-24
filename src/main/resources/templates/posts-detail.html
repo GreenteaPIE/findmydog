@@ -26,6 +26,9 @@
 <body>
 <div class="detail-view">
     <hr>
+    <strong>
+        <h2 th:text="${post.kind == '발견' ? '발견 제보' : (post.kind == '분실' ? '분실 제보' : '')}"></h2>
+    </strong>
     <h2 th:text="${post.title}"></h2>
     <p><strong>작성자:</strong> <span th:text="${post.author}"></span></p>
     <p><strong>작성일자:</strong> <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span></p>
