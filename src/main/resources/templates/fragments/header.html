@@ -29,10 +29,10 @@
                             <li class="submenu" th:if="${userName}">
                                 <a href="javascript:;" th:text="${userName + '님'}"></a>
                                 <ul>
-                                    <li><a href="#" id="deleteAccount">회원 탈퇴</a></li>
                                     <li><a th:href="@{/user/posts}">내가 쓴 글</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a href="/logout" role="button">로그아웃</a></li>
+                                    <li><a href="#" id="deleteAccount">회원 탈퇴</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -44,6 +44,8 @@
                 </div>
             </div>
         </div>
+        <!-- Global Init -->
+        <script src="/js/custom.js"></script>
     </header>
 
     <script>
