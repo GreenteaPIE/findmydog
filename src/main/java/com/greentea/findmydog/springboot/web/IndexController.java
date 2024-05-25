@@ -23,13 +23,24 @@ public class IndexController {
     @GetMapping("/")
     public String index(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
-        model.addAttribute("mapinfo",postsService.findAllMap());
         if(user != null) {
             model.addAttribute("userName", user.getName());
             System.out.println("로그인 확인 "+ user.getName());
         }
         System.out.println("메인페이지 진입");
         return "index.html";
+    }
+
+    // 분실/발견 지도 페이지
+    @GetMapping("/find/map")
+    public String findMap(Model model, @LoginUser SessionUser user) {
+        model.addAttribute("mapinfo",postsService.findAllMap());
+        if(user != null) {
+            model.addAttribute("userName", user.getName());
+            System.out.println("로그인 확인 "+ user.getName());
+        }
+        System.out.println("지도 페이지 진입");
+        return "find-map.html";
     }
 
     // 로그인 페이지

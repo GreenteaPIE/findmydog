@@ -13,6 +13,7 @@
                     <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
                     <li class="nav-item"><a th:href="@{/posts/paging}" role="button" class="nav-link">게시판</a></li>
                     <li class="nav-item"><a class="nav-link" href="#!">유기견 입양</a></li>
+                    <li class="nav-item"><a th:href="@{/find/map}" role="button" class="nav-link">분실/발견 지도</a></li>
                     <li class="nav-item" th:unless="${userName}"><a class="nav-link" role="button" th:href="@{/loginPage}">로그인</a></li>
                     <li class="nav-item dropdown" th:if="${userName}">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${userName + '님'}"></a>
