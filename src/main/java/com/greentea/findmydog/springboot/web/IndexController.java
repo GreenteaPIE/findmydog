@@ -100,9 +100,12 @@ public class IndexController {
 
     // 게시글 수정 페이지
     @GetMapping("/posts/update/{id}")
-    public String postsUpdate(@PathVariable Long id, Model model){
+    public String postsUpdate(@PathVariable Long id, @LoginUser SessionUser user, Model model){
         PostsResponseDto dto= postsService.findById(id);
         model.addAttribute("post", dto);
+        if(user != null) {
+            model.addAttribute("userName", user.getName());
+        }
         System.out.println("글 수정 진입");
         return "posts-update.html";
     }
