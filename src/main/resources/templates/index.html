@@ -2,7 +2,141 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
 <head>
     <title>Find My Dog</title>
-    <style>
+</head>
+<body>
+
+<div class="main-banner" id="top">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6 slide_div">
+                <div class="left-content" th:each="post : ${posts}">
+                    <div class="thumb">
+                        <div class="inner-content">
+                            <h4 th:text="${post.title}"></h4>
+                            <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
+                            <div class="main-border-button">
+                                <a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.kind}"></a>
+                            </div>
+                        </div>
+                        <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" style="height: 505px;"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="right-content">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="right-first-image">
+                                <div class="thumb">
+                                    <div class="inner-content">
+                                        <h4>제보 지도</h4>
+                                        <span>분실/발견</span>
+                                    </div>
+                                    <div class="hover-content">
+                                        <div class="inner">
+                                            <h4>Find Map</h4>
+                                            <p>분실/발견 제보한 위치를 확인할 수 있어요.</p>
+                                            <div class="main-border-button">
+                                                <a th:href="@{/find/map}">페이지 이동</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <img src="/img/baner-right-image-01.jpg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="right-first-image">
+                                <div class="thumb">
+                                    <div class="inner-content">
+                                        <h4>입양 공고</h4>
+                                        <span>강아지 입양 공고</span>
+                                    </div>
+                                    <div class="hover-content">
+                                        <div class="inner">
+                                            <h4>Adoption Notice</h4>
+                                            <p>농림축산검역 본부에 게시된 입양 공고를 확인할 수 있어요.</p>
+                                            <div class="main-border-button">
+                                                <a href="#">페이지 이동</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <img src="/img/baner-right-image-01.jpg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="right-first-image">
+                                <div class="thumb">
+                                    <div class="inner-content">
+                                        <h4>About</h4>
+                                        <span>회사 정보</span>
+                                    </div>
+                                    <div class="hover-content">
+                                        <div class="inner">
+                                            <h4>Information</h4>
+                                            <p>저희 사이트의 개설 이유를 확인할 수 있어요.</p>
+                                            <div class="main-border-button">
+                                                <a href="#">페이지 이동</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <img src="/img/baner-right-image-01.jpg">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="right-first-image">
+                                <div class="thumb">
+                                    <div class="inner-content">
+                                        <h4>광고</h4>
+                                        <span>광고 예정</span>
+                                    </div>
+                                    <div class="hover-content">
+                                        <div class="inner">
+                                            <h4>광고</h4>
+                                            <p>광고를 게재할 예정이에요.</p>
+                                            <div class="main-border-button">
+                                                <a href="#">페이지 이동</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <img src="/img/baner-right-image-01.jpg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $(".slide_div").slick({
+            dots: true,
+            autoplay: true,
+            autoplaySpeed: 5000,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            responsive: [
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                    }
+                }
+            ]
+        });
+    });
+</script>
+</body>
+</html>
+
+<!--
+스타일 영역
+<style>
         .post-content {
             display: flex;
             align-items: center;
@@ -67,117 +201,6 @@
             margin: 10px 0;
         }
     </style>
-</head>
-<body>
-
-<div class="main-banner" id="top">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-6 slide_div">
-                <div class="left-content" th:each="post : ${posts}">
-                    <div class="thumb">
-                        <div class="inner-content">
-                            <h4 th:text="${post.title}"></h4>
-                            <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
-                            <div class="main-border-button">
-                                <a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.kind}"></a>
-                            </div>
-                        </div>
-                        <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" style="height: 505px;"/>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="right-content">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="right-first-image">
-                                <div class="thumb">
-                                    <div class="inner-content">
-                                        <h4>제보 지도</h4>
-                                        <span>분실/발견</span>
-                                    </div>
-                                    <div class="hover-content">
-                                        <div class="inner">
-                                            <h4>Find Map</h4>
-                                            <p>분실/발견 제보한 위치를 확인할 수 있어요.</p>
-                                            <div class="main-border-button">
-                                                <a th:href="@{/find/map}">페이지 이동</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <img src="/img/bichon01.png">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="right-first-image">
-                                <div class="thumb">
-                                    <div class="inner-content">
-                                        <h4>입양 공고</h4>
-                                        <span>강아지 입양 공고</span>
-                                    </div>
-                                    <div class="hover-content">
-                                        <div class="inner">
-                                            <h4>Adoption Notice</h4>
-                                            <p>농림축산검역 본부에 게시된 입양 공고를 확인할 수 있어요.</p>
-                                            <div class="main-border-button">
-                                                <a href="#">페이지 이동</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <img src="/img/welsh01.png">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="right-first-image">
-                                <div class="thumb">
-                                    <div class="inner-content">
-                                        <h4>About</h4>
-                                        <span>회사 정보</span>
-                                    </div>
-                                    <div class="hover-content">
-                                        <div class="inner">
-                                            <h4>Information</h4>
-                                            <p>저희 사이트의 개설 이유를 확인할 수 있어요.</p>
-                                            <div class="main-border-button">
-                                                <a href="#">페이지 이동</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <img src="/img/frenh01.png">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="right-first-image">
-                                <div class="thumb">
-                                    <div class="inner-content">
-                                        <h4>광고</h4>
-                                        <span>광고 예정</span>
-                                    </div>
-                                    <div class="hover-content">
-                                        <div class="inner">
-                                            <h4>광고</h4>
-                                            <p>광고를 게재할 예정이에요.</p>
-                                            <div class="main-border-button">
-                                                <a href="#">페이지 이동</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <img src="/img/frenh01.png">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--
 
 게시글 슬라이드 영역
 <div class="container px-4 px-lg-5">
@@ -239,27 +262,3 @@
     </div>
 </div>
 -->
-
-<script>
-    $(document).ready(function(){
-        $(".slide_div").slick({
-            dots: true,
-            autoplay: true,
-            autoplaySpeed: 5000,
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            responsive: [
-                {
-                    breakpoint: 768,
-                    settings: {
-                        slidesToShow: 1,
-                        slidesToScroll: 1,
-                    }
-                }
-            ]
-        });
-    });
-</script>
-
-</body>
-</html>
