@@ -1,46 +1,10 @@
 <!-- footer.html -->
 <th:block th:fragment="footer">
-    <style>
-        .dog_land {
-            background-image: url('/img/dog_run.gif');
-            background-position: center;
-            background-repeat: repeat-x;
-            padding: 30px 0;
-            text-align: center;
-            color: #333333;
-            font-size: 14px;
-        }
-
-        .dog_land .nav {
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-        .dog_land .nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-            font-size: 16px;
-        }
-
-        .dog_land .nav a:hover {
-            text-decoration: underline;
-        }
-
-        .dog_land p {
-            margin: 0;
-            color: white;
-        }
-
-        .dog_land p + p {
-            margin-top: 5px;
-        }
-    </style>
         <footer class="py-5 bg-dark">
             <body>
             <hr>
-            <div class="dog_land">
-
+            <div>
+                <img src="/img/bottomlogo.png">
                 <nav class="nav">
                     <a href="https://greenteapie.github.io" target="_blank">Blog</a>
                     |
@@ -52,15 +16,5 @@
                     <span>Copyright 2023. GreenteaPie. All Right Reserved.</span>
                 </p>
             </div>
-
-            <script>
-                // setInterval 을 이용해서 계속 실행
-                setInterval(function() {
-                    $('.dog_land').css({
-                        'background-position' : '-=2'
-                    });
-                }, 20);
-            </script>
-
         </footer>
 </th:block>

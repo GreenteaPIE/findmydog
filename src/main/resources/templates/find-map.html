@@ -13,11 +13,27 @@
                 height: 250px;
             }
         }
+        .dog_land {
+            margin-top: 130px;
+            background-image: url('/img/dog_run.gif');
+            background-position: center;
+            background-repeat: repeat-x;
+            padding: 30px 0;
+            text-align: center;
+            color: #333333;
+            font-size: 14px;
+        }
 
+        .dog_land .nav {
+            display: inline-block;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
-<h1>신고 지도</h1>
+
+<div class="dog_land">
+</div>
 <div id="map"></div>
 
 <table style="display: none;">
@@ -118,7 +134,14 @@
         });
     }
 </script>
-
+<script>
+    // setInterval 을 이용해서 계속 실행
+    setInterval(function() {
+        $('.dog_land').css({
+            'background-position' : '-=2'
+        });
+    }, 20);
+</script>
 
 </body>
 </html>
