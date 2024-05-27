@@ -9,8 +9,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-6 slide_div" th:if="${posts.size() > 0}">
-                <div class="left-content">
-                    <div class="thumb" th:each="post : ${posts}">
+                <div class="left-content" th:each="post : ${posts}">
+                    <div class="thumb">
                         <div class="inner-content">
                             <h4 th:text="${post.title}"></h4>
                             <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
@@ -143,6 +143,29 @@
 
 
 <!--
+
+<div class="col-lg-6 slide_div" th:if="${posts.size() > 0}">
+                <div class="left-content">
+                    <div class="thumb" th:each="post : ${posts}">
+                        <div class="inner-content">
+                            <h4 th:text="${post.title}"></h4>
+                            <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
+                            <div class="main-border-button">
+                                <a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.kind}"></a>
+                            </div>
+                        </div>
+                        <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" style="height: 505px;"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 slide_div" th:unless="${posts.size() > 0}">
+                <div class="left-content">
+                    <div class="thumb">
+                        <img src="/img/maindog.png" alt="">
+                    </div>
+                </div>
+            </div>
+
 <div class="thumb">
     <div class="inner-content">
         <h4>게시글이 없어요.</h4>
