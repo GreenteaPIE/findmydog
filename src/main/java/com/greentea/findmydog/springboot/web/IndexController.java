@@ -50,6 +50,12 @@ public class IndexController {
         return "loginPage.html";
     }
 
+    // About 페이지
+    @GetMapping("/about")
+    public String about(){
+        System.out.println("about 페이지 진입");
+        return "about.html";
+    }
     // 게시글 리스트 @PageableDefault(page = 1) : page는 기본으로 1페이지를 보여준다.
     @GetMapping("/posts/paging")
     public String paging(@PageableDefault(page = 1) Pageable pageable, @LoginUser SessionUser user, Model model) {

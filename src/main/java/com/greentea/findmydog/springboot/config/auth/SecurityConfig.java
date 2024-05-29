@@ -37,7 +37,8 @@ public class SecurityConfig{
                                 new AntPathRequestMatcher("/posts/paging**"),
                                 new AntPathRequestMatcher("/posts/detail/**"),
                                 new AntPathRequestMatcher("/loginPage"),
-                                new AntPathRequestMatcher("/find/map")
+                                new AntPathRequestMatcher("/find/map"),
+                                new AntPathRequestMatcher("/about")
                         ).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/**")).hasRole(Role.USER.name())
                         .anyRequest().authenticated())

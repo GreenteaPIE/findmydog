@@ -24,7 +24,7 @@
                                 </ul>
                             </li>
                             <li class="scroll-to-section"><a role="button" href="#">입양 공고</a></li>
-                            <li class="scroll-to-section"><a href="#">about</a></li>
+                            <li class="scroll-to-section"><a th:href="@{/about}">About</a></li>
                             <li class="scroll-to-section" th:unless="${userName}"><a role="button" th:href="@{/loginPage}">로그인</a></li>
                             <li class="submenu" th:if="${userName}">
                                 <a href="javascript:;" th:text="${userName + '님'}"></a>
