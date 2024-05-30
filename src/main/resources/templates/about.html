@@ -1,67 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
 <head>
-    <title>Login Page</title>
+    <title>about Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background: #f5f5f5;
-            margin: 0;
             padding: 0;
-        }
-        .login-container {
-            margin-top: 130px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 85vh;
-        }
-        .login-buttons {
-            text-align: center;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-        .login-buttons a {
-            display: block;
-            margin: 10px 0;
-            text-decoration: none;
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .login-buttons img {
-            height: 42px;
-            width: 210px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .login-buttons a:hover img {
-            transform: scale(1.05);
-            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
-        }
-        .login-buttons h2 {
-            margin-bottom: 20px;
-            color: #333;
+            margin: 130px 0 0;
         }
     </style>
 </head>
 <body>
-<div class="login-container">
-    <div class="login-buttons">
-        <h2>로그인</h2>
-        <div th:unless="${userName}">
-            <a th:href="@{/oauth2/authorization/google}" role="button">
-                <img src="img/web_neutral.png" alt="Google 로그인">
-            </a>
-            <a th:href="@{/oauth2/authorization/naver}" role="button">
-                <img src="img/btnG.png" alt="Naver 로그인">
-            </a>
-            <a th:href="@{/oauth2/authorization/kakao}" role="button">
-                <img src="img/btnK.png" alt="Kakao 로그인">
-            </a>
-        </div>
-    </div>
-</div>
+<h2>about page</h2>
 </body>
 </html>
