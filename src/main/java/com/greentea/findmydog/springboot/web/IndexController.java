@@ -3,6 +3,8 @@ package com.greentea.findmydog.springboot.web;
 import com.greentea.findmydog.springboot.config.auth.LoginUser;
 import com.greentea.findmydog.springboot.config.auth.dto.SessionUser;
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
+import com.greentea.findmydog.springboot.sevice.posts.WebScrapingService;
+import com.greentea.findmydog.springboot.web.dto.AnimalData;
 import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,11 +15,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Controller
 public class IndexController {
 
     private final PostsService postsService;
+    private final WebScrapingService webScrapingService;
 
     // 인덱스 페이지
     @GetMapping("/")
@@ -31,13 +36,23 @@ public class IndexController {
         return "index.html";
     }
 
+    // 입양정보 페이지
+    @GetMapping("/find")
+    public String Find(@LoginUser SessionUser user, Model model) {
+        List<AnimalData> animalDataList = webScrapingService.scrapeAnimalData();
+        if(user != null) {
+            model.addAttribute("userName", user.getName());
+        }
+        model.addAttribute("animalDataList", animalDataList);
+        return "find.html";
+    }
+
     // 분실/발견 지도 페이지
     @GetMapping("/find/map")
     public String findMap(Model model, @LoginUser SessionUser user) {
         model.addAttribute("mapinfo",postsService.findAllMap());
         if(user != null) {
             model.addAttribute("userName", user.getName());
-            System.out.println("로그인 확인 "+ user.getName());
         }
         System.out.println("지도 페이지 진입");
         return "find-map.html";
@@ -52,10 +67,14 @@ public class IndexController {
 
     // About 페이지
     @GetMapping("/about")
-    public String about(){
+    public String about(@LoginUser SessionUser user, Model model){
         System.out.println("about 페이지 진입");
+        if (user != null) {
+            model.addAttribute("userName", user.getName());
+        }
         return "about.html";
     }
+
     // 게시글 리스트 @PageableDefault(page = 1) : page는 기본으로 1페이지를 보여준다.
     @GetMapping("/posts/paging")
     public String paging(@PageableDefault(page = 1) Pageable pageable, @LoginUser SessionUser user, Model model) {
