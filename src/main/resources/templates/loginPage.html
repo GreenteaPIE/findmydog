@@ -10,7 +10,7 @@
             padding: 0;
         }
         .login-container {
-            margin-top: 130px;
+            margin-top: 100px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -49,7 +49,7 @@
 <body>
 <div class="login-container">
     <div class="login-buttons">
-        <h2>로그인</h2>
+        <h2>LOGIN</h2>
         <div th:unless="${userName}">
             <a th:href="@{/oauth2/authorization/google}" role="button">
                 <img src="img/web_neutral.png" alt="Google 로그인">

@@ -19,15 +19,15 @@
                             <li class="submenu">
                                 <a href="javascript:;">게시판</a>
                                 <ul>
-                                    <li class="scroll-to-section"><a th:href="@{/posts/paging}" role="button">분실</a></li>
-                                    <li><a href="#">발견</a></li>
+                                    <li class="scroll-to-section"><a th:href="@{/posts/paging}" role="button">분실/발견 제보</a></li>
+                                    <li><a href="#">--</a></li>
                                 </ul>
                             </li>
                             <li class="scroll-to-section"><a role="button" href="#">입양 공고</a></li>
                             <li class="scroll-to-section"><a th:href="@{/about}">About</a></li>
                             <li class="scroll-to-section" th:unless="${userName}"><a role="button" th:href="@{/loginPage}">로그인</a></li>
                             <li class="submenu" th:if="${userName}">
-                                <a href="javascript:;" th:text="${userName + '님'}"></a>
+                                <a href="javascript:;" id="userName" th:text="${userName + '님'}"></a>
                                 <ul>
                                     <li><a th:href="@{/user/posts}">내가 쓴 글</a></li>
                                     <li><hr class="dropdown-divider"></li>
@@ -49,25 +49,35 @@
     </header>
 
     <script>
-        document.getElementById('deleteAccount').addEventListener('click', function() {
-            if (confirm('정말로 회원 탈퇴를 하시겠습니까?')) {
-                fetch('/api/v1/user/delete', {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(response => {
-                    if (response.ok) {
-                        alert('회원 탈퇴가 완료되었습니다.');
-                        window.location.href = '/';
-                    } else {
-                        alert('회원 탈퇴에 실패했습니다.');
-                    }
-                }).catch(error => {
-                    alert('오류가 발생했습니다.');
-                    console.error('Error:', error);
-                });
+        document.addEventListener('DOMContentLoaded', function() {
+            var userNameElement = document.getElementById('userName');
+            if (userNameElement) {
+                var userName = userNameElement.textContent.slice(0, -1); // Remove the "님"
+                if (userName.length > 4) {
+                    userNameElement.textContent = userName.slice(0, 3) + '.. 님';
+                }
             }
+
+            document.getElementById('deleteAccount').addEventListener('click', function() {
+                if (confirm('정말로 회원 탈퇴를 하시겠습니까?')) {
+                    fetch('/api/v1/user/delete', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            alert('회원 탈퇴가 완료되었습니다.');
+                            window.location.href = '/';
+                        } else {
+                            alert('회원 탈퇴에 실패했습니다.');
+                        }
+                    }).catch(error => {
+                        alert('오류가 발생했습니다.');
+                        console.error('Error:', error);
+                    });
+                }
+            });
         });
     </script>
 </th:block>
