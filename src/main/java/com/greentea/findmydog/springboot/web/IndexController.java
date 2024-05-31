@@ -37,14 +37,14 @@ public class IndexController {
     }
 
     // 입양정보 페이지
-    @GetMapping("/find")
+    @GetMapping("/adoption")
     public String Find(@LoginUser SessionUser user, Model model) {
         List<AnimalData> animalDataList = webScrapingService.scrapeAnimalData();
         if(user != null) {
             model.addAttribute("userName", user.getName());
         }
         model.addAttribute("animalDataList", animalDataList);
-        return "find.html";
+        return "adoption-notice.html";
     }
 
     // 분실/발견 지도 페이지

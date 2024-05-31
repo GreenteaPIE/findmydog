@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>Animal Data</title>
+</head>
+<body>
+<h1>Animal Data</h1>
+<div th:each="animal : ${animalDataList}">
+    <div>
+        <img th:src="${animal.imageUrl}" alt="Animal Image" style="width: 50px; height: 50px;">
+    </div>
+    <div>
+        <table>
+                <li>Breed: <span th:text="${animal.breed}"></span></li>
+                <li>ID: <span th:text="${animal.id}"></span></li>
+                <li>Sex: <span th:text="${animal.sex}"></span></li>
+                <li>Location: <span th:text="${animal.location}"></span></li>
+                <li>Characteristics: <span th:text="${animal.characteristics}"></span></li>
+            </ul>
+        </table>
+    </div>
+</div>
+</body>
+</html>
