@@ -163,8 +163,8 @@ public class PostsService {
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = resizedImage.createGraphics();
 
-        // 흰색 배경으로 초기화
-        g2d.setColor(Color.WHITE);
+        // 컬러 배경으로 초기화
+        g2d.setColor(Color.decode("#D9D9D9"));
         g2d.fillRect(0, 0, targetWidth, targetHeight);
 
         // 비율 계산
