@@ -31,6 +31,13 @@
             <div class="col-lg-6" th:unless="${posts.size() > 0}">
                 <div class="left-content">
                     <div class="thumb">
+                        <div class="inner-content">
+                            <div class="main-border-button">
+                                <a th:href="@{/posts/paging}">페이지 이동</a>
+                            </div>
+                            <h4>no Posts</h4>
+                            <span>등록된 글이 없어요!</span>
+                        </div>
                         <img src="/img/maindog.png" alt="">
                     </div>
                 </div>
