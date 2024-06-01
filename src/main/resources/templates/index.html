@@ -18,7 +18,7 @@
                             <h4 th:text="${post.title}"></h4>
                             <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
                         </div>
-                        <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" style="height: 505px;"/>
+                        <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image"/>
                     </div>
                 </div>
             </div>
