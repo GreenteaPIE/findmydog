@@ -1,6 +1,7 @@
 package com.greentea.findmydog.springboot.sevice.posts;
 
 import com.greentea.findmydog.springboot.domain.posts.*;
+import com.greentea.findmydog.springboot.domain.posts.Image;
 import com.greentea.findmydog.springboot.domain.user.UserRepository;
 import com.greentea.findmydog.springboot.domain.user.Users;
 import com.greentea.findmydog.springboot.web.dto.*;
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,9 +27,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.text.SimpleDateFormat;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class PostsService {
+
     private final PostsRepository postsRepository;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
@@ -57,7 +62,11 @@ public class PostsService {
             String storedFileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + "_" + sdf.format(new Date()) + extension;
             Path filePath = folderPath.resolve(storedFileName);
 
-            file.transferTo(filePath.toFile());
+            // 이미지를 790x680으로 리사이즈하고 공백 처리
+            BufferedImage originalImage = ImageIO.read(file.getInputStream());
+            BufferedImage resizedImage = resizeImage(originalImage, 790, 680);
+
+            ImageIO.write(resizedImage, extension.substring(1), filePath.toFile());
 
             Image image = new Image();
             image.setOriginalFileName(originalFileName);
@@ -69,7 +78,7 @@ public class PostsService {
         return post.getId();
     }
 
-    // 게시글 업데이트
+    // 게시물 수정
     @Transactional
     public Long update(Long id, PostsUpdateRequestDto requestDto, List<MultipartFile> imageFiles) throws IOException {
         Posts post = postsRepository.findById(id)
@@ -128,7 +137,11 @@ public class PostsService {
                 String storedFileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + "_" + sdf.format(new Date()) + extension;
                 Path filePath = folderPath.resolve(storedFileName);
 
-                file.transferTo(filePath.toFile());
+                // 이미지를 790x680으로 리사이즈하고 공백 처리
+                BufferedImage originalImage = ImageIO.read(file.getInputStream());
+                BufferedImage resizedImage = resizeImage(originalImage, 790, 680);
+
+                ImageIO.write(resizedImage, extension.substring(1), filePath.toFile());
 
                 Image image = new Image();
                 image.setOriginalFileName(originalFileName);
@@ -139,6 +152,45 @@ public class PostsService {
         }
 
         return post.getId();
+    }
+
+    // 저장된 이미지 리사이징
+    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
+        int originalWidth = originalImage.getWidth();
+        int originalHeight = originalImage.getHeight();
+
+        // 새로운 이미지 생성
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = resizedImage.createGraphics();
+
+        // 흰색 배경으로 초기화
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, targetWidth, targetHeight);
+
+        // 비율 계산
+        double aspectRatio = (double) originalWidth / originalHeight;
+        int newWidth, newHeight;
+
+        if (originalHeight > targetHeight || originalWidth > targetWidth) {
+            newHeight = targetHeight;
+            newWidth = (int) (targetHeight * aspectRatio);
+            if (newWidth > targetWidth) {
+                newWidth = targetWidth;
+                newHeight = (int) (targetWidth / aspectRatio);
+            }
+        } else {
+            newWidth = originalWidth;
+            newHeight = originalHeight;
+        }
+
+        // 가운데 정렬
+        int x = (targetWidth - newWidth) / 2;
+        int y = (targetHeight - newHeight) / 2;
+
+        g2d.drawImage(originalImage, x, y, newWidth, newHeight, null);
+        g2d.dispose();
+
+        return resizedImage;
     }
     
     // 게시글 삭제
