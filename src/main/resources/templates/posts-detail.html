@@ -29,6 +29,7 @@
     <strong>
         <h2 th:text="${post.kind == '발견' ? '발견 제보' : (post.kind == '분실' ? '분실 제보' : '')}"></h2>
     </strong>
+    <hr>
     <h2 th:text="${post.title}"></h2>
     <p><strong>작성자:</strong> <span th:text="${post.author}"></span></p>
     <p><strong>작성일자:</strong> <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span></p>
@@ -89,7 +90,7 @@
     </table>
 
     <div>
-        <p>사진</p>
+        <h5>사진</h5>
         <div th:each="image : ${post.images}">
             <img th:src="@{'/images/' + ${image.storedFileName}}" alt="Post Image" style="width: 250px; height: auto;"/>
         </div>
