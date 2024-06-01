@@ -660,7 +660,7 @@ banner
 
 .main-banner .left-content .inner-content {
     position: absolute;
-    left: 120px; /* 필요에 따라 조정 */
+    left: 30%; /* 필요에 따라 조정 */
     top: 50%;
     transform: translateY(-50%);
     z-index: 2; /* 이미지보다 앞에 오도록 */
@@ -684,6 +684,23 @@ banner
     font-style: italic;
     display: block;
     margin-bottom: 10px; /* 필요에 따라 조정 */
+}
+
+.main-banner .left-content .thumb .prev,
+.main-banner .left-content .thumb .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3; /* 버튼이 이미지 위에 오도록 */
+    cursor: pointer;
+}
+
+.main-banner .left-content .thumb .prev {
+    left: 10px; /* 왼쪽 위치 조정 */
+}
+
+.main-banner .left-content .thumb .next {
+    right: 10px; /* 오른쪽 위치 조정 */
 }
 
 .main-banner .right-content .right-first-image {
