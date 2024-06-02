@@ -39,11 +39,11 @@ public class IndexController {
     // 입양정보 페이지
     @GetMapping("/adoption")
     public String Find(@LoginUser SessionUser user, Model model) {
-        List<AnimalData> animalDataList = webScrapingService.scrapeAnimalData();
         if(user != null) {
             model.addAttribute("userName", user.getName());
         }
-        model.addAttribute("animalDataList", animalDataList);
+        //List<AnimalData> animalDataList = webScrapingService.scrapeAnimalData();
+        //model.addAttribute("animalDataList", animalDataList);
         return "adoption-notice.html";
     }
 
