@@ -1,18 +1,69 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
 <head>
-    <title>about Page</title>
+    <title>About Us</title>
     <style>
-        body {
+        .about-container {
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            padding: 0;
-            margin: 130px 0 0;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .about-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .about-header h1 {
+            font-size: 2em;
+            margin: 0;
+        }
+        .about-header p {
+            font-size: 1em;
+            color: #555555;
+        }
+        .about-content {
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #000000;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .about-content p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        .about-mission {
+            font-size: 1.2em;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-<h2>about page</h2>
-<h4>모든 광고 수입금은 유기견 보호를 위한 기부금으로 사용될 예정입니다.<br>잃어버린 강아지들이 보호자를 찾고 모든 유기견들이 새로운 보호자들을 찾길바라며..</h4>
+<div class="about-container">
+    <div class="about-header">
+        <h1>About Us</h1>
+        <p>Discover who we are and what we do</p>
+    </div>
+    <div class="about-content">
+        <p>
+            Welcome to our website dedicated to helping lost dogs reunite with their owners and finding new homes for abandoned dogs.
+            Our mission is to ensure that every lost dog is found and every stray dog finds a loving home.
+        </p>
+        <p>
+            Our platform allows users to post notices about lost dogs, submit sightings, and view adoption listings for dogs in need of new homes.
+        </p>
+        <div class="about-mission">
+            <p>
+                모든 광고 수입금은 유기견 보호를 위한 기부금으로 사용될 예정입니다.<br>
+                잃어버린 강아지들이 보호자를 찾고 모든 유기견들이 새로운 보호자들을 찾길 바라며...
+            </p>
+        </div>
+    </div>
+</div>
 </body>
 </html>
