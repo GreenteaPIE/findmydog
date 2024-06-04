@@ -8,6 +8,7 @@ import com.greentea.findmydog.springboot.web.dto.AnimalData;
 import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -84,18 +85,15 @@ public class IndexController {
             model.addAttribute("userName", user.getName());
         }
 
-        /**
-         * blockLimit : page 개수 설정
-         * 현재 사용자가 선택한 페이지 앞 뒤로 3페이지씩만 보여준다.
-         * ex : 현재 사용자가 4페이지라면 2, 3, (4), 5, 6
-         */
         int blockLimit = 3;
-        int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / blockLimit))) - 1) * blockLimit + 1;
-        int endPage = Math.min((startPage + blockLimit - 1), postsPages.getTotalPages());
+        int currentPage = pageable.getPageNumber() + 1; // pageNumber는 0부터 시작하므로 1을 더한다.
+        int startPage = (((int) Math.ceil((double) currentPage / blockLimit)) - 1) * blockLimit + 1;
+        int endPage = Math.min(startPage + blockLimit - 1, postsPages.getTotalPages());
 
         model.addAttribute("postsPages", postsPages);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("currentPage", currentPage);
         return "posts-paging";
     }
 
