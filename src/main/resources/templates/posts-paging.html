@@ -78,7 +78,7 @@
     <div class="table-container">
         <br>
         <!-- 목록 출력 영역 -->
-        <table class="table table-bordered">
+        <table class="table table-bordered" th:if="${postsPages.totalElements > 0}">
             <thead class="thead-light">
             <tr>
                 <th style="width: 10%;">분류</th>
@@ -100,10 +100,13 @@
             </tr>
             </tbody>
         </table>
+        <div th:if="${postsPages.totalElements == 0}" class="text-center">
+            <p>게시글이 없습니다.</p>
+        </div>
     </div>
 
     <!-- 페이징 버튼 -->
-    <div class="page_wrap">
+    <div class="page_wrap" th:if="${postsPages.totalElements > 0}">
         <div class="page_nation">
             <a th:if="${startPage > 1}" class="arrow pprev" th:href="@{/posts/paging?page=1}"></a>
             <a class="arrow prev" th:href="@{/posts/paging(page=${currentPage-1})}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
