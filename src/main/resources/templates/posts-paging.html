@@ -108,14 +108,14 @@
     <!-- 페이징 버튼 -->
     <div class="page_wrap" th:if="${postsPages.totalElements > 0}">
         <div class="page_nation">
-            <a th:if="${startPage > 1}" class="arrow pprev" th:href="@{/posts/paging?page=1}"></a>
+            <a class="arrow pprev" th:href="@{/posts/paging?page=1}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
             <a class="arrow prev" th:href="@{/posts/paging(page=${currentPage-1})}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
             <a th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
                th:href="@{/posts/paging(page=${pageNum})}"
                th:text="${pageNum}"
                th:classappend="${currentPage == pageNum} ? 'active' : ''"></a>
             <a class="arrow next" th:href="@{/posts/paging(page=${currentPage+1})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
-            <a th:if="${endPage < totalPages}" class="arrow nnext" th:href="@{/posts/paging?page=${totalPages}}"></a>
+            <a class="arrow nnext" th:href="@{/posts/paging(page=${postsPages.totalPages})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
         </div>
     </div>
 
