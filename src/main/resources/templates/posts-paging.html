@@ -17,6 +17,54 @@
         .table .title-column {
             width: 100%;
         }
+        .page_wrap {
+            text-align: center;
+            font-size: 0;
+        }
+        .page_nation {
+            display: inline-block;
+        }
+        .page_nation .none {
+            display: none;
+        }
+        .page_nation a {
+            display: block;
+            margin: 0 3px;
+            float: left;
+            border: 1px solid #e6e6e6;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            background-color: #fff;
+            font-size: 13px;
+            color: #999999;
+            text-decoration: none;
+        }
+        .page_nation .arrow {
+            border: 1px solid #ccc;
+        }
+        .page_nation .pprev {
+            background: #f8f8f8 url('/img/page_pprev.png') no-repeat center center;
+            margin-left: 0;
+        }
+        .page_nation .prev {
+            background: #f8f8f8 url('/img/page_prev.png') no-repeat center center;
+            margin-right: 7px;
+        }
+        .page_nation .next {
+            background: #f8f8f8 url('/img/page_next.png') no-repeat center center;
+            margin-left: 7px;
+        }
+        .page_nation .nnext {
+            background: #f8f8f8 url('/img/page_nnext.png') no-repeat center center;
+            margin-right: 0;
+        }
+        .page_nation a.active {
+            background-color: #42454c;
+            color: #fff;
+            border: 1px solid #42454c;
+        }
     </style>
 </head>
 <body>
@@ -35,7 +83,7 @@
             </tr>
             </thead>
             <tbody id="tbody">
-            <tr th:each="post : ${postsPages}">
+            <tr th:each="post : ${postsPages.content}">
                 <td th:text="${post.kind}"></td>
                 <td th:text="${post.id}"></td>
                 <td class="title-column"><a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.title}"></a></td>
@@ -46,6 +94,20 @@
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <!-- 페이징 버튼 -->
+    <div class="page_wrap">
+        <div class="page_nation">
+            <a th:if="${startPage > 1}" class="arrow pprev" th:href="@{/posts/paging?page=1}"></a>
+            <a th:if="${currentPage > 1}" class="arrow prev" th:href="@{/posts/paging?page=${currentPage-1}}"></a>
+            <a th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
+               th:href="@{/posts/paging(page=${pageNum})}"
+               th:text="${pageNum}"
+               th:classappend="${currentPage == pageNum} ? 'active' : ''"></a>
+            <a th:if="${currentPage < totalPages}" class="arrow next" th:href="@{/posts/paging?page=${currentPage+1}}"></a>
+            <a th:if="${endPage < totalPages}" class="arrow nnext" th:href="@{/posts/paging?page=${totalPages}}"></a>
+        </div>
     </div>
 
     <!-- 글쓰기 버튼 -->

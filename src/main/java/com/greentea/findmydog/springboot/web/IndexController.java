@@ -8,7 +8,6 @@ import com.greentea.findmydog.springboot.web.dto.AnimalData;
 import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -78,7 +77,7 @@ public class IndexController {
 
     // 게시글 리스트 @PageableDefault(page = 1) : page는 기본으로 1페이지를 보여준다.
     @GetMapping("/posts/paging")
-    public String paging(@PageableDefault(page = 1) Pageable pageable, @LoginUser SessionUser user, Model model) {
+    public String paging(@PageableDefault(page = 1, size = 15) Pageable pageable, @LoginUser SessionUser user, Model model) {
         Page<PostsResponseDto> postsPages = postsService.paging(pageable);
 
         if (user != null) {
@@ -86,7 +85,7 @@ public class IndexController {
         }
 
         int blockLimit = 3;
-        int currentPage = pageable.getPageNumber() + 1; // pageNumber는 0부터 시작하므로 1을 더한다.
+        int currentPage = pageable.getPageNumber(); // pageNumber는 1부터 시작하도록 설정
         int startPage = (((int) Math.ceil((double) currentPage / blockLimit)) - 1) * blockLimit + 1;
         int endPage = Math.min(startPage + blockLimit - 1, postsPages.getTotalPages());
 
@@ -94,6 +93,7 @@ public class IndexController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", postsPages.getTotalPages());
         return "posts-paging";
     }
 

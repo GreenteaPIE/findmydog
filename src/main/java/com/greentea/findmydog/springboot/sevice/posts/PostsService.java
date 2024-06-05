@@ -228,11 +228,8 @@ public class PostsService {
         int page = pageable.getPageNumber() - 1; // page 위치에 있는 값은 0부터 시작한다.
         int pageLimit = 1; // 한페이지에 보여줄 글 개수
 
+        // 한 페이지당 pageLimit 개의 글을 보여주고 정렬 기준은 ID기준으로 내림차순
         Page<Posts> postsPages = postsRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
-
-        if (postsPages.getTotalPages() == 0) {
-            return Page.empty();
-        }
 
         // 목록 : kind, id, title, content, author, modifiedDate, images
         Page<PostsResponseDto> postsResponseDtos = postsPages.map(
@@ -240,7 +237,6 @@ public class PostsService {
 
         return postsResponseDtos;
     }
-
     // 게시글 디테일
     public PostsResponseDto findById(Long id) {
         Posts entity = postsRepository.findById(id)
