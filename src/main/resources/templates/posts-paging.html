@@ -191,8 +191,9 @@
         }
 
         .write-button-container {
-            text-align: center;
+            text-align: right;
             margin-top: 20px;
+            margin-right: 15px; /* 테이블의 오른쪽 경계에 맞추기 위해 추가 */
         }
         .table th, .table td {
             white-space: nowrap;
@@ -200,6 +201,42 @@
         .table .title-column {
             width: 100%;
         }
+        .btn-custom {
+            background: #555;
+            color: #fff;
+            border: 1px solid transparent;
+            display: inline-block;
+            padding: 0 30px;
+            font-size: 15px;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            text-transform: uppercase;
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            -ms-transition: all 0.3s;
+            -o-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+        .btn-custom:hover,
+        .btn-custom:focus {
+            background: #373737;
+            border-color: #373737;
+            color: #fff;
+        }
+
         .page_wrap {
             text-align: center;
             font-size: 0;
@@ -301,15 +338,25 @@
                             <a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.title}"></a>
                         </th>
                         <td th:text="${post.author}"></td>
-                        <td><span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span></td>
+                        <td>
+                            <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
                 <table class="board-table" th:if="${postsPages.totalElements == 0}">
                     <tr>
-                        <td class="no-posts" >게시글이 없습니다.</td>
+                        <td class="no-posts">게시글이 없습니다.</td>
                     </tr>
                 </table>
+            </div>
+            <div class="write-button-container">
+                <div th:if="${userName == null}">
+                    <a th:href="@{/}" role="button" class="btn btn-custom" onclick="showLoginAlert(); return false;">글 등록</a>
+                </div>
+                <div th:if="${userName != null}">
+                    <a th:href="@{/posts/save}" role="button" class="btn btn-custom">글 등록</a>
+                </div>
             </div>
         </div>
     </div>
@@ -326,16 +373,6 @@
            th:classappend="${currentPage == pageNum} ? 'active' : ''"></a>
         <a class="arrow next" th:href="@{/posts/paging(page=${currentPage+1})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
         <a class="arrow nnext" th:href="@{/posts/paging(page=${postsPages.totalPages})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
-    </div>
-</div>
-
-<!-- 글쓰기 버튼 -->
-<div class="write-button-container">
-    <div th:if="${userName == null}">
-        <a th:href="@{/}" role="button" class="btn btn-primary" onclick="showLoginAlert(); return false;">글 등록</a>
-    </div>
-    <div th:if="${userName != null}">
-        <a th:href="@{/posts/save}" role="button" class="btn btn-primary">글 등록</a>
     </div>
 </div>
 
