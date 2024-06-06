@@ -77,7 +77,7 @@ public class IndexController {
 
     // 게시글 리스트 @PageableDefault(page = 1) : page는 기본으로 1페이지를 보여준다.
     @GetMapping("/posts/paging")
-    public String paging(@PageableDefault(page = 1, size = 15) Pageable pageable, @LoginUser SessionUser user, Model model) {
+    public String paging(@PageableDefault(page = 1, size = 10) Pageable pageable, @LoginUser SessionUser user, Model model) {
         Page<PostsResponseDto> postsPages = postsService.paging(pageable);
 
         if (user != null) {

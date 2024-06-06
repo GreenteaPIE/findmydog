@@ -248,18 +248,21 @@ var main = {
 
     delete: function() {
         var id = $('#id').val();
+        var confirmed = confirm('이 글을 삭제하시겠습니까?\n\n삭제된 글은 복구할 수 없습니다.');
 
-        $.ajax({
-            type: 'DELETE',
-            url: '/api/v1/posts/' + id,
-            dataType: 'json',
-            contentType: 'application/json; charset=UTF-8',
-        }).done(function() {
-            alert('글이 삭제되었습니다.');
-            window.location.href = '/posts/paging';
-        }).fail(function(error) {
-            alert(JSON.stringify(error));
-        });
+        if (confirmed) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/v1/posts/' + id,
+                dataType: 'json',
+                contentType: 'application/json; charset=UTF-8',
+            }).done(function() {
+                alert('글이 삭제되었습니다.');
+                window.location.href = '/posts/paging';
+            }).fail(function(error) {
+                alert(JSON.stringify(error));
+            });
+        }
     }
 };
 
