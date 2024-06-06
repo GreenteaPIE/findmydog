@@ -3,7 +3,15 @@
 <head>
     <title>게시글 상세보기</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/posts.css">
     <style>
+        #map {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #e7e7e7;
+        }
         body {
             font-family: Arial, sans-serif;
         }
@@ -13,30 +21,9 @@
             margin: 130px auto 20px;
         }
 
-        .detail-view hr {
-            border-top: 1px solid #ccc;
-        }
-
         .detail-view h2, .detail-view h3 {
             color: #333;
             font-weight: 400;
-        }
-
-        .detail-view table {
-            margin-bottom: 20px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .detail-view th, .detail-view td {
-            padding: 14px;
-            border-top: 1px solid #e7e7e7;
-        }
-
-        .detail-view th {
-            background-color: #f9f9f9;
-            text-align: left;
-            font-weight: 600;
         }
 
         .detail-view img {
@@ -44,64 +31,78 @@
             height: auto;
         }
 
-        #map {
-            width: 100%;
-            height: 300px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: 1px solid #e7e7e7;
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .btn-group {
-            text-align: right;
-            margin-top: 20px;
-        }
-
-        .btn-custom {
-            background: #555;
-            color: #fff;
-            border: 1px solid transparent;
-            display: inline-block;
-            padding: 0 30px;
-            font-size: 15px;
-            font-weight: 400;
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            max-width: 250px;
             text-align: center;
-            white-space: nowrap;
-            vertical-align: middle;
+        }
+
+        .card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 80px;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .modal-content, .modal-caption {
+            animation-name: zoom;
+            animation-duration: 0.6s;
+        }
+
+        @keyframes zoom {
+            from {transform:scale(0)}
+            to {transform:scale(1)}
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
             cursor: pointer;
-            user-select: none;
-            text-transform: uppercase;
-            border-radius: 0;
-            transition: all 0.3s;
         }
 
-        .btn-custom:hover,
-        .btn-custom:focus {
-            background: #373737;
-            border-color: #373737;
-            color: #fff;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: #fff;
-            border: 1px solid #6c757d;
-            padding: 0 30px;
-            font-size: 15px;
-            text-transform: uppercase;
-            border-radius: 0;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary:hover,
-        .btn-secondary:focus {
-            background: #565e64;
-            border-color: #565e64;
-            color: #fff;
-        }
-
-        .btn-group .btn + .btn {
-            margin-left: 10px;
+        .modal-caption {
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
         }
     </style>
 </head>
@@ -162,7 +163,7 @@
             <th>색상</th>
             <td th:text="${post.content.color}"></td>
             <th>내장칩 유무</th>
-            <td th="${post.content.hasMicrochip ? '예' : '아니오'}"></td>
+            <td th:text="${post.content.hasMicrochip ? '예' : '아니오'}"></td>
         </tr>
         <tr>
             <th>특징</th>
@@ -172,17 +173,24 @@
     </table>
     <div>
         <h5>사진</h5>
-        <div th:each="image : ${post.images}">
-            <img th:src="@{'/images/' + ${image.storedFileName}}" alt="Post Image" style="width: 250px; height: auto;"/>
+        <div class="card-container">
+            <div th:each="image : ${post.images}" class="img-card">
+                <img th:src="@{'/images/' + ${image.storedFileName}}" alt="Post Image" style="width: 250px; height: auto;" onclick="openModal(this)"/>
+            </div>
         </div>
     </div>
-
-    <!-- 버튼 -->
-    <div class="btn-group">
+    <div class="btn-container">
+        <a th:href="@{/posts/paging}" role="button" class="btn btn-secondary">이전 페이지</a>
         <a th:href="@{/posts/update/{id}(id=${post.id})}" th:if="${post.user_id == userId}" class="btn btn-custom">수정</a>
-        <a href="/posts/paging" class="btn btn-secondary" role="button">목록으로</a>
     </div>
 </div>
+<!-- 모달 -->
+<div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImg">
+    <div id="caption" class="modal-caption"></div>
+</div>
+
 <script th:src="@{/js/app/index.js}"></script>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=54b2cd781663af1c76944546233135db"></script>
 <script th:inline="javascript">
@@ -202,6 +210,22 @@
 
     marker.setMap(map);
     /*]]>*/
+</script>
+<script>
+    function openModal(imgElement) {
+        var modal = document.getElementById("myModal");
+        var modalImg = document.getElementById("modalImg");
+        var captionText = document.getElementById("caption");
+
+        modal.style.display = "block";
+        modalImg.src = imgElement.src;
+        captionText.innerHTML = imgElement.alt;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
 </script>
 </body>
 </html>

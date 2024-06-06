@@ -40,6 +40,7 @@
                         <th scope="col" class="th-title">제목</th>
                         <th scope="col">작성자</th>
                         <th scope="col" class="th-date">등록일</th>
+                        <th scope="col">상태</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -53,6 +54,7 @@
                         <td>
                             <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
                         </td>
+                        <td>찾고 있어요. or 찾았어요.</td>
                     </tr>
                     </tbody>
                 </table>

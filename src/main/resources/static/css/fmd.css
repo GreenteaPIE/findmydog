@@ -688,7 +688,7 @@ banner
 
 .main-banner .left-content .inner-content {
     position: absolute;
-    left: 30%; /* 필요에 따라 조정 */
+    left: 12%; /* 필요에 따라 조정 */
     top: 50%;
     transform: translateY(-50%);
     z-index: 2; /* 이미지보다 앞에 오도록 */
