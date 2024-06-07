@@ -3,6 +3,7 @@ package com.greentea.findmydog.springboot.web;
 import com.greentea.findmydog.springboot.config.auth.LoginUser;
 import com.greentea.findmydog.springboot.config.auth.dto.SessionUser;
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
+
 import com.greentea.findmydog.springboot.sevice.posts.WebScrapingService;
 import com.greentea.findmydog.springboot.web.dto.AnimalData;
 import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
@@ -42,12 +43,12 @@ public class IndexController {
         if(user != null) {
             model.addAttribute("userName", user.getName());
         }
-        //List<AnimalData> animalDataList = webScrapingService.scrapeAnimalData();
-        //model.addAttribute("animalDataList", animalDataList);
+        List<AnimalData> animalDataList = webScrapingService.scrapeAnimalData();
+        model.addAttribute("animalDataList", animalDataList);
         return "adoption-notice.html";
     }
 
-    // 분실/발견 지도 페이지
+    // 제보 지도 페이지
     @GetMapping("/find/map")
     public String findMap(Model model, @LoginUser SessionUser user) {
         model.addAttribute("mapinfo",postsService.findAllMap());

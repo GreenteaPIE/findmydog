@@ -39,7 +39,8 @@ public class SecurityConfig{
                                 new AntPathRequestMatcher("/loginPage"),
                                 new AntPathRequestMatcher("/find/map"),
                                 new AntPathRequestMatcher("/about"),
-                                new AntPathRequestMatcher("/adoption")
+                                new AntPathRequestMatcher("/adoption"),
+                                new AntPathRequestMatcher("/adoption/*")
                         ).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/**")).hasRole(Role.USER.name())
                         .anyRequest().authenticated())
