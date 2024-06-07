@@ -2,10 +2,7 @@ package com.greentea.findmydog.springboot.web;
 
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
 import com.greentea.findmydog.springboot.sevice.posts.WebScrapingService;
-import com.greentea.findmydog.springboot.web.dto.AnimalData;
-import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
-import com.greentea.findmydog.springboot.web.dto.PostsSaveRequestDto;
-import com.greentea.findmydog.springboot.web.dto.PostsUpdateRequestDto;
+import com.greentea.findmydog.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.ui.Model;
@@ -47,4 +44,10 @@ public class PostsApiController {
         return id;
     }
 
+    @PostMapping("/adoption/search")
+    public String searchAnimals(@RequestParam String searchSDate, @RequestParam String searchEDate, @RequestParam String searchUprCd, @RequestParam String searchOrgCd, @RequestParam String searchKindCd, Model model) {
+        List<AnimalDetailData> animalDetailDataList = webScrapingService.scrapeAnimalData(searchSDate, searchEDate, searchUprCd, searchOrgCd, searchKindCd);
+        model.addAttribute("animalDetailDataList", animalDetailDataList);
+        return "adoption-notice";
+    }
 }

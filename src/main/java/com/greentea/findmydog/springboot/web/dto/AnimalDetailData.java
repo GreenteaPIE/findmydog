@@ -9,11 +9,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnimalData {
+public class AnimalDetailData {
     private String imageUrl;
+    private String noticeNo;
     private String breed;
-    private String id;
+    private String color;
     private String sex;
-    private String location;
-    private String characteristics;
+    private String neuterStatus;
+    private String foundLocation;
+    private String receivedDate;
+    private String jurisdiction;
+    private String shelterName;
+    private String shelterAddress;
 }

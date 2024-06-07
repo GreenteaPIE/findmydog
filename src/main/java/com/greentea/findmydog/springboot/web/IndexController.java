@@ -4,8 +4,7 @@ import com.greentea.findmydog.springboot.config.auth.LoginUser;
 import com.greentea.findmydog.springboot.config.auth.dto.SessionUser;
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
 
-import com.greentea.findmydog.springboot.sevice.posts.WebScrapingService;
-import com.greentea.findmydog.springboot.web.dto.AnimalData;
+
 import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,14 +15,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
 public class IndexController {
 
     private final PostsService postsService;
-    private final WebScrapingService webScrapingService;
+    //private final WebScrapingService webScrapingService;
 
     // 인덱스 페이지
     @GetMapping("/")
@@ -43,8 +41,7 @@ public class IndexController {
         if(user != null) {
             model.addAttribute("userName", user.getName());
         }
-        List<AnimalData> animalDataList = webScrapingService.scrapeAnimalData();
-        model.addAttribute("animalDataList", animalDataList);
+
         return "adoption-notice.html";
     }
 

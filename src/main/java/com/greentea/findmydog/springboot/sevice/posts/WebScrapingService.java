@@ -1,6 +1,6 @@
 package com.greentea.findmydog.springboot.sevice.posts;
 
-import com.greentea.findmydog.springboot.web.dto.AnimalData;
+import com.greentea.findmydog.springboot.web.dto.AnimalDetailData;
 import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -24,30 +24,75 @@ public class WebScrapingService {
         System.setProperty("webdriver.chrome.driver", "C:\\Download\\chromedriver-win32\\chromedriver.exe");
     }
 
-    public List<AnimalData> scrapeAnimalData() {
-        WebDriver driver = new ChromeDriver(options);
-        driver.get("https://www.animal.go.kr/front/awtis/protection/protectionList.do?csSignature=tvleUQetGVcNSX%2BxTmAv6Q%3D%3D&boardId=&page=1&pageSize=0&desertionNo=&menuNo=1000000060&searchSDate=2024-05-01&searchEDate=2024-05-31&searchUprCd=6110000&searchOrgCd=3240000&searchCareRegNo=&searchUpKindCd=417000&searchKindCd=&searchSexCd=&searchRfid=");
+    public List<AnimalDetailData> scrapeAnimalData(String searchSDate, String searchEDate, String searchUprCd, String searchOrgCd, String searchKindCd) {
+        String url = "https://www.animal.go.kr/front/awtis/protection/protectionList.do?"
+                + "csSignature=tvleUQetGVcNSX%2BxTmAv6Q%3D%3D"
+                + "&boardId="
+                + "&page=1"
+                + "&pageSize=100"
+                + "&desertionNo="
+                + "&menuNo=1000000060"
+                + "&searchSDate=" + searchSDate
+                + "&searchEDate=" + searchEDate
+                + "&searchUprCd=" + searchUprCd
+                + "&searchOrgCd=" + searchOrgCd
+                + "&searchCareRegNo="
+                + "&searchUpKindCd=417000"
+                + "&searchKindCd=" + searchKindCd
+                + "&searchSexCd="
+                + "&searchRfid=";
 
-        List<AnimalData> animalDataList = new ArrayList<>();
+        WebDriver driver = new ChromeDriver(options);
+        System.out.println(url);
+        driver.get(url);
+
+        List<AnimalDetailData> animalDetailDataList = new ArrayList<>();
         List<WebElement> elements = driver.findElements(By.cssSelector("li"));
 
         for (WebElement element : elements) {
             try {
-                String imageUrl = element.findElement(By.cssSelector(".thum-img img")).getAttribute("src");
-                String breed = element.findElement(By.cssSelector(".subject")).getText();
-                String id = element.findElements(By.cssSelector(".info-item .value")).get(0).getText();
-                String sex = element.findElements(By.cssSelector(".info-item .value")).get(1).getText();
-                String location = element.findElements(By.cssSelector(".info-item .value")).get(2).getText();
-                String characteristics = element.findElements(By.cssSelector(".info-item .value")).get(3).getText();
+                String onclickValue = element.findElement(By.tagName("a")).getAttribute("onclick");
+                String desertionNo = onclickValue.split("'")[1];
 
-                AnimalData animalData = new AnimalData(imageUrl, breed, id, sex, location, characteristics);
-                animalDataList.add(animalData);
+                AnimalDetailData animalDetailData = scrapeAnimalDetailData(desertionNo);
+                animalDetailDataList.add(animalDetailData);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         driver.quit();
-        return animalDataList;
+        return animalDetailDataList;
+    }
+
+    private AnimalDetailData scrapeAnimalDetailData(String desertionNo) {
+        String detailUrl = "https://www.animal.go.kr/front/awtis/protection/protectionDtl.do?desertionNo=" + desertionNo;
+        WebDriver driver = new ChromeDriver(options);
+        System.out.println(detailUrl);
+        driver.get(detailUrl);
+
+        try {
+            String imageUrl = driver.findElement(By.cssSelector(".photoArea")).getAttribute("src");
+            String noticeNo = driver.findElement(By.xpath("//th[text()='공고번호']/following-sibling::td")).getText();
+            String breed = driver.findElement(By.xpath("//th[text()='품종']/following-sibling::td")).getText();
+            String color = driver.findElement(By.xpath("//th[text()='색상']/following-sibling::td")).getText();
+            String sex = driver.findElement(By.xpath("//th[text()='성별']/following-sibling::td")).getText();
+            String neuterStatus = driver.findElement(By.xpath("//th[text()='중성화']/following-sibling::td")).getText();
+            String foundLocation = driver.findElement(By.xpath("//th[text()='발생장소']/following-sibling::td")).getText();
+            String receivedDate = driver.findElement(By.xpath("//th[text()='접수일시']/following-sibling::td")).getText();
+            //String ageWeight = driver.findElement(By.xpath("//th[text()='나이/체중']/following-sibling::td")).getText();
+            String jurisdiction = driver.findElement(By.xpath("//th[text()='관할기관']/following-sibling::td")).getText();
+            String shelterName = driver.findElement(By.xpath("//th[text()='보호센터']/following-sibling::td")).getText();
+            //String shelterContact = driver.findElement(By.xpath("//th[text()='보호센터연락처']/following-sibling::td/a")).getText();
+            String shelterAddress = driver.findElement(By.xpath("//th[text()='보호장소']/following-sibling::td")).getText();
+
+            return new AnimalDetailData(imageUrl, noticeNo, breed, color, sex, neuterStatus, foundLocation, receivedDate, jurisdiction, shelterName, shelterAddress);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            driver.quit();
+        }
+
+        return null;
     }
 }

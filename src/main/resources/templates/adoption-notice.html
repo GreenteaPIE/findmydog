@@ -4,125 +4,22 @@
     <meta charset="UTF-8">
     <title>Animal Data</title>
     <style>
-        body {
-            margin-top: 130px;
-            font-family: Arial, sans-serif;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        form {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f8f8f8;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        .fieldset {
-            border: none;
-        }
-
-        .legend {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        .tr {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-
-        .form-group {
-            flex: 1;
-            min-width: 150px;
-            margin-right: 10px;
-        }
-
-        .lable {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .hyphen {
-            display: inline-block;
-            margin: 0 5px;
-            font-weight: bold;
-        }
-
-        .action-btn-group {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .w-md {
-            width: 150px;
-        }
-
-        .icon-search::before {
-            content: "\f002";
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            margin-right: 5px;
-        }
-
-        .center {
-            display: flex;
-            justify-content: center;
-        }
-
         .card {
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 4px;
             padding: 16px;
             margin: 16px;
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: inline-block;
             width: 300px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-
         .card img {
-            max-width: 100%;
+            width: 100%;
+            height: auto;
             border-radius: 4px;
         }
-
-        .card h2 {
-            font-size: 1.5em;
-            margin: 0;
-            color: #333;
-        }
-
-        .card p {
-            margin: 8px 0;
-            color: #666;
+        .card-content {
+            margin-top: 12px;
         }
     </style>
 </head>
@@ -174,9 +71,35 @@
         </div>
     </fieldset>
 </form>
+<div th:each="animalDetail : ${animalDetailDataList}" class="card">
+    <img th:src="${animalDetail.imageUrl}" alt="Animal Image">
+    <div class="card-content">
+        <p>공고번호: <span th:text="${animalDetail.noticeNo}"></span></p>
+        <p>품종: <span th:text="${animalDetail.breed}"></span></p>
+        <p>색상: <span th:text="${animalDetail.color}"></span></p>
+        <p>성별: <span th:text="${animalDetail.sex}"></span></p>
+        <p>중성화 여부: <span th:text="${animalDetail.neuterStatus}"></span></p>
+        <p>발생장소: <span th:text="${animalDetail.foundLocation}"></span></p>
+        <p>접수일시: <span th:text="${animalDetail.receivedDate}"></span></p>
+        <p>나이/체중: <span th:text="${animalDetail.ageWeight}"></span></p>
+        <p>관할기관: <span th:text="${animalDetail.jurisdiction}"></span></p>
+        <p>보호센터: <span th:text="${animalDetail.shelterName}"></span></p>
+        <p>보호센터 연락처: <span th:text="${animalDetail.shelterContact}"></span></p>
+        <p>보호장소: <span th:text="${animalDetail.shelterAddress}"></span></p>
+    </div>
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        const searchSDate = document.getElementById("searchSDate");
+        const searchEDate = document.getElementById("searchEDate");
+        const now = new Date();
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(now.getMonth() - 2);
+
+        searchSDate.value = twoMonthsAgo.toISOString().split('T')[0];
+        searchEDate.value = now.toISOString().split('T')[0];
+
         const districts = {
             "6110000": [
                 { value: "3220000", text: "강남구" },
@@ -207,35 +130,6 @@
         }
     });
 </script>
-<div th:each="animal : ${animalDataList}">
-    <div>
-        <img th:src="${animal.imageUrl}" alt="Animal Image" style="width: 50px; height: 50px;">
-    </div>
-    <div>
-        <table>
-            <li>Breed: <span th:text="${animal.breed}"></span></li>
-            <li>ID: <span th:text="${animal.id}"></span></li>
-            <li>Sex: <span th:text="${animal.sex}"></span></li>
-            <li>Location: <span th:text="${animal.location}"></span></li>
-            <li>Characteristics: <span th:text="${animal.characteristics}"></span></li>
-            </ul>
-        </table>
-    </div>
-</div>
+
 </body>
 </html>
-
-<!--
-<div th:each="animal : ${animalDataList}">
-    <div>
-        <table>
-            <li>Breed: <span th:text="${animal.breed}"></span></li>
-            <li>ID: <span th:text="${animal.id}"></span></li>
-            <li>Sex: <span th:text="${animal.sex}"></span></li>
-            <li>Location: <span th:text="${animal.location}"></span></li>
-            <li>Characteristics: <span th:text="${animal.characteristics}"></span></li>
-            </ul>
-        </table>
-    </div>
-</div>
--->
