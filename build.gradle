@@ -37,7 +37,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' //thymeleaf 의존성
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0' // Thymeleaf 레이아웃 플러그인 추가
-    implementation 'org.seleniumhq.selenium:selenium-java:2.41.0'
+    implementation 'org.jsoup:jsoup:1.17.2' //jsoup 의존성
 }
 
 tasks.named('test') {

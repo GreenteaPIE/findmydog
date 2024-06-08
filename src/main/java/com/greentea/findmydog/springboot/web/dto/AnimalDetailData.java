@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnimalDetailData {
+    private String detailUrl;
     private String imageUrl;
     private String noticeNo;
     private String breed;

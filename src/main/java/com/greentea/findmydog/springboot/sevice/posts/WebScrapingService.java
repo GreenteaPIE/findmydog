@@ -2,27 +2,20 @@ package com.greentea.findmydog.springboot.sevice.posts;
 
 import com.greentea.findmydog.springboot.web.dto.AnimalDetailData;
 import lombok.RequiredArgsConstructor;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
 public class WebScrapingService {
-
-    private final ChromeOptions options;
-
-    public WebScrapingService() {
-        this.options = new ChromeOptions();
-        this.options.addArguments("--headless");
-        System.setProperty("webdriver.chrome.driver", "C:\\Download\\chromedriver-win32\\chromedriver.exe");
-    }
 
     public List<AnimalDetailData> scrapeAnimalData(String searchSDate, String searchEDate, String searchUprCd, String searchOrgCd, String searchKindCd) {
         String url = "https://www.animal.go.kr/front/awtis/protection/protectionList.do?"
@@ -42,55 +35,55 @@ public class WebScrapingService {
                 + "&searchSexCd="
                 + "&searchRfid=";
 
-        WebDriver driver = new ChromeDriver(options);
-        System.out.println(url);
-        driver.get(url);
-
         List<AnimalDetailData> animalDetailDataList = new ArrayList<>();
-        List<WebElement> elements = driver.findElements(By.cssSelector("li"));
 
-        for (WebElement element : elements) {
-            try {
-                String onclickValue = element.findElement(By.tagName("a")).getAttribute("onclick");
-                String desertionNo = onclickValue.split("'")[1];
+        try {
+            Document doc = Jsoup.connect(url).get();
+            Elements elements = doc.select("li");
 
-                AnimalDetailData animalDetailData = scrapeAnimalDetailData(desertionNo);
-                animalDetailDataList.add(animalDetailData);
-            } catch (Exception e) {
-                e.printStackTrace();
+            for (Element element : elements) {
+                try {
+                    String onclickValue = element.select("a").attr("onclick");
+                    String[] parts = onclickValue.split("'");
+                    if (parts.length > 1) {
+                        String desertionNo = parts[1];
+                        AnimalDetailData animalDetailData = scrapeAnimalDetailData(desertionNo);
+                        if (animalDetailData != null) {
+                            animalDetailDataList.add(animalDetailData);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        driver.quit();
         return animalDetailDataList;
     }
 
     private AnimalDetailData scrapeAnimalDetailData(String desertionNo) {
         String detailUrl = "https://www.animal.go.kr/front/awtis/protection/protectionDtl.do?desertionNo=" + desertionNo;
-        WebDriver driver = new ChromeDriver(options);
-        System.out.println(detailUrl);
-        driver.get(detailUrl);
 
         try {
-            String imageUrl = driver.findElement(By.cssSelector(".photoArea")).getAttribute("src");
-            String noticeNo = driver.findElement(By.xpath("//th[text()='공고번호']/following-sibling::td")).getText();
-            String breed = driver.findElement(By.xpath("//th[text()='품종']/following-sibling::td")).getText();
-            String color = driver.findElement(By.xpath("//th[text()='색상']/following-sibling::td")).getText();
-            String sex = driver.findElement(By.xpath("//th[text()='성별']/following-sibling::td")).getText();
-            String neuterStatus = driver.findElement(By.xpath("//th[text()='중성화']/following-sibling::td")).getText();
-            String foundLocation = driver.findElement(By.xpath("//th[text()='발생장소']/following-sibling::td")).getText();
-            String receivedDate = driver.findElement(By.xpath("//th[text()='접수일시']/following-sibling::td")).getText();
-            //String ageWeight = driver.findElement(By.xpath("//th[text()='나이/체중']/following-sibling::td")).getText();
-            String jurisdiction = driver.findElement(By.xpath("//th[text()='관할기관']/following-sibling::td")).getText();
-            String shelterName = driver.findElement(By.xpath("//th[text()='보호센터']/following-sibling::td")).getText();
-            //String shelterContact = driver.findElement(By.xpath("//th[text()='보호센터연락처']/following-sibling::td/a")).getText();
-            String shelterAddress = driver.findElement(By.xpath("//th[text()='보호장소']/following-sibling::td")).getText();
+            Document doc = Jsoup.connect(detailUrl).get();
+            String imageUrl = doc.select("ul.thum-list img.photoArea").attr("src");
+            imageUrl = "https://www.animal.go.kr" + imageUrl;
+            String noticeNo = doc.select("th:contains(공고번호) + td").text();
+            String breed = doc.select("th:contains(품종) + td").text();
+            String color = doc.select("th:contains(색상) + td").text();
+            String sex = doc.select("th:contains(성별) + td").text();
+            String neuterStatus = doc.select("th:contains(중성화) + td").text();
+            String foundLocation = doc.select("th:contains(발생장소) + td").text();
+            String receivedDate = doc.select("th:contains(접수일시) + td").text();
+            String jurisdiction = doc.select("th:contains(관할기관) + td").text();
+            String shelterName = doc.select("th:contains(보호센터) + td").text();
+            String shelterAddress = doc.select("th:contains(보호장소) + td").text();
 
-            return new AnimalDetailData(imageUrl, noticeNo, breed, color, sex, neuterStatus, foundLocation, receivedDate, jurisdiction, shelterName, shelterAddress);
-        } catch (Exception e) {
+            return new AnimalDetailData(detailUrl, imageUrl, noticeNo, breed, color, sex, neuterStatus, foundLocation, receivedDate, jurisdiction, shelterName, shelterAddress);
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            driver.quit();
         }
 
         return null;

@@ -25,7 +25,7 @@
 </head>
 <body>
 <h1>Animal Data</h1>
-<form id="searchList" method="POST" action="/adoption/search">
+<form id="searchList" method="POST">
     <fieldset>
         <legend>검색조건</legend>
         <div class="tr">
@@ -64,35 +64,22 @@
         </div>
         <div class="action-btn-group">
             <div class="center">
-                <button class="btn btn-primary w-md" id="searchButton">
+                <button type="button" class="btn btn-primary w-md" id="searchButton">
                     <i class="icon-search"></i>조회
                 </button>
             </div>
         </div>
     </fieldset>
 </form>
-<div th:each="animalDetail : ${animalDetailDataList}" class="card">
-    <img th:src="${animalDetail.imageUrl}" alt="Animal Image">
-    <div class="card-content">
-        <p>공고번호: <span th:text="${animalDetail.noticeNo}"></span></p>
-        <p>품종: <span th:text="${animalDetail.breed}"></span></p>
-        <p>색상: <span th:text="${animalDetail.color}"></span></p>
-        <p>성별: <span th:text="${animalDetail.sex}"></span></p>
-        <p>중성화 여부: <span th:text="${animalDetail.neuterStatus}"></span></p>
-        <p>발생장소: <span th:text="${animalDetail.foundLocation}"></span></p>
-        <p>접수일시: <span th:text="${animalDetail.receivedDate}"></span></p>
-        <p>나이/체중: <span th:text="${animalDetail.ageWeight}"></span></p>
-        <p>관할기관: <span th:text="${animalDetail.jurisdiction}"></span></p>
-        <p>보호센터: <span th:text="${animalDetail.shelterName}"></span></p>
-        <p>보호센터 연락처: <span th:text="${animalDetail.shelterContact}"></span></p>
-        <p>보호장소: <span th:text="${animalDetail.shelterAddress}"></span></p>
-    </div>
-</div>
+<div id="animalList"></div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const searchSDate = document.getElementById("searchSDate");
         const searchEDate = document.getElementById("searchEDate");
+        const searchButton = document.getElementById("searchButton");
+        const animalList = document.getElementById("animalList");
+
         const now = new Date();
         const twoMonthsAgo = new Date();
         twoMonthsAgo.setMonth(now.getMonth() - 2);
@@ -109,6 +96,9 @@
                 { value: "3360000", text: "강서구" }
             ]
         };
+
+        const searchUprCd = document.getElementById("searchUprCd");
+        const searchOrgCd = document.getElementById("searchOrgCd");
 
         // 페이지 로드 시 초기화
         loadDistricts(searchUprCd.value);
@@ -128,8 +118,48 @@
                 searchOrgCd.appendChild(option);
             });
         }
+
+        // 조회 버튼 클릭 시 이벤트 핸들러
+        searchButton.addEventListener("click", function() {
+            const formData = new FormData();
+            formData.append("searchSDate", searchSDate.value);
+            formData.append("searchEDate", searchEDate.value);
+            formData.append("searchUprCd", searchUprCd.value);
+            formData.append("searchOrgCd", searchOrgCd.value);
+            formData.append("searchKindCd", document.getElementById("searchKindCd").value);
+
+            fetch('/adoption/search', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    animalList.innerHTML = "";
+                    data.forEach(animalDetail => {
+                        const card = document.createElement("div");
+                        card.className = "card";
+                        card.innerHTML = `
+                        <a href="${animalDetail.detailUrl}">
+                        <img src="${animalDetail.imageUrl}" alt="Animal Image"></a>
+                        <div class="card-content">
+                            <p>공고번호: ${animalDetail.noticeNo}</p>
+                            <p>품종: ${animalDetail.breed}</p>
+                            <p>색상: ${animalDetail.color}</p>
+                            <p>성별: ${animalDetail.sex}</p>
+                            <p>중성화 여부: ${animalDetail.neuterStatus}</p>
+                            <p>발생장소: ${animalDetail.foundLocation}</p>
+                            <p>접수일시: ${animalDetail.receivedDate}</p>
+                            <p>관할기관: ${animalDetail.jurisdiction}</p>
+                            <p>보호센터: ${animalDetail.shelterName}</p>
+                            <p>보호장소: ${animalDetail.shelterAddress}</p>
+                        </div>
+                    `;
+                        animalList.appendChild(card);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
     });
 </script>
-
 </body>
 </html>
