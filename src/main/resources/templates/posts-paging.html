@@ -53,7 +53,7 @@
                         </th>
                         <td th:text="${post.author}"></td>
                         <td>
-                            <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
+                            <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy.MM.dd HH:mm')}"></span>
                         </td>
                         <td>찾고 있어요. or 찾았어요.</td>
                     </tr>

@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/posts.css">
+    <style>
+        .board-table th, .board-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .collapse.show {
+            display: table-row;
+        }
+        .collapse {
+            display: none;
+        }
+        .table-container .card-body {
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
 <body>
 <section class="notice" style="margin-top: 40px;">
     <div class="page-title">
         <div class="container">
-            <h3 style="text-align: left">공지사항</h3>
+            <h3 style="text-align: left" id="page-title">공지사항</h3>
             <hr>
         </div>
     </div>
@@ -32,12 +46,37 @@
                         <td>공지</td>
                         <td>1</td>
                         <th>
-                            <a href = "#">첫 방문 이벤트</a>
+                            <a href="#collapse1" data-toggle="collapse" aria-expanded="false" aria-controls="collapse1">▼ 첫 방문 이벤트</a>
                         </th>
                         <td>
                             <span>2024.06.09</span>
                         </td>
                         <td>진행중</td>
+                    </tr>
+                    <tr id="collapse1" class="collapse">
+                        <td colspan="5">
+                            <div class="card card-body">
+                                첫 방문 이벤트 내용이 여기에 들어갑니다.
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>공지</td>
+                        <td>2</td>
+                        <th>
+                            <a href="#collapse2" data-toggle="collapse" aria-expanded="false" aria-controls="collapse2">▼ 유기견 입양 안내</a>
+                        </th>
+                        <td>
+                            <span>2024.06.10</span>
+                        </td>
+                        <td>진행중</td>
+                    </tr>
+                    <tr id="collapse2" class="collapse">
+                        <td colspan="5">
+                            <div class="card card-body">
+                                유기견 입양 안내 공지 입니다.
+                            </div>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -46,6 +85,31 @@
     </div>
 </section>
 
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('a[data-toggle="collapse"]').on('click', function() {
+            var $this = $(this);
+            var target = $this.attr('href');
 
+            if ($(target).hasClass('show')) {
+                $this.text('▼ ' + $this.text().substring(2));
+            } else {
+                $this.text('▲ ' + $this.text().substring(2));
+            }
+        });
+
+        $('.collapse').on('shown.bs.collapse', function () {
+            var $link = $('a[href="#' + this.id + '"]');
+            $link.text('▲ ' + $link.text().substring(2));
+        });
+
+        $('.collapse').on('hidden.bs.collapse', function () {
+            var $link = $('a[href="#' + this.id + '"]');
+            $link.text('▼ ' + $link.text().substring(2));
+        });
+    });
+</script>
 </body>
 </html>
