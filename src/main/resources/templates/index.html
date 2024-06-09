@@ -2,6 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
 <head>
     <title>Find My Dog</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 </head>
 <body>
 
@@ -9,8 +13,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-6 slide_div" th:if="${posts.size() > 0}">
-                <div class="left-content" th:each="post : ${posts}">
-                    <div class="thumb">
+                <div class="left-content" th:each="post, iterStat : ${posts}">
+                    <div class="thumb" th:if="${iterStat.index < 10}">
                         <div class="prev">
                             <img src="/img/prev.png" alt="Previous">
                         </div>
@@ -27,7 +31,7 @@
                         <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image"/>
                     </div>
                 </div>
-                </div>
+            </div>
             <div class="col-lg-6" th:unless="${posts.size() > 0}">
                 <div class="left-content">
                     <div class="thumb">
@@ -75,7 +79,7 @@
                                     <div class="hover-content">
                                         <div class="inner">
                                             <h4>Adoption Notice</h4>
-                                            <p>농림축산검역 본부에 게시된 입양 공고를 확인할 수 있어요.</p>
+                                            <p>국가동물보호정보시스템에 게시된 입양 공고를 확인할 수 있어요.</p>
                                             <div class="main-border-button">
                                                 <a th:href="@{/adoption}">페이지 이동</a>
                                             </div>
@@ -131,6 +135,7 @@
         </div>
     </div>
 </div>
+
 <script>
     $(document).ready(function(){
         $(".slide_div").slick({
@@ -155,7 +160,6 @@
 </script>
 </body>
 </html>
-
 
 <!--
 
