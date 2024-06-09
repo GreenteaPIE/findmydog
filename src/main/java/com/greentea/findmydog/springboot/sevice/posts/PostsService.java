@@ -224,20 +224,22 @@ public class PostsService {
     }
 
     // 게시글 페이징
-    public Page<PostsResponseDto> paging(Pageable pageable) {
+    public Page<PostsResponseDto> paging(Pageable pageable, String searchTitle) {
         int page = pageable.getPageNumber() - 1; // page 위치에 있는 값은 0부터 시작한다.
         int pageLimit = 10; // 한페이지에 보여줄 글 개수
 
-        // 한 페이지당 3개식 글을 보여주고 정렬 기준은 ID기준으로 내림차순
-        Page<Posts> postsPages = postsRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        Page<Posts> postsPages;
+        if (searchTitle == null || searchTitle.isEmpty()) {
+            postsPages = postsRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        } else {
+            postsPages = postsRepository.findByTitleContaining(searchTitle, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        }
 
-        // 목록 : kind, id, title, content, author, modifiedDate, images
         Page<PostsResponseDto> postsResponseDtos = postsPages.map(
                 postPage -> new PostsResponseDto(postPage));
 
         return postsResponseDtos;
     }
-
     // 게시글 디테일
     public PostsResponseDto findById(Long id) {
         Posts entity = postsRepository.findById(id)

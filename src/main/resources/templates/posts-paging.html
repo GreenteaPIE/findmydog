@@ -13,14 +13,14 @@
         </div>
     </div>
 
-    <!-- board seach area -->
+    <!-- 검색창 영역 -->
     <div id="board-search">
         <div class="container">
             <div class="search-window">
-                <form action="">
+                <form action="/posts/paging" method="get">
                     <div class="search-wrap">
                         <label for="search" class="blind">내용 검색</label>
-                        <input id="search" type="search" name="" placeholder="검색할 제목을 입력해주세요." value="">
+                        <input id="search" type="search" name="searchTitle" placeholder="검색할 제목을 입력해주세요." th:value="${searchTitle}">
                         <button type="submit" class="btn btn-dark">검색</button>
                     </div>
                 </form>
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <!-- board list area -->
+    <!-- 게시글 리스트 영역 -->
     <div id="board-list">
         <div class="container">
             <div class="table-container">
@@ -79,18 +79,16 @@
 <!-- 페이징 버튼 -->
 <div class="page_wrap" th:if="${postsPages.totalElements > 0}">
     <div class="page_nation">
-        <a class="arrow pprev" th:href="@{/posts/paging?page=1}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
-        <a class="arrow prev" th:href="@{/posts/paging(page=${currentPage-1})}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
+        <a class="arrow pprev" th:href="@{/posts/paging?page=1(searchTitle=${searchTitle})}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
+        <a class="arrow prev" th:href="@{/posts/paging(page=${currentPage-1}, searchTitle=${searchTitle})}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
         <a th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
-           th:href="@{/posts/paging(page=${pageNum})}"
+           th:href="@{/posts/paging(page=${pageNum}, searchTitle=${searchTitle})}"
            th:text="${pageNum}"
            th:classappend="${currentPage == pageNum} ? 'active' : ''"></a>
-        <a class="arrow next" th:href="@{/posts/paging(page=${currentPage+1})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
-        <a class="arrow nnext" th:href="@{/posts/paging(page=${postsPages.totalPages})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
+        <a class="arrow next" th:href="@{/posts/paging(page=${currentPage+1}, searchTitle=${searchTitle})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
+        <a class="arrow nnext" th:href="@{/posts/paging(page=${postsPages.totalPages}, searchTitle=${searchTitle})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
     </div>
 </div>
-
-<script th:src="@{/js/app/index.js}"></script>
 <script>
     function showLoginAlert() {
         alert("로그인이 필요합니다.");

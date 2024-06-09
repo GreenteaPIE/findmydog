@@ -1,6 +1,8 @@
 package com.greentea.findmydog.springboot.domain.posts;
 
 import com.greentea.findmydog.springboot.domain.user.Users;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,4 +13,6 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     List<Posts> findAllDesc();
 
     List<Posts> findByUser(Users user);
+
+    Page<Posts> findByTitleContaining(String title, Pageable pageable);
 }

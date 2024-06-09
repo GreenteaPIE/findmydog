@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RequiredArgsConstructor
@@ -75,8 +76,10 @@ public class IndexController {
 
     // 게시글 리스트 @PageableDefault(page = 1) : page는 기본으로 1페이지를 보여준다.
     @GetMapping("/posts/paging")
-    public String paging(@PageableDefault(page = 1, size = 10) Pageable pageable, @LoginUser SessionUser user, Model model) {
-        Page<PostsResponseDto> postsPages = postsService.paging(pageable);
+    public String paging(@PageableDefault(page = 1, size = 10) Pageable pageable,
+                         @RequestParam(required = false) String searchTitle,
+                         @LoginUser SessionUser user, Model model) {
+        Page<PostsResponseDto> postsPages = postsService.paging(pageable, searchTitle);
 
         if (user != null) {
             model.addAttribute("userName", user.getName());
@@ -92,6 +95,8 @@ public class IndexController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", postsPages.getTotalPages());
+        model.addAttribute("searchTitle", searchTitle);
+
         return "posts-paging";
     }
 
