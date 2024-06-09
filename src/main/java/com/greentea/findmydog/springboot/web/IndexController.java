@@ -77,6 +77,16 @@ public class IndexController {
         return "about.html";
     }
 
+    // Notice 페이지
+    @GetMapping("/posts/notice")
+    public String notice(@LoginUser SessionUser user, Model model){
+        System.out.println("notice 페이지 진입");
+        if (user != null) {
+            model.addAttribute("userName", user.getName());
+        }
+        return "admin-notice.html";
+    }
+
     // 게시글 리스트 @PageableDefault(page = 1) : page는 기본으로 1페이지를 보여준다.
     @GetMapping("/posts/paging")
     public String paging(@PageableDefault(page = 1, size = 10) Pageable pageable,

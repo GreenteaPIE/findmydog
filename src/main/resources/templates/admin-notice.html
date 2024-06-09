@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/posts.css">
+</head>
+<body>
+<section class="notice" style="margin-top: 40px;">
+    <div class="page-title">
+        <div class="container">
+            <h3 style="text-align: left">공지사항</h3>
+            <hr>
+        </div>
+    </div>
+
+    <!-- 게시글 리스트 영역 -->
+    <div id="board-list">
+        <div class="container">
+            <div class="table-container">
+                <table class="board-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">분류</th>
+                        <th scope="col" class="th-num">번호</th>
+                        <th scope="col" class="th-title">제목</th>
+                        <th scope="col" class="th-date">등록일</th>
+                        <th scope="col">상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>공지</td>
+                        <td>1</td>
+                        <th>
+                            <a href = "#">첫 방문 이벤트</a>
+                        </th>
+                        <td>
+                            <span>2024.06.09</span>
+                        </td>
+                        <td>진행중</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+</body>
+</html>
