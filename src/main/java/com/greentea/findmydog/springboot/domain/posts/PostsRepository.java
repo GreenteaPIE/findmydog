@@ -15,4 +15,6 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     List<Posts> findByUser(Users user);
 
     Page<Posts> findByTitleContaining(String title, Pageable pageable);
+
+    List<Posts> findTop10ByOrderByIdDesc();
 }

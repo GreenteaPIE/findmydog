@@ -263,4 +263,11 @@ public class PostsService {
                 .map(PostsResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    // IndexPage slide 10개만
+    public List<PostsResponseDto> findTop10() {
+        return postsRepository.findTop10ByOrderByIdDesc().stream()
+                .map(PostsResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }

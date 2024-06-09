@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 @Controller
@@ -27,7 +29,8 @@ public class IndexController {
     // 인덱스 페이지
     @GetMapping("/")
     public String index(Model model, @LoginUser SessionUser user) {
-        model.addAttribute("posts", postsService.findAllDesc());
+        List<PostsResponseDto> posts = postsService.findTop10();
+        model.addAttribute("posts", posts);
         if(user != null) {
             model.addAttribute("userName", user.getName());
             System.out.println("로그인 확인 "+ user.getName());
