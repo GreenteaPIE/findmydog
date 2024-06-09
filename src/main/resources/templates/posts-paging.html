@@ -8,7 +8,7 @@
 <section class="notice" style="margin-top: 40px;">
     <div class="page-title">
         <div class="container">
-            <h3 style="text-align: left">분실/발견 제보</h3>
+            <h3 th:text="${pageTitle}" style="text-align: left"></h3>
             <hr>
         </div>
     </div>
@@ -17,8 +17,9 @@
     <div id="board-search">
         <div class="container">
             <div class="search-window">
-                <form action="/posts/paging" method="get">
+                <form th:action="@{/posts/paging}" method="get">
                     <div class="search-wrap">
+                        <input type="hidden" name="kind" th:value="${kind}"/> <!-- kind 파라미터 추가 -->
                         <label for="search" class="blind">내용 검색</label>
                         <input id="search" type="search" name="searchTitle" placeholder="검색할 제목을 입력해주세요." th:value="${searchTitle}">
                         <button type="submit" class="btn btn-dark">검색</button>
@@ -79,14 +80,14 @@
 <!-- 페이징 버튼 -->
 <div class="page_wrap" th:if="${postsPages.totalElements > 0}">
     <div class="page_nation">
-        <a class="arrow pprev" th:href="@{/posts/paging?page=1(searchTitle=${searchTitle})}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
-        <a class="arrow prev" th:href="@{/posts/paging(page=${currentPage-1}, searchTitle=${searchTitle})}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
+        <a class="arrow pprev" th:href="@{/posts/paging?page=1(kind=${kind}, searchTitle=${searchTitle})}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
+        <a class="arrow prev" th:href="@{/posts/paging(page=${currentPage-1}, kind=${kind}, searchTitle=${searchTitle})}" th:classappend="${currentPage == 1} ? 'disabled'"></a>
         <a th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
-           th:href="@{/posts/paging(page=${pageNum}, searchTitle=${searchTitle})}"
+           th:href="@{/posts/paging(page=${pageNum}, kind=${kind}, searchTitle=${searchTitle})}"
            th:text="${pageNum}"
            th:classappend="${currentPage == pageNum} ? 'active' : ''"></a>
-        <a class="arrow next" th:href="@{/posts/paging(page=${currentPage+1}, searchTitle=${searchTitle})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
-        <a class="arrow nnext" th:href="@{/posts/paging(page=${postsPages.totalPages}, searchTitle=${searchTitle})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
+        <a class="arrow next" th:href="@{/posts/paging(page=${currentPage+1}, kind=${kind}, searchTitle=${searchTitle})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
+        <a class="arrow nnext" th:href="@{/posts/paging(page=${postsPages.totalPages}, kind=${kind}, searchTitle=${searchTitle})}" th:classappend="${currentPage == totalPages} ? 'disabled'"></a>
     </div>
 </div>
 <script>

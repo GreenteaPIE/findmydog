@@ -114,8 +114,7 @@
             kakao.maps.event.addListener(marker, 'click', function() {
                 var content = `
                     <div style="padding:5px;">
-                        ${position.knd} ${position.pname}<br>
-                        <a href="/posts/detail/${position.pid}">More Info</a>
+                        ${position.knd} <a href="/posts/detail/${position.pid}">${position.pname}</a>
                     </div>`;
                 var infowindow = new kakao.maps.InfoWindow({
                     content: content

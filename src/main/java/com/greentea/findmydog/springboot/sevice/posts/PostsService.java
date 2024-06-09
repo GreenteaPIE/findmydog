@@ -224,15 +224,23 @@ public class PostsService {
     }
 
     // 게시글 페이징
-    public Page<PostsResponseDto> paging(Pageable pageable, String searchTitle) {
+    public Page<PostsResponseDto> paging(Pageable pageable, String searchTitle, String kind) {
         int page = pageable.getPageNumber() - 1; // page 위치에 있는 값은 0부터 시작한다.
         int pageLimit = 10; // 한페이지에 보여줄 글 개수
 
         Page<Posts> postsPages;
         if (searchTitle == null || searchTitle.isEmpty()) {
-            postsPages = postsRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            if (kind == null || kind.isEmpty()) {
+                postsPages = postsRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            } else {
+                postsPages = postsRepository.findByKind(kind, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            }
         } else {
-            postsPages = postsRepository.findByTitleContaining(searchTitle, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            if (kind == null || kind.isEmpty()) {
+                postsPages = postsRepository.findByTitleContaining(searchTitle, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            } else {
+                postsPages = postsRepository.findByTitleContainingAndKind(searchTitle, kind, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            }
         }
 
         Page<PostsResponseDto> postsResponseDtos = postsPages.map(

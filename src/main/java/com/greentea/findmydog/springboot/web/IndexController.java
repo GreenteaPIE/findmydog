@@ -81,8 +81,9 @@ public class IndexController {
     @GetMapping("/posts/paging")
     public String paging(@PageableDefault(page = 1, size = 10) Pageable pageable,
                          @RequestParam(required = false) String searchTitle,
+                         @RequestParam(required = false) String kind, // kind 파라미터 추가
                          @LoginUser SessionUser user, Model model) {
-        Page<PostsResponseDto> postsPages = postsService.paging(pageable, searchTitle);
+        Page<PostsResponseDto> postsPages = postsService.paging(pageable, searchTitle, kind);
 
         if (user != null) {
             model.addAttribute("userName", user.getName());
@@ -99,6 +100,16 @@ public class IndexController {
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", postsPages.getTotalPages());
         model.addAttribute("searchTitle", searchTitle);
+        model.addAttribute("kind", kind); // kind 파라미터 추가
+
+        // 페이지 제목 설정
+        if ("분실".equals(kind)) {
+            model.addAttribute("pageTitle", "분실 제보");
+        } else if ("발견".equals(kind)) {
+            model.addAttribute("pageTitle", "발견 제보");
+        } else {
+            model.addAttribute("pageTitle", "분실/발견 제보");
+        }
 
         return "posts-paging";
     }

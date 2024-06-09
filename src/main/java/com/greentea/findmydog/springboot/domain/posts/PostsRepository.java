@@ -17,4 +17,8 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     Page<Posts> findByTitleContaining(String title, Pageable pageable);
 
     List<Posts> findTop10ByOrderByIdDesc();
+
+    Page<Posts> findByKind(String kind, Pageable pageable);
+    
+    Page<Posts> findByTitleContainingAndKind(String title, String kind, Pageable pageable);
 }
