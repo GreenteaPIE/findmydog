@@ -2,19 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
 <head>
     <link rel="stylesheet" href="/css/posts.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         .board-table th, .board-table td {
             text-align: center;
             vertical-align: middle;
         }
-        .collapse.show {
-            display: table-row;
-        }
-        .collapse {
-            display: none;
-        }
         .table-container .card-body {
             background-color: #f9f9f9;
+        }
+        .collapse {
+            transition: height 0.5s ease;
         }
     </style>
 </head>
@@ -87,16 +85,29 @@
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('a[data-toggle="collapse"]').on('click', function() {
+        $('a[data-toggle="collapse"]').on('click', function(e) {
+            e.preventDefault();
             var $this = $(this);
             var target = $this.attr('href');
 
+            // 모든 아코디언 닫기
+            $('.collapse').not(target).each(function() {
+                $(this).collapse('hide');
+                var $link = $('a[href="#' + this.id + '"]');
+                $link.text('▼ ' + $link.text().substring(2));
+            });
+
+            // 클릭된 아코디언 토글
+            $(target).collapse('toggle');
+
+            // 텍스트 업데이트
             if ($(target).hasClass('show')) {
-                $this.text('▼ ' + $this.text().substring(2));
-            } else {
                 $this.text('▲ ' + $this.text().substring(2));
+            } else {
+                $this.text('▼ ' + $this.text().substring(2));
             }
         });
 
