@@ -4,174 +4,6 @@
     <link rel="stylesheet" href="/css/posts.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
-        .faq-container {
-            max-width: 60rem;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            margin: 0 auto;
-            padding: 0;
-            list-style: none;
-        }
-
-        .faq {
-            position: relative;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            overflow: hidden;
-            transition: 0.3s ease;
-        }
-
-        .faq.active {
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1), 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .faq__question {
-            padding: 1rem;
-        }
-
-        .faq__title {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .faq__answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-in-out;
-        }
-
-        .faq__text {
-            padding: 0.5rem 1rem;
-            color: gray;
-            font-size: 1rem;
-        }
-
-        .faq.active .faq__answer {
-            max-height: 200px;
-            border-top: 1px solid silver;
-            transition: max-height 0.3s ease-in-out;
-        }
-
-        .faq__btn {
-            cursor: pointer;
-            width: 2rem;
-            height: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            border: 0;
-            border-radius: 50%;
-            font-size: 1.5rem;
-        }
-
-        .faq__btn:focus {
-            outline: 0;
-        }
-
-        .faq__icon.close {
-            display: none;
-        }
-
-        .faq.active .faq__icon.close {
-            color: #ffffff;
-            display: block;
-        }
-
-        .faq.active .faq__icon.open {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-<section class="notice" style="margin-top: 40px;">
-    <div class="page-title">
-        <div class="container">
-            <h3 style="text-align: left" id="page-title">공지사항</h3>
-            <hr>
-        </div>
-    </div>
-
-    <!-- 게시글 리스트 영역 -->
-    <div id="board-list">
-        <div class="container">
-            <ul class="faq-container">
-                <li class="faq">
-                    <div class="faq__question">
-                        <h3 class="faq__title">
-                            첫 방문 이벤트
-                        </h3>
-                    </div>
-                    <div class="faq__answer">
-                        <p class="faq__text">
-                            첫 방문 이벤트 내용이 여기에 들어갑니다.
-                        </p>
-                    </div>
-                    <button class="faq__btn">
-                        <span class="faq__icon open">+</span>
-                        <span class="faq__icon close">-</span>
-                    </button>
-                </li>
-                <li class="faq">
-                    <div class="faq__question">
-                        <h3 class="faq__title">
-                            유기견 입양 안내
-                        </h3>
-                    </div>
-                    <div class="faq__answer">
-                        <p class="faq__text">
-                            유기견 입양 안내 공지 입니다.
-                        </p>
-                    </div>
-                    <button class="faq__btn">
-                        <span class="faq__icon open">+</span>
-                        <span class="faq__icon close">-</span>
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </div>
-</section>
-
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script>
-    const btns = document.querySelectorAll(".faq__btn");
-
-    btns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const faqItem = btn.parentNode;
-            const isActive = faqItem.classList.contains("active");
-
-            removeActiveClasses();
-
-            if (!isActive) {
-                faqItem.classList.add("active");
-            }
-        });
-    });
-
-    function removeActiveClasses() {
-        btns.forEach((btn) => {
-            btn.parentNode.classList.remove("active");
-        });
-    }
-</script>
-</body>
-</html>
-
-
-<!--
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
-<head>
-    <link rel="stylesheet" href="/css/posts.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <style>
         .board-table th, .board-table td {
             text-align: center;
             vertical-align: middle;
@@ -182,6 +14,45 @@
         .collapse {
             transition: height 0.5s ease;
         }
+
+        .panel-faq-title {
+            cursor: pointer;
+        }
+
+        .panel-faq-answer {
+            height: 0px;
+            overflow: hidden;
+            transition: all 0.35s;
+        }
+        .panel-faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .panel-faq-answer.active {
+            max-height: 1000px; /* 충분히 큰 값으로 설정 */
+        }
+
+        .active {
+            height: auto;
+        }
+
+        #btn-all-close {
+            margin-bottom: 10px;
+            background-color: #6c757d;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 10px 25px;
+            float: right;
+        }
+
+        #btn-all-close:hover {
+            background-color: #565e64;
+            color: #fff;
+            transition: all .35s;
+        }
     </style>
 </head>
 <body>
@@ -193,103 +64,109 @@
         </div>
     </div>
 
-
-<div id="board-list">
-    <div class="container">
-        <div class="table-container">
-            <table class="board-table">
-                <thead>
-                <tr>
-                    <th scope="col">분류</th>
-                    <th scope="col" class="th-num">번호</th>
-                    <th scope="col" class="th-title">제목</th>
-                    <th scope="col" class="th-date">등록일</th>
-                    <th scope="col">상태</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>공지</td>
-                    <td>1</td>
-                    <th>
-                        <a href="#collapse1" data-toggle="collapse" aria-expanded="false" aria-controls="collapse1">▼ 첫 방문 이벤트</a>
-                    </th>
-                    <td>
-                        <span>2024.06.09</span>
-                    </td>
-                    <td>진행중</td>
-                </tr>
-                <tr id="collapse1" class="collapse">
-                    <td colspan="5">
-                        <div class="card card-body">
-                            첫 방문 이벤트 내용이 여기에 들어갑니다.
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>공지</td>
-                    <td>2</td>
-                    <th>
-                        <a href="#collapse2" data-toggle="collapse" aria-expanded="false" aria-controls="collapse2">▼ 유기견 입양 안내</a>
-                    </th>
-                    <td>
-                        <span>2024.06.10</span>
-                    </td>
-                    <td>진행중</td>
-                </tr>
-                <tr id="collapse2" class="collapse">
-                    <td colspan="5">
-                        <div class="card card-body">
-                            유기견 입양 안내 공지 입니다.
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+    <div id="board-list">
+        <div class="container">
+            <button id="btn-all-close">모두 닫기</button>
+            <div class="table-container">
+                <table class="board-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">분류</th>
+                        <th scope="col" class="th-num">번호</th>
+                        <th scope="col" class="th-title">제목</th>
+                        <th scope="col" class="th-date">등록일</th>
+                        <th scope="col">상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>공지</td>
+                        <td>1</td>
+                        <th>
+                            <div class="panel-faq-container">
+                                <p class="panel-faq-title">▼ 첫 방문 이벤트</p>
+                                <div class="panel-faq-answer">
+                                    첫 방문 이벤트 내용이 여기에 들어갑니다.<br>
+                                    test<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>test
+                                    test<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>test
+                                    test<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>testtest<br>test<br>test<br>test
+                                </div>
+                            </div>
+                        </th>
+                        <td>
+                            <span>2024.06.09</span>
+                        </td>
+                        <td>진행중</td>
+                    </tr>
+                    <tr>
+                        <td>공지</td>
+                        <td>2</td>
+                        <th>
+                            <div class="panel-faq-container">
+                                <p class="panel-faq-title">▼ 유기견 입양 안내</p>
+                                <div class="panel-faq-answer">
+                                    유기견 입양 안내 공지 입니다.
+                                </div>
+                            </div>
+                        </th>
+                        <td>
+                            <span>2024.06.10</span>
+                        </td>
+                        <td>진행중</td>
+                    </tr>
+                    <tr>
+                        <td>공지</td>
+                        <td>3</td>
+                        <th>
+                            <div class="panel-faq-container">
+                                <p class="panel-faq-title">▼ 안내안내</p>
+                                <div class="panel-faq-answer">
+                                    추가안내
+                                </div>
+                            </div>
+                        </th>
+                        <td>
+                            <span>2024.06.10</span>
+                        </td>
+                        <td>진행중</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 </section>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('a[data-toggle="collapse"]').on('click', function(e) {
-            e.preventDefault();
-            var $this = $(this);
-            var target = $this.attr('href');
+    window.onload = () => {
+        const panelFaqContainer = document.querySelectorAll('.panel-faq-container');
+        const panelFaqAnswer = document.querySelectorAll('.panel-faq-answer');
+        const btnAllClose = document.getElementById('btn-all-close');
 
-            // 모든 아코디언 닫기
-            $('.collapse').not(target).each(function() {
-                $(this).collapse('hide');
-                var $link = $('a[href="#' + this.id + '"]');
-                $link.text('▼ ' + $link.text().substring(2));
+        for(let i = 0; i < panelFaqContainer.length; i++){
+            panelFaqContainer[i].addEventListener('click', function(){
+                if (panelFaqAnswer[i].classList.contains('active')) {
+                    panelFaqAnswer[i].classList.remove('active');
+                } else {
+                    panelFaqAnswer[i].classList.add('active');
+                }
+
+                const title = this.querySelector('.panel-faq-title');
+                title.textContent = title.textContent.startsWith('▼') ? '▲ ' + title.textContent.substring(2) : '▼ ' + title.textContent.substring(2);
             });
+        }
 
-            // 클릭된 아코디언 토글
-            $(target).collapse('toggle');
+        btnAllClose.addEventListener('click', function(){
+            for (let i = 0; i < panelFaqAnswer.length; i++){
+                panelFaqAnswer[i].classList.remove('active');
+            }
 
-            // 텍스트 업데이트
-            if ($(target).hasClass('show')) {
-                $this.text('▲ ' + $this.text().substring(2));
-            } else {
-                $this.text('▼ ' + $this.text().substring(2));
+            const titles = document.querySelectorAll('.panel-faq-title');
+            for (let i = 0; i < titles.length; i++) {
+                titles[i].textContent = '▼ ' + titles[i].textContent.substring(2);
             }
         });
-
-        $('.collapse').on('shown.bs.collapse', function () {
-            var $link = $('a[href="#' + this.id + '"]');
-            $link.text('▲ ' + $link.text().substring(2));
-        });
-
-        $('.collapse').on('hidden.bs.collapse', function () {
-            var $link = $('a[href="#' + this.id + '"]');
-            $link.text('▼ ' + $link.text().substring(2));
-        });
-    });
+    }
 </script>
 </body>
 </html>
--->
