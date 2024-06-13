@@ -4,6 +4,76 @@
     <meta charset="UTF-8">
     <title>Animal Data</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+        form#searchList {
+            background: #fff;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+        }
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+        legend {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        .tr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .form-group:last-child {
+            margin-right: 0;
+        }
+        .lable {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .action-btn-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
         .card {
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -12,6 +82,7 @@
             display: inline-block;
             width: 300px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: #fff;
         }
         .card img {
             width: 100%;
@@ -42,6 +113,122 @@
                 <label class="lable">시도</label>
                 <select class="form-control" name="searchUprCd" id="searchUprCd" title="시도선택">
                     <option value="6110000">서울특별시</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="lable">시군구</label>
+                <select class="form-control" name="searchOrgCd" id="searchOrgCd" title="시군구선택"></select>
+            </div>
+        </div>
+        <div class="tr">
+            <div class="form-group">
+                <label class="lable">품종</label>
+                <select class="form-control" name="searchKindCd" id="searchKindCd" title="종류선택">
+                    <option value="">전체</option>
+                </select>
+            </div>
+        </div>
+        <div class="action-btn-group">
+            <div class="center">
+                <button type="button" class="btn btn-primary w-md" id="searchButton">
+                    <i class="icon-search"></i>조회
+                </button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+<div id="animalList"></div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchSDate = document.getElementById("searchSDate");
+        const searchEDate = document.getElementById("searchEDate");
+        const searchButton = document.getElementById("searchButton");
+        const animalList = document.getElementById("animalList");
+
+        const now = new Date();
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(now.getMonth() - 2);
+
+        searchSDate.value = twoMonthsAgo.toISOString().split('T')[0];
+        searchEDate.value = now.toISOString().split('T')[0];
+
+        const districts = {
+            "6110000": [
+                { value: "3240000", text: "강동구" }
+            ]
+
+        };
+
+        const searchUprCd = document.getElementById("searchUprCd");
+        const searchOrgCd = document.getElementById("searchOrgCd");
+
+        // 페이지 로드 시 초기화
+        loadDistricts(searchUprCd.value);
+
+        // 시도가 변경되었을 때 해당 시도에 속하는 시군구 로드
+        searchUprCd.addEventListener("change", function() {
+            const selectedUprCd = this.value;
+            loadDistricts(selectedUprCd);
+        });
+
+        // 해당 시도에 속하는 시군구 로드하는 함수
+        function loadDistricts(uprCd) {
+            searchOrgCd.innerHTML = ""; // 시군구 선택 목록 초기화
+            const districtList = districts[uprCd]; // 선택된 시도의 시군구 목록 가져오기
+            districtList.forEach(function(district) {
+                const option = new Option(district.text, district.value);
+                searchOrgCd.appendChild(option);
+            });
+        }
+
+        // 조회 버튼 클릭 시 이벤트 핸들러
+        searchButton.addEventListener("click", function() {
+            const formData = new FormData();
+            formData.append("searchSDate", searchSDate.value);
+            formData.append("searchEDate", searchEDate.value);
+            formData.append("searchUprCd", searchUprCd.value);
+            formData.append("searchOrgCd", searchOrgCd.value);
+            formData.append("searchKindCd", document.getElementById("searchKindCd").value);
+
+            fetch('/adoption/search', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    animalList.innerHTML = "";
+                    data.forEach(animalDetail => {
+                        const card = document.createElement("div");
+                        card.className = "card";
+                        card.innerHTML = `
+                        <a href="${animalDetail.detailUrl}" target="_blank">
+                        <img src="${animalDetail.imageUrl}" alt="Animal Image"></a>
+                        <div class="card-content">
+                            <p>공고번호: ${animalDetail.noticeNo}</p>
+                            <p>품종: ${animalDetail.breed}</p>
+                            <p>색상: ${animalDetail.color}</p>
+                            <p>성별: ${animalDetail.sex}</p>
+                            <p>중성화 여부: ${animalDetail.neuterStatus}</p>
+                            <p>발생장소: ${animalDetail.foundLocation}</p>
+                            <p>접수일시: ${animalDetail.receivedDate}</p>
+                            <p>관할기관: ${animalDetail.jurisdiction}</p>
+                            <p>보호센터: ${animalDetail.shelterName}</p>
+                            <p>보호장소: ${animalDetail.shelterAddress}</p>
+                        </div>
+                    `;
+                        animalList.appendChild(card);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+</body>
+</html>
+
+
+
+<!--
                     <option value="6260000">부산광역시</option>
                     <option value="6270000">대구광역시</option>
                     <option value="6280000">인천광역시</option>
@@ -58,19 +245,11 @@
                     <option value="6470000">경상북도</option>
                     <option value="6480000">경상남도</option>
                     <option value="6500000">제주특별자치도</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="lable">시군구</label>
-                <select class="form-control" name="searchOrgCd" id="searchOrgCd" title="시군구선택"></select>
-            </div>
-        </div>
-        <div class="tr">
-            <div class="form-group">
-                <label class="lable">품종</label>
-                <select class="form-control" name="searchKindCd" id="searchKindCd" title="종류선택">
-                    <option value="">전체</option>
-                    <option value="000054">골든 리트리버</option><option value="000056">그레이 하운드</option>
+
+
+
+
+                     <option value="000054">골든 리트리버</option><option value="000056">그레이 하운드</option>
                     <option value="000055">그레이트 덴</option><option value="000118">그레이트 피레니즈</option>
                     <option value="000115">기타</option><option value="000037">꼬똥 드 뚤레아</option>
                     <option value="000081">네오폴리탄 마스티프</option><option value="000204">노르포크 테리어</option>
@@ -163,34 +342,8 @@
                     <option value="000135">핏불테리어</option><option value="000224">핏불테리어 믹스견</option>
                     <option value="000206">허배너스</option><option value="000130">화이트리트리버</option>
                     <option value="000134">화이트테리어</option><option value="000111">휘펫</option></select>
-                </select>
-            </div>
-        </div>
-        <div class="action-btn-group">
-            <div class="center">
-                <button type="button" class="btn btn-primary w-md" id="searchButton">
-                    <i class="icon-search"></i>조회
-                </button>
-            </div>
-        </div>
-    </fieldset>
-</form>
-<div id="animalList"></div>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const searchSDate = document.getElementById("searchSDate");
-        const searchEDate = document.getElementById("searchEDate");
-        const searchButton = document.getElementById("searchButton");
-        const animalList = document.getElementById("animalList");
 
-        const now = new Date();
-        const twoMonthsAgo = new Date();
-        twoMonthsAgo.setMonth(now.getMonth() - 2);
 
-        searchSDate.value = twoMonthsAgo.toISOString().split('T')[0];
-        searchEDate.value = now.toISOString().split('T')[0];
-
-        const districts = {
             "6110000": [
                 { value: "3220000", text: "강남구" },
                 { value: "3240000", text: "강동구" },
@@ -457,71 +610,4 @@
                 { value: "5011000", text: "서귀포시" },
                 { value: "5013000", text: "제주시" }
             ]
-        };
-
-        const searchUprCd = document.getElementById("searchUprCd");
-        const searchOrgCd = document.getElementById("searchOrgCd");
-
-        // 페이지 로드 시 초기화
-        loadDistricts(searchUprCd.value);
-
-        // 시도가 변경되었을 때 해당 시도에 속하는 시군구 로드
-        searchUprCd.addEventListener("change", function() {
-            const selectedUprCd = this.value;
-            loadDistricts(selectedUprCd);
-        });
-
-        // 해당 시도에 속하는 시군구 로드하는 함수
-        function loadDistricts(uprCd) {
-            searchOrgCd.innerHTML = ""; // 시군구 선택 목록 초기화
-            const districtList = districts[uprCd]; // 선택된 시도의 시군구 목록 가져오기
-            districtList.forEach(function(district) {
-                const option = new Option(district.text, district.value);
-                searchOrgCd.appendChild(option);
-            });
-        }
-
-        // 조회 버튼 클릭 시 이벤트 핸들러
-        searchButton.addEventListener("click", function() {
-            const formData = new FormData();
-            formData.append("searchSDate", searchSDate.value);
-            formData.append("searchEDate", searchEDate.value);
-            formData.append("searchUprCd", searchUprCd.value);
-            formData.append("searchOrgCd", searchOrgCd.value);
-            formData.append("searchKindCd", document.getElementById("searchKindCd").value);
-
-            fetch('/adoption/search', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    animalList.innerHTML = "";
-                    data.forEach(animalDetail => {
-                        const card = document.createElement("div");
-                        card.className = "card";
-                        card.innerHTML = `
-                        <a href="${animalDetail.detailUrl}" target="_blank">
-                        <img src="${animalDetail.imageUrl}" alt="Animal Image"></a>
-                        <div class="card-content">
-                            <p>공고번호: ${animalDetail.noticeNo}</p>
-                            <p>품종: ${animalDetail.breed}</p>
-                            <p>색상: ${animalDetail.color}</p>
-                            <p>성별: ${animalDetail.sex}</p>
-                            <p>중성화 여부: ${animalDetail.neuterStatus}</p>
-                            <p>발생장소: ${animalDetail.foundLocation}</p>
-                            <p>접수일시: ${animalDetail.receivedDate}</p>
-                            <p>관할기관: ${animalDetail.jurisdiction}</p>
-                            <p>보호센터: ${animalDetail.shelterName}</p>
-                            <p>보호장소: ${animalDetail.shelterAddress}</p>
-                        </div>
-                    `;
-                        animalList.appendChild(card);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        });
-    });
-</script>
-</body>
-</html>
+-->
