@@ -17,34 +17,45 @@
         }
         form#searchList {
             background: #fff;
-            padding: 20px;
+            padding: 10px 20px;
             margin: 20px auto;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             max-width: 800px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
         }
         fieldset {
             border: none;
             padding: 0;
             margin: 0;
+            width: 100%;
         }
         legend {
-            font-size: 1.2em;
+            font-size: 1em;
             margin-bottom: 10px;
             color: #666;
-        }
-        .tr {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+            text-align: center;
         }
         .form-group {
-            flex: 1;
-            margin-right: 10px;
+            flex: 1 1 200px;
+            margin: 10px;
         }
         .form-group:last-child {
             margin-right: 0;
+        }
+        .form-group.date-group {
+            flex: 1 1 100%;
+            display: flex;
+            align-items: center;
+        }
+        .form-group.date-group .form-control {
+            flex: 1;
+            margin: 0 5px;
+        }
+        .form-group.date-group .hyphen {
+            margin: 0 5px;
         }
         .lable {
             display: block;
@@ -54,13 +65,14 @@
         }
         .form-control {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
         .action-btn-group {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 10px;
+            width: 100%;
         }
         .btn {
             background-color: #007bff;
@@ -99,41 +111,33 @@
 <form id="searchList" method="POST">
     <fieldset>
         <legend>검색조건</legend>
-        <div class="tr">
-            <div class="form-group date">
-                <label class="lable">날짜</label>
-                <input type="date" name="searchSDate" id="searchSDate" class="form-control" title="시작일" maxlength="10">
-                <div class="hyphen">~</div>
-                <input type="date" name="searchEDate" id="searchEDate" class="form-control" title="마감일" maxlength="10">
-                <label class="lable">(접수일 기준)</label>
-            </div>
+        <div class="form-group date-group">
+            <label class="lable">날짜</label>
+            <input type="date" name="searchSDate" id="searchSDate" class="form-control" title="시작일" maxlength="10">
+            <div class="hyphen">~</div>
+            <input type="date" name="searchEDate" id="searchEDate" class="form-control" title="마감일" maxlength="10">
+            <label class="lable">(접수일 기준)</label>
         </div>
-        <div class="tr">
-            <div class="form-group">
-                <label class="lable">시도</label>
-                <select class="form-control" name="searchUprCd" id="searchUprCd" title="시도선택">
-                    <option value="6110000">서울특별시</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="lable">시군구</label>
-                <select class="form-control" name="searchOrgCd" id="searchOrgCd" title="시군구선택"></select>
-            </div>
+        <div class="form-group">
+            <label class="lable">시도</label>
+            <select class="form-control" name="searchUprCd" id="searchUprCd" title="시도선택">
+                <option value="6110000">서울특별시</option>
+            </select>
         </div>
-        <div class="tr">
-            <div class="form-group">
-                <label class="lable">품종</label>
-                <select class="form-control" name="searchKindCd" id="searchKindCd" title="종류선택">
-                    <option value="">전체</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label class="lable">시군구</label>
+            <select class="form-control" name="searchOrgCd" id="searchOrgCd" title="시군구선택"></select>
+        </div>
+        <div class="form-group">
+            <label class="lable">품종</label>
+            <select class="form-control" name="searchKindCd" id="searchKindCd" title="종류선택">
+                <option value="">전체</option>
+            </select>
         </div>
         <div class="action-btn-group">
-            <div class="center">
-                <button type="button" class="btn btn-primary w-md" id="searchButton">
-                    <i class="icon-search"></i>조회
-                </button>
-            </div>
+            <button type="button" class="btn btn-primary w-md" id="searchButton">
+                <i class="icon-search"></i> 조회
+            </button>
         </div>
     </fieldset>
 </form>
@@ -156,32 +160,27 @@
             "6110000": [
                 { value: "3240000", text: "강동구" }
             ]
-
         };
 
         const searchUprCd = document.getElementById("searchUprCd");
         const searchOrgCd = document.getElementById("searchOrgCd");
 
-        // 페이지 로드 시 초기화
         loadDistricts(searchUprCd.value);
 
-        // 시도가 변경되었을 때 해당 시도에 속하는 시군구 로드
         searchUprCd.addEventListener("change", function() {
             const selectedUprCd = this.value;
             loadDistricts(selectedUprCd);
         });
 
-        // 해당 시도에 속하는 시군구 로드하는 함수
         function loadDistricts(uprCd) {
-            searchOrgCd.innerHTML = ""; // 시군구 선택 목록 초기화
-            const districtList = districts[uprCd]; // 선택된 시도의 시군구 목록 가져오기
+            searchOrgCd.innerHTML = "";
+            const districtList = districts[uprCd];
             districtList.forEach(function(district) {
                 const option = new Option(district.text, district.value);
                 searchOrgCd.appendChild(option);
             });
         }
 
-        // 조회 버튼 클릭 시 이벤트 핸들러
         searchButton.addEventListener("click", function() {
             const formData = new FormData();
             formData.append("searchSDate", searchSDate.value);
@@ -225,7 +224,6 @@
 </script>
 </body>
 </html>
-
 
 
 <!--
