@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Animal Data</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/posts.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,42 +28,24 @@
             flex-wrap: wrap;
             justify-content: space-between;
         }
-        fieldset {
-            border: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-        }
-        legend {
-            font-size: 1em;
-            margin-bottom: 10px;
-            color: #666;
-            text-align: center;
-        }
         .form-group {
             flex: 1 1 200px;
             margin: 10px;
         }
-        .form-group:last-child {
-            margin-right: 0;
-        }
         .form-group.date-group {
-            flex: 1 1 100%;
             display: flex;
+            flex: 1 1 100%;
             align-items: center;
+        }
+        .form-group.date-group label {
+            flex: 0 0 auto;
+            margin-right: 10px;
         }
         .form-group.date-group .form-control {
             flex: 1;
-            margin: 0 5px;
         }
         .form-group.date-group .hyphen {
-            margin: 0 5px;
-        }
-        .lable {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
+            margin: 0 10px;
         }
         .form-control {
             width: 100%;
@@ -70,7 +54,7 @@
             border-radius: 4px;
         }
         .action-btn-group {
-            text-align: center;
+            text-align: right;
             margin-top: 10px;
             width: 100%;
         }
@@ -224,7 +208,6 @@
 </script>
 </body>
 </html>
-
 
 <!--
                     <option value="6260000">부산광역시</option>
