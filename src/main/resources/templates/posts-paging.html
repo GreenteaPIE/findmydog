@@ -55,7 +55,7 @@
                         <td>
                             <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy.MM.dd HH:mm')}"></span>
                         </td>
-                        <td>찾고 있어요. or 찾았어요.</td>
+                        <td th:text="${post.status == 'L' ? '찾고 있어요.' : (post.status == 'F' ? '찾았어요.' : '')}"></td>
                     </tr>
                     </tbody>
                 </table>

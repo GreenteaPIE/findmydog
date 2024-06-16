@@ -179,6 +179,7 @@
             </div>
         </div>
     </div>
+
     <div class="btn-container">
         <a th:href="@{/posts/paging}" role="button" class="btn btn-secondary">이전 페이지</a>
         <a th:href="@{/posts/update/{id}(id=${post.id})}" th:if="${post.user_id == userId}" class="btn btn-custom">수정</a>

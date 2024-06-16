@@ -30,6 +30,8 @@ public class Posts extends BaseTimeEntity {
 
     private String author;
 
+    private String status = "L";
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "content_id")
     private Content content;
@@ -45,6 +47,7 @@ public class Posts extends BaseTimeEntity {
         this.content = content;
         this.author = author;
         this.user = user;
+        this.status="L"; // 상태 유무 기본설정 Lost / Find
 
     }
 

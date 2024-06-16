@@ -13,6 +13,7 @@ public class PostsListResponseDto {
     private String kind;
     private String title;
     private String author;
+    private String status;
     private List<ImageDto> images;
     private LocalDateTime modifiedDate;
 
@@ -21,6 +22,7 @@ public class PostsListResponseDto {
         this.kind = entity.getKind();
         this.title = entity.getTitle();
         this.author = entity.getAuthor();
+        this.status = entity.getStatus();
         this.modifiedDate = entity.getModifiedDate();
         this.images = entity.getImages().stream()
                 .map(image -> new ImageDto(image.getId(), image.getOriginalFileName(), image.getStoredFileName()))

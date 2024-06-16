@@ -15,6 +15,7 @@ public class PostsResponseDto {
     private String kind;
     private String title;
     private String author;
+    private String status;
     private List<ImageDto> images; // 이미지 정보를 담을 리스트 추가
     private ContentDto content;
     private LocalDateTime modifiedDate;
@@ -25,6 +26,7 @@ public class PostsResponseDto {
         this.kind = entity.getKind();
         this.title = entity.getTitle();
         this.author = entity.getAuthor();
+        this.status = entity.getStatus();
         this.modifiedDate = entity.getModifiedDate();
         // Posts 엔티티 내의 이미지 리스트를 ImageDto 리스트로 변환
         this.images = entity.getImages().stream()
