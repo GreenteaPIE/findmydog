@@ -22,4 +22,5 @@ public class AnimalDetailData {
     private String jurisdiction;
     private String shelterName;
     private String shelterAddress;
+    private String page;
 }

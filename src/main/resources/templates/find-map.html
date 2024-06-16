@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
 <head>
+    <link rel="stylesheet" href="/css/posts.css">
     <title>find map</title>
     <style>
         #map {
@@ -31,6 +32,13 @@
     </style>
 </head>
 <body>
+<section class="notice" style="margin-top: 40px;">
+    <div class="page-title">
+        <div class="container">
+            <h3 style="text-align: left">제보 지도</h3>
+            <hr>
+        </div>
+    </div>
 
 <div class="dog_land">
 </div>
@@ -47,6 +55,9 @@
     </tr>
     </tbody>
 </table>
+
+</section>
+
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=54b2cd781663af1c76944546233135db&libraries=clusterer"></script>
 
 <script>

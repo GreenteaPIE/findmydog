@@ -80,8 +80,9 @@ public class WebScrapingService {
             String jurisdiction = doc.select("th:contains(관할기관) + td").text();
             String shelterName = doc.select("th:contains(보호센터) + td").text();
             String shelterAddress = doc.select("th:contains(보호장소) + td").text();
+            String page = doc.select("th:contains(나이/체중) + td").text();
 
-            return new AnimalDetailData(detailUrl, imageUrl, noticeNo, breed, color, sex, neuterStatus, foundLocation, receivedDate, jurisdiction, shelterName, shelterAddress);
+            return new AnimalDetailData(detailUrl, imageUrl, noticeNo, breed, color, sex, neuterStatus, foundLocation, receivedDate, jurisdiction, shelterName, shelterAddress, page);
         } catch (IOException e) {
             e.printStackTrace();
         }
