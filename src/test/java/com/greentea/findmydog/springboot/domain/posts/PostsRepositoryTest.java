@@ -1,18 +1,15 @@
 package com.greentea.findmydog.springboot.domain.posts;
 
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@ExtendWith(SpringExtension.class)
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest
 public class PostsRepositoryTest {
 
@@ -20,20 +17,24 @@ public class PostsRepositoryTest {
     PostsRepository postsRepository;
 
     @AfterEach
-    public void cleanup(){
+    public void cleanup() {
         postsRepository.deleteAll();
     }
 
-    @Test
-    public void 게시글저장_불러오기(){
-        //given
-        String title = "테스트 게시글";
-        String content = "테스트 본문";
-
-        postsRepository.save(Posts.builder()
+    private Posts newPost(String title) {
+        return Posts.builder()
+                .kind("실종")
                 .title(title)
-                .author("jojoldu@gmail.com")
-                .build());
+                .author("author@example.com")
+                .content(Content.builder().pname("루시").breed("말티즈").landmark("시청역").build())
+                .build();
+    }
+
+    @Test
+    public void 게시글저장_불러오기() {
+        //given
+        String title = "말티즈 루시를 찾습니다";
+        postsRepository.save(newPost(title));
 
         //when
         List<Posts> postsList = postsRepository.findAll();
@@ -41,28 +42,22 @@ public class PostsRepositoryTest {
         //then
         Posts posts = postsList.get(0);
         assertThat(posts.getTitle()).isEqualTo(title);
-
+        assertThat(posts.getKind()).isEqualTo("실종");
+        assertThat(posts.getStatus()).isEqualTo("L");
+        assertThat(posts.getContent().getPname()).isEqualTo("루시");
     }
 
     @Test
-    public void BaseTimeEntity_등록 (){
+    public void BaseTimeEntity_등록() {
         //given
-        LocalDateTime now = LocalDateTime.of(2024,4,18,0,0,0);
-        postsRepository.save(Posts.builder()
-                .title("title")
-                .author("author")
-                .build());
+        LocalDateTime before = LocalDateTime.now().minusSeconds(1);
+        postsRepository.save(newPost("title"));
 
         //when
-        List<Posts> postsList = postsRepository.findAll();
+        Posts posts = postsRepository.findAll().get(0);
 
         //then
-        Posts posts = postsList.get(0);
-
-        System.out.println(">>>>>>> createDate=" +posts.getCreatedDate()+", modifiedDate=" + posts.getModifiedDate());
-
-        assertThat(posts.getCreatedDate()).isAfter(now);
-        assertThat(posts.getModifiedDate()).isAfter(now);
-
+        assertThat(posts.getCreatedDate()).isAfter(before);
+        assertThat(posts.getModifiedDate()).isAfter(before);
     }
 }

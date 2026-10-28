@@ -2,4 +2,8 @@
 .gradle
 HELP.md
 hs_*
+# 실제 OAuth 키 (예시는 application-oauth.properties.example)
 application-oauth.properties
+build/
+out/
+uploads/

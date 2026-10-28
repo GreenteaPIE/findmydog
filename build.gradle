@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.1.2'  //Spring Boot 플러그인을 추가
-    id 'io.spring.dependency-management' version '1.1.4' //Spring의 의존성 관리 플러그인을 추가
+    id 'org.springframework.boot' version '3.5.16'  //Spring Boot 플러그인을 추가
+    id 'io.spring.dependency-management' version '1.1.7' //Spring의 의존성 관리 플러그인을 추가
 }
 
 group = 'com.greentea'
@@ -34,10 +34,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.session:spring-session-jdbc' //jdbc session 추가
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' //thymeleaf 의존성
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0' // Thymeleaf 레이아웃 플러그인 추가
-    implementation 'org.jsoup:jsoup:1.17.2' //jsoup 의존성
+    implementation 'org.jsoup:jsoup:1.23.2' //jsoup 의존성
 }
 
 tasks.named('test') {
