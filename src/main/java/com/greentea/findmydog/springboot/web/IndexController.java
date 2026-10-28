@@ -2,162 +2,156 @@ package com.greentea.findmydog.springboot.web;
 
 import com.greentea.findmydog.springboot.config.auth.LoginUser;
 import com.greentea.findmydog.springboot.config.auth.dto.SessionUser;
+import com.greentea.findmydog.springboot.domain.posts.Posts;
+import com.greentea.findmydog.springboot.sevice.adoption.AdoptionService;
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
-
-
 import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
-
 
 @RequiredArgsConstructor
 @Controller
 public class IndexController {
 
     private final PostsService postsService;
-    //private final WebScrapingService webScrapingService;
+    private final AdoptionService adoptionService;
 
-    // 인덱스 페이지
+    // 메인: 최근 제보와 현황
     @GetMapping("/")
-    public String index(Model model, @LoginUser SessionUser user) {
-        List<PostsResponseDto> posts = postsService.findTop10();
+    public String index(Model model) {
+        List<PostsResponseDto> recent = postsService.findRecent();
+        model.addAttribute("posts", recent);
+        // 첫 화면 전봇대에는 아직 찾고 있는 아이만 붙인다
+        model.addAttribute("heroPosts", recent.stream().filter(p -> !p.isReunited()).limit(3).toList());
+        model.addAttribute("lookingCount", postsService.countLooking());
+        model.addAttribute("reunitedCount", postsService.countReunited());
+        return "index";
+    }
+
+    // 제보 목록 (page 는 1부터)
+    @GetMapping("/posts")
+    public String list(@RequestParam(required = false) String kind,
+                       @RequestParam(required = false) String status,
+                       @RequestParam(required = false) String q,
+                       @RequestParam(defaultValue = "1") int page, Model model) {
+        Page<PostsResponseDto> posts = postsService.search(kind, status, q, page);
         model.addAttribute("posts", posts);
-        if(user != null) {
-            model.addAttribute("userName", user.getName());
-            System.out.println("로그인 확인 "+ user.getName());
-        }
-        System.out.println("메인페이지 진입");
-        return "index.html";
+        model.addAttribute("kind", kind);
+        model.addAttribute("status", status);
+        model.addAttribute("q", q);
+        model.addAttribute("page", Math.max(page, 1));
+        // 페이지 번호는 지금 페이지 앞뒤로 2개씩
+        model.addAttribute("startPage", Math.max(1, page - 2));
+        model.addAttribute("endPage", Math.max(1, Math.min(posts.getTotalPages(), page + 2)));
+        model.addAttribute("pageTitle", Posts.KIND_LOST.equals(kind) ? "실종 제보" : Posts.KIND_FOUND.equals(kind) ? "발견 제보" : "모든 제보");
+        return "posts/list";
     }
 
-    // 입양정보 페이지
+    // 제보 상세
+    @GetMapping("/posts/{id:\\d+}")
+    public String detail(@PathVariable Long id, @LoginUser SessionUser user, Model model) {
+        PostsResponseDto post = postsService.findById(id);
+        model.addAttribute("post", post);
+        model.addAttribute("isOwner", user != null && post.getUser_id() != null && post.getUser_id() == user.getId());
+        return "posts/detail";
+    }
+
+    // 제보 쓰기
+    @GetMapping("/posts/new")
+    public String create(@RequestParam(required = false) String kind, Model model) {
+        model.addAttribute("post", null);
+        model.addAttribute("kind", Posts.KIND_FOUND.equals(kind) ? Posts.KIND_FOUND : Posts.KIND_LOST);
+        model.addAttribute("maxImages", PostsService.MAX_IMAGES);
+        return "posts/form";
+    }
+
+    // 제보 고치기 (작성자만)
+    @GetMapping("/posts/{id:\\d+}/edit")
+    public String edit(@PathVariable Long id, @LoginUser SessionUser user, Model model) {
+        PostsResponseDto post = postsService.findForEdit(id, user.getId());
+        model.addAttribute("post", post);
+        model.addAttribute("kind", post.getKind());
+        model.addAttribute("maxImages", PostsService.MAX_IMAGES);
+        return "posts/form";
+    }
+
+    // 내가 쓴 제보
+    @GetMapping("/my/posts")
+    public String myPosts(@LoginUser SessionUser user, Model model) {
+        model.addAttribute("posts", postsService.findByUser(user.getId()));
+        return "posts/mine";
+    }
+
+    @GetMapping("/map")
+    public String map() {
+        return "map";
+    }
+
     @GetMapping("/adoption")
-    public String Find(@LoginUser SessionUser user, Model model) {
-        if(user != null) {
-            model.addAttribute("userName", user.getName());
-        }
-
-        return "adoption-notice.html";
+    public String adoption(Model model) {
+        model.addAttribute("officialApi", adoptionService.usesOfficialApi());
+        return "adoption";
     }
 
-    // 제보 지도 페이지
-    @GetMapping("/find/map")
-    public String findMap(Model model, @LoginUser SessionUser user) {
-        model.addAttribute("mapinfo",postsService.findAllMap());
-        if(user != null) {
-            model.addAttribute("userName", user.getName());
-        }
-        System.out.println("지도 페이지 진입");
-        return "find-map.html";
+    @GetMapping("/guide")
+    public String guide() {
+        return "guide";
     }
 
-    // 로그인 페이지
-    @GetMapping("/loginPage")
-    public String login(){
-        System.out.println("로그인 페이지 진입");
-        return "loginPage.html";
-    }
-
-    // About 페이지
     @GetMapping("/about")
-    public String about(@LoginUser SessionUser user, Model model){
-        System.out.println("about 페이지 진입");
-        if (user != null) {
-            model.addAttribute("userName", user.getName());
-        }
-        return "about.html";
+    public String about() {
+        return "about";
     }
 
-    // Notice 페이지
-    @GetMapping("/posts/notice")
-    public String notice(@LoginUser SessionUser user, Model model){
-        System.out.println("notice 페이지 진입");
-        if (user != null) {
-            model.addAttribute("userName", user.getName());
-        }
-        return "admin-notice.html";
+    @GetMapping("/login")
+    public String login(@LoginUser SessionUser user) {
+        return user == null ? "login" : "redirect:/";
     }
 
-    // 게시글 리스트 @PageableDefault(page = 1) : page는 기본으로 1페이지를 보여준다.
+    // ---------- 예전 주소 ----------
+
     @GetMapping("/posts/paging")
-    public String paging(@PageableDefault(page = 1, size = 10) Pageable pageable,
-                         @RequestParam(required = false) String searchTitle,
-                         @RequestParam(required = false) String kind, // kind 파라미터 추가
-                         @LoginUser SessionUser user, Model model) {
-        Page<PostsResponseDto> postsPages = postsService.paging(pageable, searchTitle, kind);
-
-        if (user != null) {
-            model.addAttribute("userName", user.getName());
-        }
-
-        int blockLimit = 3;
-        int currentPage = pageable.getPageNumber(); // pageNumber는 1부터 시작하도록 설정
-        int startPage = (((int) Math.ceil((double) currentPage / blockLimit)) - 1) * blockLimit + 1;
-        int endPage = Math.min(startPage + blockLimit - 1, postsPages.getTotalPages());
-
-        model.addAttribute("postsPages", postsPages);
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-        model.addAttribute("currentPage", currentPage);
-        model.addAttribute("totalPages", postsPages.getTotalPages());
-        model.addAttribute("searchTitle", searchTitle);
-        model.addAttribute("kind", kind); // kind 파라미터 추가
-
-        // 페이지 제목 설정
-        if ("분실".equals(kind)) {
-            model.addAttribute("pageTitle", "분실 제보");
-        } else if ("발견".equals(kind)) {
-            model.addAttribute("pageTitle", "발견 제보");
-        } else {
-            model.addAttribute("pageTitle", "분실/발견 제보");
-        }
-
-        return "posts-paging";
+    public String oldList() {
+        // kind·searchTitle 같은 예전 검색 조건을 새 이름으로 옮긴다
+        String query = ServletUriComponentsBuilder.fromCurrentRequest().build().getQuery();
+        return "redirect:/posts" + (query == null ? "" : "?" + query.replace("searchTitle=", "q="));
     }
 
-    // 게시글 작성폼
-    @GetMapping("/posts/save")
-    public String postsSave(Model model, @LoginUser SessionUser user){
-        if(user != null) {
-            model.addAttribute("userName", user.getName());
-            model.addAttribute("userId", user.getId());
-            System.out.println("글 등록 진입 " + user.getName());
-        }
-        return "posts-save.html";
-    }
-    
-    // 게시글 디테일 페이지
     @GetMapping("/posts/detail/{id}")
-    public String postsDetail(Model model, @LoginUser SessionUser user, @PathVariable Long id){
-        PostsResponseDto dto =postsService.findById(id);
-        model.addAttribute("post", dto);
-        if(user != null) {
-            model.addAttribute("userName", user.getName());
-            model.addAttribute("userId", user.getId());
-        }
-        System.out.println("게시글 디테일 진입");
-        return "posts-detail.html";
+    public String oldDetail(@PathVariable Long id) {
+        return "redirect:/posts/" + id;
     }
 
-    // 게시글 수정 페이지
+    @GetMapping("/posts/save")
+    public String oldSave() {
+        return "redirect:/posts/new";
+    }
+
     @GetMapping("/posts/update/{id}")
-    public String postsUpdate(@PathVariable Long id, @LoginUser SessionUser user, Model model){
-        PostsResponseDto dto= postsService.findById(id);
-        model.addAttribute("post", dto);
-        if(user != null) {
-            model.addAttribute("userName", user.getName());
-        }
-        System.out.println("글 수정 진입");
-        return "posts-update.html";
+    public String oldUpdate(@PathVariable Long id) {
+        return "redirect:/posts/" + id + "/edit";
     }
 
+    @GetMapping("/find/map")
+    public String oldMap() {
+        return "redirect:/map";
+    }
+
+    @GetMapping("/posts/notice")
+    public String oldNotice() {
+        return "redirect:/guide";
+    }
+
+    @GetMapping({"/loginPage", "/user/posts"})
+    public String oldLogin(@LoginUser SessionUser user) {
+        return user == null ? "redirect:/login" : "redirect:/my/posts";
+    }
 }

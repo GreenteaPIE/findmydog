@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+<head><title>강아지를 잃어버렸을 때</title></head>
+<body>
+<main layout:fragment="content" class="container">
+    <div class="page-head"><div><h1>강아지를 잃어버렸을 때</h1><p>처음 몇 시간이 가장 중요해요. 순서대로 해 보세요.</p></div></div>
+    <div class="prose">
+        <ol class="checklist">
+            <li><b>잃어버린 곳 주변부터 찾아요.</b> 겁먹은 강아지는 멀리 가지 않고 차 밑, 화단, 계단 아래에 숨어 있는 경우가 많아요. 평소 쓰던 간식과 장난감 소리로 불러 보세요.</li>
+            <li><b>Find My Dog 에 실종 제보를 올려요.</b> 지도에서 잃어버린 곳을 정확히 찍고, 얼굴과 몸 전체가 보이는 사진을 올려 주세요.</li>
+            <li><b>동물등록이 되어 있다면 등록 정보를 확인해요.</b> 내장칩이 있으면 보호소나 동물병원에서 조회해 바로 연락이 올 수 있어요.</li>
+            <li><b>보호소 공고를 매일 확인해요.</b> 구조된 강아지는 관할 보호소 공고에 올라와요. <a href="/adoption">입양 공고</a>에서 지역과 날짜로 찾아보세요.</li>
+            <li><b>전단을 붙이고 근처 동물병원, 편의점, 경비실에 알려요.</b> 제보 링크를 공유하면 사진을 다시 보낼 필요가 없어요.</li>
+        </ol>
+
+        <h2>길 잃은 강아지를 봤다면</h2>
+        <p>가까이 갈 수 있으면 목줄이나 인식표를 확인하고, 사진을 찍어 <a href="/posts/new?kind=발견">발견 제보</a>를 올려 주세요. 다가가기 어렵다면 무리하게 잡지 말고 본 시간과 장소만 제보해도 큰 도움이 돼요. 직접 보호할 수 없다면 해당 시군구청이나 120 다산콜센터(서울)에 구조를 요청할 수 있어요.</p>
+
+        <h2>자주 묻는 질문</h2>
+        <div class="faq">
+            <details>
+                <summary>연락처는 누구에게 보이나요?</summary>
+                <div>로그인한 사람에게만 보여요. 가족을 찾아 ‘가족을 찾았어요’로 바꾸면 연락처가 숨겨져요.</div>
+            </details>
+            <details>
+                <summary>제보를 고치거나 지우려면 어떻게 하나요?</summary>
+                <div>제보를 쓴 계정으로 로그인한 뒤 제보 화면의 ‘내 제보 관리’에서 고치거나 지울 수 있어요. 다른 사람의 제보는 고칠 수 없어요.</div>
+            </details>
+            <details>
+                <summary>사진에 위치 정보가 남나요?</summary>
+                <div>아니요. 올린 사진은 서버에서 다시 저장하면서 촬영 위치 같은 정보를 지워요.</div>
+            </details>
+            <details>
+                <summary>입양 공고는 어디서 가져오나요?</summary>
+                <div>농림축산식품부 국가동물보호정보시스템의 구조동물 공고예요. 자세한 내용과 입양 신청은 각 공고의 ‘공고 원문’에서 할 수 있어요.</div>
+            </details>
+            <details>
+                <summary>회원 탈퇴하면 제보는 어떻게 되나요?</summary>
+                <div>내가 쓴 제보와 사진이 모두 지워지고, 연결한 소셜 계정과의 연결도 해제돼요.</div>
+            </details>
+        </div>
+    </div>
+</main>
+</body>
+</html>

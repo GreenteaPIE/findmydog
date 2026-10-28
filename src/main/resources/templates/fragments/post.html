@@ -1,0 +1,24 @@
+<!-- 제보 카드: 전단지 모양. post 는 PostsResponseDto -->
+<a th:fragment="card(post)" class="flyer"
+   th:href="@{/posts/{id}(id=${post.id})}"
+   th:classappend="${(post.kind == '발견' ? 'flyer--found' : 'flyer--lost') + (post.reunited ? ' is-reunited' : '')}">
+    <div class="flyer__head" th:text="${post.reunited} ? '가족을 찾았어요' : (${post.kind == '발견'} ? '보호하고 있어요' : '찾습니다')">찾습니다</div>
+    <div class="flyer__photo">
+        <img th:if="${post.thumbnail}" th:src="@{/images/{n}(n=${post.thumbnail})}" th:alt="${post.content.breed + ' 사진'}" loading="lazy">
+        <span class="stamp" th:if="${post.reunited}">찾았어요</span>
+    </div>
+    <div class="flyer__body">
+        <h3 class="flyer__title" th:text="${post.title}">제목</h3>
+        <div class="flyer__facts">
+            <span th:text="${post.content.breed}">말티즈</span>
+            <span th:if="${post.content.color}" th:text="${post.content.color}">흰색</span>
+            <span th:if="${post.content.gender != null and post.content.gender != '모름'}" th:text="${post.content.gender}">암컷</span>
+        </div>
+        <div class="flyer__where" th:if="${post.content.address != null or post.content.landmark != null}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+            <span><th:block th:text="${post.content.address ?: post.content.landmark}">주소</th:block><br>
+                <th:block th:if="${post.content.lostDate}" th:text="${#temporals.format(post.content.lostDate, 'M월 d일')} + (${post.kind == '발견'} ? ' 발견' : ' 실종')"></th:block></span>
+        </div>
+    </div>
+    <div class="flyer__tabs" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+</a>

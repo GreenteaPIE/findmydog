@@ -23,11 +23,13 @@ public class Content extends BaseTimeEntity {
     private String contact;         // 연락처
     private LocalDateTime lostDate; // 분실일자
     private String landmark;        // 주위 대표건물
+    private String address;         // 지도에서 고른 위치의 주소 (예: 서울 마포구 망원동)
     private String breed;           // 품종
     private String pname;           // 반려동물 이름
     private String color;           // 색상
     private String gender;          // 성별
-    private int age;                // 나이
+    private Integer age;            // 나이 (모르면 null)
+    @Column(length = 1000)
     private String features;        // 특징
     private boolean hasMicrochip;   // 내장칩 유무
     private double latitude;        // 위도
@@ -37,11 +39,12 @@ public class Content extends BaseTimeEntity {
     private Posts post;
 
     @Builder
-    public Content(String reporterName, String contact, LocalDateTime lostDate, String landmark, String breed,String pname, String color, String gender, int age, String features, boolean hasMicrochip, double latitude, double longitude) {
+    public Content(String reporterName, String contact, LocalDateTime lostDate, String landmark, String address, String breed, String pname, String color, String gender, Integer age, String features, boolean hasMicrochip, double latitude, double longitude) {
         this.reporterName = reporterName;
         this.contact = contact;
         this.lostDate = lostDate;
         this.landmark = landmark;
+        this.address = address;
         this.breed = breed;
         this.pname = pname;
         this.color = color;

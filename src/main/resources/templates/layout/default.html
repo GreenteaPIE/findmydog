@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE">Find My Dog</title>
+    <meta name="description" content="잃어버린 강아지를 동네 이웃과 함께 찾는 실종·발견 제보 게시판. 지도에서 근처 제보를 보고, 보호소 입양 공고도 확인할 수 있어요.">
+    <meta name="theme-color" content="#ffd21a">
+    <meta property="og:site_name" content="Find My Dog">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Find My Dog">
+    <meta property="og:description" content="잃어버린 강아지, 동네가 함께 찾아요.">
+    <meta th:if="${_csrf}" name="_csrf" th:content="${_csrf.token}">
+    <meta th:if="${_csrf}" name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <th:block layout:fragment="head"></th:block>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<header th:replace="~{fragments/header :: header}"></header>
+<main id="main" layout:fragment="content"></main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script th:src="@{/js/app.js}"></script>
+<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

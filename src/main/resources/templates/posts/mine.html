@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+<head><title>내가 쓴 제보</title></head>
+<body>
+<main layout:fragment="content" class="container">
+    <div class="page-head">
+        <div>
+            <h1>내가 쓴 제보</h1>
+            <p>가족을 찾았다면 제보에 들어가 ‘가족을 찾았어요’를 눌러 주세요. 연락처가 숨겨져요.</p>
+        </div>
+        <a class="btn btn--primary" href="/posts/new">제보하기</a>
+    </div>
+    <div class="flyer-grid" th:unless="${#lists.isEmpty(posts)}">
+        <th:block th:each="post : ${posts}"><a th:replace="~{fragments/post :: card(${post})}"></a></th:block>
+    </div>
+    <div class="empty" th:if="${#lists.isEmpty(posts)}">
+        <img src="/img/dog-pomeranian.png" alt="">
+        <strong>아직 쓴 제보가 없어요</strong>
+        <p>잃어버렸거나 길에서 만난 강아지가 있다면 올려 주세요.</p>
+        <a class="btn btn--primary" href="/posts/new">제보하기</a>
+    </div>
+    <div style="height:64px"></div>
+</main>
+</body>
+</html>

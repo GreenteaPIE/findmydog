@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+<head><title>보호소 입양 공고</title></head>
+<body>
+<main layout:fragment="content" class="container">
+    <div class="page-head">
+        <div>
+            <h1>보호소 입양 공고</h1>
+            <p>전국 보호소에 들어온 강아지예요. 잃어버린 아이를 찾고 있다면 그 지역의 최근 공고부터 확인해 보세요.</p>
+        </div>
+    </div>
+    <form class="adopt-filters" id="adopt-form">
+        <div class="field"><label for="from">접수일 시작</label><input class="input" type="date" id="from" name="from"></div>
+        <div class="field"><label for="to">접수일 끝</label><input class="input" type="date" id="to" name="to"></div>
+        <div class="field"><label for="sido">시도</label><select class="select" id="sido" name="sido"><option value="">전국</option></select></div>
+        <div class="field"><label for="sigungu">시군구</label><select class="select" id="sigungu" name="sigungu" disabled><option value="">전체</option></select></div>
+        <div class="field"><label for="breed">품종</label><select class="select" id="breed" name="breed"><option value="">모든 품종</option></select></div>
+        <button class="btn btn--ink" type="submit">공고 찾기</button>
+    </form>
+    <p class="notice-bar" th:unless="${officialApi}">공공데이터 인증키가 설정되지 않아 국가동물보호정보시스템 화면에서 직접 가져오고 있어요. 조금 느릴 수 있어요.</p>
+    <p class="result-count" id="adopt-count" aria-live="polite"></p>
+    <div class="adopt-grid" id="adopt-grid"></div>
+    <nav class="pagination" id="adopt-pages" aria-label="페이지"></nav>
+    <div style="height:56px"></div>
+</main>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/adoption.js}"></script>
+</th:block>
+</body>
+</html>

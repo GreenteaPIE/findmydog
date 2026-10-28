@@ -1,0 +1,5 @@
+build
+.gradle
+.idea
+uploads
+src/main/resources/application-oauth.properties

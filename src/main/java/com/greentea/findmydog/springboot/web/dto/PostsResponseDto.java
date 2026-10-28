@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class PostsResponseDto {
@@ -16,22 +15,30 @@ public class PostsResponseDto {
     private String title;
     private String author;
     private String status;
-    private List<ImageDto> images; // 이미지 정보를 담을 리스트 추가
+    private boolean reunited;
+    private List<ImageDto> images;
     private ContentDto content;
+    private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
-    public PostsResponseDto(Posts entity){
+    public PostsResponseDto(Posts entity) {
         this.id = entity.getId();
-        this.user_id = entity.getUser().getId();
+        this.user_id = entity.getUser() == null ? null : entity.getUser().getId();
         this.kind = entity.getKind();
         this.title = entity.getTitle();
         this.author = entity.getAuthor();
         this.status = entity.getStatus();
+        this.reunited = entity.isReunited();
+        this.createdDate = entity.getCreatedDate();
         this.modifiedDate = entity.getModifiedDate();
-        // Posts 엔티티 내의 이미지 리스트를 ImageDto 리스트로 변환
         this.images = entity.getImages().stream()
                 .map(image -> new ImageDto(image.getId(), image.getOriginalFileName(), image.getStoredFileName()))
-                .collect(Collectors.toList());
+                .toList();
         this.content = new ContentDto(entity.getContent());
+    }
+
+    /** 첫 번째 사진. 사진이 없으면 null */
+    public String getThumbnail() {
+        return images.isEmpty() ? null : images.get(0).getStoredFileName();
     }
 }

@@ -23,7 +23,7 @@ public class PostsRepositoryTest {
 
     private Posts newPost(String title) {
         return Posts.builder()
-                .kind("실종")
+                .kind("분실")
                 .title(title)
                 .author("author@example.com")
                 .content(Content.builder().pname("루시").breed("말티즈").landmark("시청역").build())
@@ -42,7 +42,7 @@ public class PostsRepositoryTest {
         //then
         Posts posts = postsList.get(0);
         assertThat(posts.getTitle()).isEqualTo(title);
-        assertThat(posts.getKind()).isEqualTo("실종");
+        assertThat(posts.getKind()).isEqualTo("분실");
         assertThat(posts.getStatus()).isEqualTo("L");
         assertThat(posts.getContent().getPname()).isEqualTo("루시");
     }

@@ -1,281 +1,207 @@
 package com.greentea.findmydog.springboot.sevice.posts;
 
 import com.greentea.findmydog.springboot.domain.posts.*;
-import com.greentea.findmydog.springboot.domain.posts.Image;
 import com.greentea.findmydog.springboot.domain.user.UserRepository;
 import com.greentea.findmydog.springboot.domain.user.Users;
+import com.greentea.findmydog.springboot.exception.InvalidImageException;
+import com.greentea.findmydog.springboot.exception.PostNotFoundException;
+import com.greentea.findmydog.springboot.storage.ImageNames;
+import com.greentea.findmydog.springboot.storage.ImageProcessor;
+import com.greentea.findmydog.springboot.storage.ImageStorage;
 import com.greentea.findmydog.springboot.web.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Date;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.text.SimpleDateFormat;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostsService {
 
+    public static final int PAGE_SIZE = 12;
+    public static final int MAX_IMAGES = 5;
+
     private final PostsRepository postsRepository;
-    private final ImageRepository imageRepository;
     private final UserRepository userRepository;
+    private final ImageStorage imageStorage;
+    private final ImageProcessor imageProcessor;
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
-
-    // 게시글 저장
-    public Long save(PostsSaveRequestDto requestDto, List<MultipartFile> imageFiles) throws IOException {
-        Users user = userRepository.findById(requestDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found. ID: " + requestDto.getUserId()));
-
-        Posts post = requestDto.toEntity(user);
-        postsRepository.save(post);
-        Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        if (!Files.exists(folderPath)) {
-            Files.createDirectories(folderPath);
+    // 게시글 저장. 작성자는 로그인한 사용자로 정한다
+    @Transactional
+    public Long save(PostsSaveRequestDto requestDto, List<MultipartFile> imageFiles, Long userId) {
+        List<MultipartFile> files = nonEmpty(imageFiles);
+        if (files.isEmpty()) {
+            throw new InvalidImageException("사진을 한 장 이상 올려 주세요");
         }
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new AccessDeniedException("로그인 정보를 찾을 수 없어요"));
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-
-        for (MultipartFile file : imageFiles) {
-            String originalFileName = file.getOriginalFilename();
-            String extension = originalFileName.substring(originalFileName.lastIndexOf(".")).toLowerCase();
-            if (!extension.equals(".jpeg") && !extension.equals(".jpg") && !extension.equals(".png")) {
-                throw new IOException("Unsupported file type: " + extension);
-            }
-
-            String storedFileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + "_" + sdf.format(new Date()) + extension;
-            Path filePath = folderPath.resolve(storedFileName);
-
-            // 이미지를 790x680으로 리사이즈하고 공백 처리
-            BufferedImage originalImage = ImageIO.read(file.getInputStream());
-            BufferedImage resizedImage = resizeImage(originalImage, 790, 680);
-
-            ImageIO.write(resizedImage, extension.substring(1), filePath.toFile());
-
-            Image image = new Image();
-            image.setOriginalFileName(originalFileName);
-            image.setStoredFileName(storedFileName);
-            image.setPost(post);
-            imageRepository.save(image);
-        }
-
+        Posts post = postsRepository.save(requestDto.toEntity(user));
+        storeImages(post, files);
         return post.getId();
     }
 
-    // 게시물 수정
+    // 게시글 수정. 작성자만 고칠 수 있다
     @Transactional
-    public Long update(Long id, PostsUpdateRequestDto requestDto, List<MultipartFile> imageFiles) throws IOException {
-        Posts post = postsRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+    public Long update(Long id, PostsUpdateRequestDto requestDto, List<MultipartFile> imageFiles, Long userId) {
+        Posts post = findOwnedPost(id, userId);
 
-        post.update(requestDto.getTitle());
+        post.update(requestDto.getKind(), requestDto.getTitle());
+        requestDto.getContent().applyTo(post.getContent());
 
-        Content content = post.getContent();
-        ContentDto contentDto = requestDto.getContent();
-        content.setReporterName(contentDto.getReporterName());
-        content.setContact(contentDto.getContact());
-        content.setLostDate(contentDto.getLostDate());
-        content.setLandmark(contentDto.getLandmark());
-        content.setBreed(contentDto.getBreed());
-        content.setPname(contentDto.getPname());
-        content.setColor(contentDto.getColor());
-        content.setGender(contentDto.getGender());
-        content.setAge(contentDto.getAge());
-        content.setFeatures(contentDto.getFeatures());
-        content.setHasMicrochip(contentDto.isHasMicrochip());
-        content.setLatitude(contentDto.getLatitude());
-        content.setLongitude(contentDto.getLongitude());
-
-        if (requestDto.isImageChanged() && imageFiles != null && !imageFiles.isEmpty()) {
-            // 기존 이미지 삭제
-            List<Image> existingImages = post.getImages();
-            if (existingImages != null && !existingImages.isEmpty()) {
-                for (Image image : existingImages) {
-                    Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-                    Path filePath = folderPath.resolve(image.getStoredFileName());
-                    try {
-                        Files.deleteIfExists(filePath); // 파일이 존재할 경우 삭제
-                    } catch (IOException e) {
-                        e.printStackTrace(); // 오류 처리
-                    }
-                }
-            }
-            imageRepository.deleteAll(existingImages);
-            post.getImages().clear();
-
-            // 새 이미지 저장
-            Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-            if (!Files.exists(folderPath)) {
-                Files.createDirectories(folderPath);
-            }
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-
-            for (MultipartFile file : imageFiles) {
-                String originalFileName = file.getOriginalFilename();
-                String extension = originalFileName.substring(originalFileName.lastIndexOf(".")).toLowerCase();
-                if (!extension.equals(".jpeg") && !extension.equals(".jpg") && !extension.equals(".png")) {
-                    throw new IOException("Unsupported file type: " + extension);
-                }
-
-                String storedFileName = originalFileName.substring(0, originalFileName.lastIndexOf(".")) + "_" + sdf.format(new Date()) + extension;
-                Path filePath = folderPath.resolve(storedFileName);
-
-                // 이미지를 790x680으로 리사이즈하고 공백 처리
-                BufferedImage originalImage = ImageIO.read(file.getInputStream());
-                BufferedImage resizedImage = resizeImage(originalImage, 790, 680);
-
-                ImageIO.write(resizedImage, extension.substring(1), filePath.toFile());
-
-                Image image = new Image();
-                image.setOriginalFileName(originalFileName);
-                image.setStoredFileName(storedFileName);
-                image.setPost(post);
-                post.addImage(image);
-            }
+        List<MultipartFile> files = nonEmpty(imageFiles);
+        if (requestDto.isImageChanged() && !files.isEmpty()) {
+            List<String> oldNames = post.getImages().stream().map(Image::getStoredFileName).toList();
+            post.getImages().clear(); // orphanRemoval 로 DB 에서도 지워진다
+            storeImages(post, files);
+            deleteAfterCommit(oldNames);
         }
-
         return post.getId();
     }
 
-    // 저장된 이미지 리사이징
-    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
-        int originalWidth = originalImage.getWidth();
-        int originalHeight = originalImage.getHeight();
-
-        // 새로운 이미지 생성
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = resizedImage.createGraphics();
-
-        // 컬러 배경으로 초기화
-        g2d.setColor(Color.decode("#D9D9D9"));
-        g2d.fillRect(0, 0, targetWidth, targetHeight);
-
-        // 비율 계산
-        double aspectRatio = (double) originalWidth / originalHeight;
-        int newWidth, newHeight;
-
-        if (originalHeight > targetHeight || originalWidth > targetWidth) {
-            newHeight = targetHeight;
-            newWidth = (int) (targetHeight * aspectRatio);
-            if (newWidth > targetWidth) {
-                newWidth = targetWidth;
-                newHeight = (int) (targetWidth / aspectRatio);
-            }
-        } else {
-            newWidth = originalWidth;
-            newHeight = originalHeight;
-        }
-
-        // 가운데 정렬
-        int x = (targetWidth - newWidth) / 2;
-        int y = (targetHeight - newHeight) / 2;
-
-        g2d.drawImage(originalImage, x, y, newWidth, newHeight, null);
-        g2d.dispose();
-
-        return resizedImage;
-    }
-    
-    // 게시글 삭제
+    // 찾았어요 / 다시 찾는 중으로 바꾸기
     @Transactional
-    public void delete(Long id){
-        // 해당 게시글 찾기
-        Posts posts = postsRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
-
-        // 해당 게시글에 연관된 이미지 정보 조회
-        List<Image> images = imageRepository.findByPost(posts);
-
-        // 파일 시스템에서 이미지 파일 삭제
-        if (images != null && !images.isEmpty()) {
-            for (Image image : images) {
-                Path folderPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-                Path filePath = folderPath.resolve(image.getStoredFileName());
-                try {
-                    Files.deleteIfExists(filePath); // 파일이 존재할 경우 삭제
-                } catch (IOException e) {
-                    e.printStackTrace(); // 오류 처리
-                }
-            }
-        }
-
-        // 데이터베이스에서 이미지 정보 삭제
-        imageRepository.deleteAll(images);
-
-        // 데이터베이스에서 게시글 정보 삭제
-        postsRepository.delete(posts);
+    public void changeStatus(Long id, String status, Long userId) {
+        findOwnedPost(id, userId).changeStatus(status);
     }
 
-    // 게시글 페이징
-    public Page<PostsResponseDto> paging(Pageable pageable, String searchTitle, String kind) {
-        int page = pageable.getPageNumber() - 1; // page 위치에 있는 값은 0부터 시작한다.
-        int pageLimit = 10; // 한페이지에 보여줄 글 개수
-
-        Page<Posts> postsPages;
-        if (searchTitle == null || searchTitle.isEmpty()) {
-            if (kind == null || kind.isEmpty()) {
-                postsPages = postsRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
-            } else {
-                postsPages = postsRepository.findByKind(kind, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
-            }
-        } else {
-            if (kind == null || kind.isEmpty()) {
-                postsPages = postsRepository.findByTitleContaining(searchTitle, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
-            } else {
-                postsPages = postsRepository.findByTitleContainingAndKind(searchTitle, kind, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
-            }
-        }
-
-        Page<PostsResponseDto> postsResponseDtos = postsPages.map(
-                postPage -> new PostsResponseDto(postPage));
-
-        return postsResponseDtos;
+    // 게시글 삭제. 작성자만 지울 수 있다
+    @Transactional
+    public void delete(Long id, Long userId) {
+        Posts post = findOwnedPost(id, userId);
+        List<String> names = post.getImages().stream().map(Image::getStoredFileName).toList();
+        postsRepository.delete(post);
+        deleteAfterCommit(names);
     }
-    // 게시글 디테일
+
+    // 회원 탈퇴 때 그 사람의 글을 모두 지운다
+    @Transactional
+    public void deleteAllByUser(Users user) {
+        for (Posts post : postsRepository.findByUser(user)) {
+            List<String> names = post.getImages().stream().map(Image::getStoredFileName).toList();
+            postsRepository.delete(post);
+            deleteAfterCommit(names);
+        }
+    }
+
+    // 게시판 검색 (page 는 1부터)
+    @Transactional(readOnly = true)
+    public Page<PostsResponseDto> search(String kind, String status, String keyword, int page) {
+        Specification<Posts> spec = PostsSpecs.kind(kind)
+                .and(PostsSpecs.status(status))
+                .and(PostsSpecs.keyword(keyword));
+        PageRequest pageable = PageRequest.of(Math.max(page, 1) - 1, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "id"));
+        return postsRepository.findAll(spec, pageable).map(PostsResponseDto::new);
+    }
+
+    @Transactional(readOnly = true)
     public PostsResponseDto findById(Long id) {
-        Posts entity = postsRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
-
-        return new PostsResponseDto(entity);
+        return new PostsResponseDto(postsRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id)));
     }
 
-    // 게시글 리스트
+    // 수정 화면용. 작성자가 아니면 403
     @Transactional(readOnly = true)
-    public List<PostsListResponseDto> findAllDesc() {
-        return postsRepository.findAllDesc().stream()
-                .map(PostsListResponseDto::new)
-                .collect(Collectors.toList());
+    public PostsResponseDto findForEdit(Long id, Long userId) {
+        return new PostsResponseDto(findOwnedPost(id, userId));
     }
 
-    // 게시글 전체 지도
     @Transactional(readOnly = true)
-    public List<PostsResponseDto> findAllMap() {
-        return postsRepository.findAllDesc().stream()
-                .map(PostsResponseDto::new)
-                .collect(Collectors.toList());
+    public List<PostsResponseDto> findByUser(Long userId) {
+        return userRepository.findById(userId)
+                .map(user -> postsRepository.findByUserOrderByIdDesc(user).stream().map(PostsResponseDto::new).toList())
+                .orElse(List.of());
     }
 
-    // IndexPage slide 10개만
-    public List<PostsResponseDto> findTop10() {
-        return postsRepository.findTop10ByOrderByIdDesc().stream()
-                .map(PostsResponseDto::new)
-                .collect(Collectors.toList());
+    // 제보 지도
+    @Transactional(readOnly = true)
+    public List<MapMarkerDto> findMapMarkers() {
+        return postsRepository.findAllDesc().stream().map(MapMarkerDto::from).toList();
+    }
+
+    // 메인 화면 최근 제보
+    @Transactional(readOnly = true)
+    public List<PostsResponseDto> findRecent() {
+        return postsRepository.findTop8ByOrderByIdDesc().stream().map(PostsResponseDto::new).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public long countLooking() {
+        return postsRepository.countByStatus(Posts.STATUS_LOOKING);
+    }
+
+    @Transactional(readOnly = true)
+    public long countReunited() {
+        return postsRepository.countByStatus(Posts.STATUS_REUNITED);
+    }
+
+    private Posts findOwnedPost(Long id, Long userId) {
+        Posts post = postsRepository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
+        if (!post.isOwnedBy(userId)) {
+            throw new AccessDeniedException("작성자만 고칠 수 있어요");
+        }
+        return post;
+    }
+
+    private static List<MultipartFile> nonEmpty(List<MultipartFile> files) {
+        if (files == null) return List.of();
+        return files.stream().filter(f -> f != null && !f.isEmpty()).toList();
+    }
+
+    // 사진을 JPEG 로 다시 저장하고 UUID 이름을 붙인다. 원래 파일 이름은 경로에 쓰지 않는다
+    private void storeImages(Posts post, List<MultipartFile> files) {
+        if (files.size() > MAX_IMAGES) {
+            throw new InvalidImageException("사진은 " + MAX_IMAGES + "장까지 올릴 수 있어요");
+        }
+        List<String> saved = new ArrayList<>();
+        for (MultipartFile file : files) {
+            byte[] jpeg = imageProcessor.toJpeg(file);
+            String name = ImageNames.newName("jpg");
+            try {
+                imageStorage.save(name, jpeg);
+            } catch (IOException e) {
+                saved.forEach(imageStorage::delete);
+                throw new UncheckedIOException("사진을 저장하지 못했어요", e);
+            }
+            saved.add(name);
+            post.addImage(Image.builder().originalFileName(file.getOriginalFilename()).storedFileName(name).post(post).build());
+        }
+        // DB 저장이 실패하면 방금 저장한 파일도 지운다
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCompletion(int status) {
+                    if (status != STATUS_COMMITTED) saved.forEach(imageStorage::delete);
+                }
+            });
+        }
+    }
+
+    // 파일은 DB 변경이 확정된 뒤에 지운다 (롤백되면 사진이 남아 있어야 하므로)
+    private void deleteAfterCommit(List<String> names) {
+        if (names.isEmpty()) return;
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    names.forEach(imageStorage::delete);
+                }
+            });
+        } else {
+            names.forEach(imageStorage::delete);
+        }
     }
 }

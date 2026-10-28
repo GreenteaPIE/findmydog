@@ -1,0 +1,2 @@
+<!-- 카카오 지도 SDK. 키가 없거나 불러오지 못하면 각 화면이 안내 문구를 보여 준다 -->
+<script th:fragment="sdk" th:if="${kakaoMapKey}" th:src="|https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapKey}&libraries=services,clusterer&autoload=false|"></script>

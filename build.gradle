@@ -29,7 +29,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'  //주석 처리기용 종속성을 추가
     testImplementation 'org.springframework.boot:spring-boot-starter-test'  //테스트 실행에 필요한 종속성을 추가
     runtimeOnly 'com.h2database:h2'  //런타임에만 필요한 종속성을 추가
-    implementation('org.springframework.boot:spring-boot-starter-mustache') //mustache 템플릿 엔진 등록
+    runtimeOnly 'org.postgresql:postgresql' // 운영(prod 프로필) DB
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // 입력값 검증
+    implementation 'org.springframework.boot:spring-boot-starter-actuator' // /actuator/health 헬스체크
     implementation 'org.springframework.security:spring-security-oauth2-client' // 스프링시큐리티 관련 의존성 추가
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.session:spring-session-jdbc' //jdbc session 추가

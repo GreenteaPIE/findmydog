@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+<head><title>제보 지도</title></head>
+<body>
+<main layout:fragment="content" class="container">
+    <div class="page-head">
+        <div>
+            <h1>제보 지도</h1>
+            <p>지도를 움직이면 왼쪽 목록이 화면 안의 제보로 바뀌어요. 핀을 누르면 사진과 함께 볼 수 있어요.</p>
+        </div>
+        <div class="legend"><span><i style="background:var(--lost)"></i>실종</span><span><i style="background:var(--found)"></i>발견</span></div>
+    </div>
+    <div class="map-layout">
+        <div class="map-list">
+            <div class="map-list__head">
+                <nav class="segmented" aria-label="제보 종류" id="map-filter">
+                    <a href="#" data-kind="" aria-current="true">전체</a>
+                    <a href="#" data-kind="분실">실종</a>
+                    <a href="#" data-kind="발견">발견</a>
+                </nav>
+                <label style="font-size:14px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="map-hide-reunited" checked> 찾은 제보 숨기기</label>
+                <p class="hint" id="map-count" style="font-size:13px;color:var(--ink-2)">제보를 불러오는 중이에요.</p>
+            </div>
+            <ul id="map-items"></ul>
+        </div>
+        <div class="map-box map-box--tall" id="board-map"><div class="map-fallback">지도를 불러오는 중이에요.</div></div>
+    </div>
+</main>
+<th:block layout:fragment="scripts">
+    <script th:replace="~{fragments/kakao :: sdk}"></script>
+    <script th:src="@{/js/map.js}"></script>
+</th:block>
+</body>
+</html>

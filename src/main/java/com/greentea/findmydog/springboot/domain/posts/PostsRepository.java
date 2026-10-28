@@ -1,24 +1,21 @@
 package com.greentea.findmydog.springboot.domain.posts;
 
 import com.greentea.findmydog.springboot.domain.user.Users;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface PostsRepository extends JpaRepository<Posts, Long> {
+public interface PostsRepository extends JpaRepository<Posts, Long>, JpaSpecificationExecutor<Posts> {
     @Query("SELECT p FROM Posts p ORDER BY p.id DESC")
     List<Posts> findAllDesc();
 
     List<Posts> findByUser(Users user);
 
-    Page<Posts> findByTitleContaining(String title, Pageable pageable);
+    List<Posts> findByUserOrderByIdDesc(Users user);
 
-    List<Posts> findTop10ByOrderByIdDesc();
+    List<Posts> findTop8ByOrderByIdDesc();
 
-    Page<Posts> findByKind(String kind, Pageable pageable);
-    
-    Page<Posts> findByTitleContainingAndKind(String title, String kind, Pageable pageable);
+    long countByStatus(String status);
 }

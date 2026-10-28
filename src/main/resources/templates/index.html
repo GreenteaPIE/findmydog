@@ -1,325 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}" layout:fragment="content">
-<head>
-    <title>Find My Dog</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-</head>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+<head></head>
 <body>
-
-<div class="main-banner" id="top">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-6 slide_div" th:if="${posts.size() > 0}">
-                <div class="left-content" th:each="post, iterStat : ${posts}">
-                    <div class="thumb" th:if="${iterStat.index < 10}">
-                        <div class="prev">
-                            <img src="/img/prev.png" alt="Previous">
-                        </div>
-                        <div class="next">
-                            <img src="/img/next.png" alt="Next">
-                        </div>
-                        <div class="inner-content">
-                            <div class="main-border-button">
-                                <a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.kind}"></a>
-                            </div>
-                            <h4 th:text="${post.title}"></h4>
-                            <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
-                        </div>
-                        <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image"/>
-                    </div>
+<main layout:fragment="content">
+    <section class="hero">
+        <div class="container">
+            <div>
+                <h1>잃어버린 강아지,<br>동네가 함께 찾아요</h1>
+                <p class="hero__lead">전봇대에 전단을 붙이듯 사진과 잃어버린 곳을 올려 주세요. 근처 이웃이 지도에서 보고, 비슷한 아이를 만나면 바로 연락할 수 있어요.</p>
+                <div class="hero__actions">
+                    <a class="btn btn--primary btn--lg" href="/posts/new?kind=분실">실종 신고하기</a>
+                    <a class="btn btn--outline btn--lg" href="/posts/new?kind=발견">길 잃은 강아지를 봤어요</a>
                 </div>
+                <p class="hero__status" th:if="${lookingCount + reunitedCount > 0}">
+                    지금 <b th:text="${lookingCount}">0</b>마리를 찾고 있고, <b th:text="${reunitedCount}">0</b>마리가 가족에게 돌아갔어요.
+                </p>
             </div>
-            <div class="col-lg-6" th:unless="${posts.size() > 0}">
-                <div class="left-content">
-                    <div class="thumb">
-                        <div class="nopost-content">
-                            <div class="main-border-button">
-                                <a th:href="@{/posts/paging}">페이지 이동</a>
-                            </div>
-                            <h4>no Posts</h4>
-                            <span>등록된 글이 없어요!</span>
-                        </div>
-                        <img src="/img/maindog.png" alt="">
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="right-content">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="right-first-image">
-                                <div class="thumb">
-                                    <div class="inner-content">
-                                        <h4>제보 지도</h4>
-                                        <span>분실/발견</span>
-                                    </div>
-                                    <div class="hover-content">
-                                        <div class="inner">
-                                            <h4>Find Map</h4>
-                                            <p>분실/발견 제보한 위치를 확인할 수 있어요.</p>
-                                            <div class="main-border-button">
-                                                <a th:href="@{/find/map}">페이지 이동</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <img src="/img/dog1.png">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="right-first-image">
-                                <div class="thumb">
-                                    <div class="inner-content">
-                                        <h4>입양 공고</h4>
-                                        <span>강아지 입양 공고</span>
-                                    </div>
-                                    <div class="hover-content">
-                                        <div class="inner">
-                                            <h4>Adoption Notice</h4>
-                                            <p>국가동물보호정보시스템에 게시된 입양 공고를 확인할 수 있어요.</p>
-                                            <div class="main-border-button">
-                                                <a th:href="@{/adoption}">페이지 이동</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <img src="/img/dog2.png">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="right-first-image">
-                                <div class="thumb">
-                                    <div class="inner-content">
-                                        <h4>About</h4>
-                                        <span>회사 정보</span>
-                                    </div>
-                                    <div class="hover-content">
-                                        <div class="inner">
-                                            <h4>Information</h4>
-                                            <p>저희 사이트의 개설 이유를 확인할 수 있어요.</p>
-                                            <div class="main-border-button">
-                                                <a th:href="@{/about}">페이지 이동</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <img src="/img/dog3.png">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="right-first-image">
-                                <div class="thumb">
-                                    <div class="inner-content">
-                                        <h4>광고</h4>
-                                        <span>광고 예정</span>
-                                    </div>
-                                    <div class="hover-content">
-                                        <div class="inner">
-                                            <h4>Ad</h4>
-                                            <p>광고를 게재할 예정이에요.</p>
-                                            <div class="main-border-button">
-                                                <a href="#">페이지 이동</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <img src="/img/dog4.png">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="pole" aria-label="최근 제보">
+                <th:block th:each="post : ${heroPosts}">
+                    <a th:replace="~{fragments/post :: card(${post})}"></a>
+                </th:block>
+                <th:block th:if="${#lists.isEmpty(heroPosts)}">
+                    <div class="flyer"><div class="flyer__head">찾습니다</div><div class="flyer__photo"><img src="/img/dog-poodle.png" alt="" style="object-fit:contain;padding:10px"></div><div class="flyer__body"><p class="flyer__title">첫 번째 제보가 여기에 붙어요</p></div></div>
+                    <div class="flyer flyer--found"><div class="flyer__head">보호하고 있어요</div><div class="flyer__photo"><img src="/img/dog-husky.png" alt="" style="object-fit:contain;padding:10px"></div><div class="flyer__body"><p class="flyer__title">길에서 만난 강아지도 올릴 수 있어요</p></div></div>
+                </th:block>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<script>
-    $(document).ready(function(){
-        $(".slide_div").slick({
-            dots: true,
-            autoplay: true,
-            autoplaySpeed: 5000,
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            prevArrow: $('.prev'),
-            nextArrow: $('.next'),
-            responsive: [
-                {
-                    breakpoint: 768,
-                    settings: {
-                        slidesToShow: 1,
-                        slidesToScroll: 1,
-                    }
-                }
-            ]
-        });
-    });
-</script>
+    <section class="section" th:unless="${#lists.isEmpty(posts)}">
+        <div class="container">
+            <div class="section__head">
+                <h2>최근 제보</h2>
+                <a href="/posts">모든 제보 보기</a>
+            </div>
+            <div class="flyer-grid">
+                <th:block th:each="post : ${posts}"><a th:replace="~{fragments/post :: card(${post})}"></a></th:block>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section__head"><h2>이렇게 찾아요</h2><a href="/guide">잃어버렸을 때 할 일</a></div>
+            <ol class="steps">
+                <li><h3>사진과 위치를 올려요</h3><p>잃어버린 곳을 지도에서 고르고, 생김새가 잘 보이는 사진을 5장까지 올려요.</p></li>
+                <li><h3>이웃이 지도에서 봐요</h3><p>제보 지도에 빨간 핀(실종)과 파란 핀(발견)으로 표시돼서, 근처에서 본 사람이 알아볼 수 있어요.</p></li>
+                <li><h3>찾으면 표시해요</h3><p>가족을 찾으면 ‘찾았어요’로 바꿔 주세요. 더 이상 연락이 오지 않아요.</p></li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container doors">
+            <a class="door" href="/map">
+                <div><h3>제보 지도</h3><p>우리 동네 근처에 올라온 실종·발견 제보를 지도에서 한눈에 봐요.</p></div>
+                <img src="/img/dog-pomeranian.png" alt="">
+            </a>
+            <a class="door" href="/adoption">
+                <div><h3>보호소 입양 공고</h3><p>전국 보호소에서 새 가족을 기다리는 강아지를 지역별로 찾아봐요. 잃어버린 아이가 보호소에 있을 수도 있어요.</p></div>
+                <img src="/img/dog-bandana.png" alt="">
+            </a>
+        </div>
+    </section>
+</main>
 </body>
 </html>
-
-<!--
-
-<div class="col-lg-6 slide_div" th:if="${posts.size() > 0}">
-                <div class="left-content">
-                    <div class="thumb" th:each="post : ${posts}">
-                        <div class="inner-content">
-                            <h4 th:text="${post.title}"></h4>
-                            <span th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></span>
-                            <div class="main-border-button">
-                                <a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.kind}"></a>
-                            </div>
-                        </div>
-                        <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" style="height: 505px;"/>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 slide_div" th:unless="${posts.size() > 0}">
-                <div class="left-content">
-                    <div class="thumb">
-                        <img src="/img/maindog.png" alt="">
-                    </div>
-                </div>
-            </div>
-
-<div class="thumb">
-    <div class="inner-content">
-        <h4>게시글이 없어요.</h4>
-        <span>버튼을 누르면 게시판으로 이동해요.</span>
-        <div class="main-border-button">
-            <a href="#">게시판 이동</a>
-        </div>
-    </div>
-    <img src="/img/maindog.png" alt="">
-</div>
-
-스타일 영역
-<style>
-        .post-content {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-
-        .post-image-container {
-            width: 270px; /* 이미지 컨테이너의 고정 너비 */
-            height: 300px; /* 이미지 컨테이너의 고정 높이 */
-            flex-shrink: 0; /* 컨테이너가 줄어들지 않도록 설정 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .post-image {
-            width: 100%;
-            height: auto;
-            object-fit: cover; /* 이미지가 컨테이너에 맞게 조절되도록 설정 */
-            border-radius: 5px;
-        }
-
-        .post-text {
-            flex: 1;
-            padding-left: 20px;
-            text-align: left;
-        }
-
-        @media (max-width: 768px) {
-            .post-content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .post-image-container, .post-text {
-                width: 100%; /* 이미지와 텍스트 컨테이너가 차지하는 최대 너비를 100%로 설정 */
-                height: auto;
-                padding-left: 0;
-            }
-
-            .post-image {
-                height: auto; /* 이미지의 높이를 자동으로 설정 */
-            }
-        }
-
-        .slide-item {
-            margin-right: 20px; /* 포스트 사이의 간격을 20px로 설정 */
-        }
-
-        .no-posts {
-            min-height: 100px; /* 적절한 높이값으로 설정 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-    </style>
-
-게시글 슬라이드 영역
-<div class="container px-4 px-lg-5">
-    <div class="row gx-4 gx-lg-5 align-items-stretch my-5 slide_div">
-        <div th:each="post : ${posts}" class="slide-item">
-            <div th:if="${not #lists.isEmpty(post.images)}" class="post-content">
-                <div class="post-image-container">
-                    <img th:src="@{'/images/' + ${post.images[0].storedFileName}}" alt="Post Image" class="post-image"/>
-                </div>
-                <div class="post-text">
-                    <h1 th:style="'color: ' + (${post.kind} == '발견' ? 'blue' : (${post.kind} == '분실' ? 'red' : 'black'))"
-                        th:text="${post.kind}"></h1>
-                    <a th:href="@{/posts/detail/{id}(id=${post.id})}" th:text="${post.title}"></a>
-                    <p th:if="${post.modifiedDate != null}" th:text="${#temporals.format(post.modifiedDate, 'yyyy년 MM월 dd일 HH시 mm분')}"></p>
-                </div>
-            </div>
-        </div>
-        <div th:if="${#lists.isEmpty(posts)}" class="col-12">
-            <div class="no-posts">
-                <p>등록된 포스트가 없습니다.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-광고 영역
-<div class="card text-white bg-secondary my-5 py-4 text-center">
-    <div class="card-body"><p class="text-white m-0">광고 내용</p></div>
-</div>
-
-유기견 공고 영역
-<div class="row gx-4 gx-lg-5">
-    <div class="col-md-4 mb-5">
-        <div class="card h-100">
-            <div class="card-body">
-                <h2 class="card-title">유기견 공고</h2>
-                <p class="card-text">공고 내용</p>
-            </div>
-            <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-5">
-        <div class="card h-100">
-            <div class="card-body">
-                <h2 class="card-title">유기견 공고2</h2>
-                <p class="card-text">공고 내용</p>
-            </div>
-            <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-5">
-        <div class="card h-100">
-            <div class="card-body">
-                <h2 class="card-title">유기견 공고3</h2>
-                <p class="card-text">공고 내용</p>
-            </div>
-            <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
-        </div>
-    </div>
-</div>
--->

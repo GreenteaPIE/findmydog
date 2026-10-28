@@ -1,34 +1,15 @@
-<!-- footer.html -->
-<th:block th:fragment="footer">
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="first-item">
-                        <div class="logo">
-                            <img src="/img/bottomlogo.png" alt="fmdbottomlogo">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <h4>저자</h4>
-                    <ul>
-                        <li><a href="https://greenteapie.github.io">Blog</a></li>
-                        <li><a href="https://github.com/GreenteaPIE">Github</a></li>
-                        <li><a href="#">이메일 : GreenteaPie2023@gmail.com</a></li>
-                        <li><a href="#">010-0000-0000</a></li>
-                    </ul>
-                </div>
-
-
-                <div class="col-lg-12">
-                    <div class="under-footer">
-                        <p>Copyright © 2024 GreenTeaPie Co., Ltd. All Rights Reserved.
-
-                    </div>
-                </div>
-            </div>
+<footer class="site-footer" th:fragment="footer">
+    <div class="container">
+        <div>
+            <span class="brand__name">Find My Dog</span>
+            <p>잃어버린 강아지를 이웃과 함께 찾는 제보 게시판이에요. 보호소 입양 공고는 국가동물보호정보시스템의 공개 정보를 보여 줍니다.</p>
         </div>
-    </footer>
-
-</th:block>
+        <nav aria-label="바닥글 메뉴">
+            <a href="/guide">찾는 방법</a>
+            <a href="/about">만든 이유</a>
+            <a href="https://www.animal.go.kr" rel="noopener" target="_blank">국가동물보호정보시스템</a>
+            <a href="https://github.com/GreenteaPIE/findmydog" rel="noopener" target="_blank">GitHub</a>
+            <a href="https://greenteapie.github.io" rel="noopener" target="_blank">개발 블로그</a>
+        </nav>
+    </div>
+</footer>

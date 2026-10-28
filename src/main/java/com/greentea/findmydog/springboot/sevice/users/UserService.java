@@ -1,45 +1,41 @@
 package com.greentea.findmydog.springboot.sevice.users;
 
-import com.greentea.findmydog.springboot.domain.posts.Posts;
-import com.greentea.findmydog.springboot.domain.posts.PostsRepository;
 import com.greentea.findmydog.springboot.domain.user.UserRepository;
 import com.greentea.findmydog.springboot.domain.user.Users;
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final SocialUnlinkService socialUnlinkService;
     private final PostsService postsService;
-    private final PostsRepository postsRepository;
 
     @Transactional
     public void deleteUser(Long userId, String registrationId, String accessToken) {
         Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("No user found with id: " + userId));
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없어요: " + userId));
 
-        // 소셜 연동 해제
-        if ("google".equals(registrationId)) {
-            socialUnlinkService.unlinkGoogle(accessToken);
-        } else if ("kakao".equals(registrationId)) {
-            socialUnlinkService.unlinkKakao(accessToken);
-        } else if ("naver".equals(registrationId)) {
-            socialUnlinkService.unlinkNaver(accessToken);
+        // 소셜 연결 해제는 토큰이 만료됐을 수도 있으니, 실패해도 탈퇴는 계속 진행한다
+        try {
+            if (accessToken != null) {
+                switch (String.valueOf(registrationId)) {
+                    case "google" -> socialUnlinkService.unlinkGoogle(accessToken);
+                    case "kakao" -> socialUnlinkService.unlinkKakao(accessToken);
+                    case "naver" -> socialUnlinkService.unlinkNaver(accessToken);
+                    default -> log.info("연결 해제를 지원하지 않는 로그인: {}", registrationId);
+                }
+            }
+        } catch (RuntimeException e) {
+            log.warn("소셜 연결 해제 실패 ({}): {}", registrationId, e.getMessage());
         }
 
-        // 게시글 삭제
-        List<Posts> userPosts = postsRepository.findByUser(user);
-        for (Posts post : userPosts) {
-            postsService.delete(post.getId());
-        }
-
-        // 사용자 삭제
+        postsService.deleteAllByUser(user);
         userRepository.delete(user);
     }
 }

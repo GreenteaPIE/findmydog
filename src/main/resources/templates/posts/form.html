@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+<head><title th:text="${post} ? '제보 고치기' : '제보하기'">제보하기</title></head>
+<body>
+<main layout:fragment="content" class="container" th:with="c=${post != null} ? ${post.content} : null">
+    <div class="page-head">
+        <div>
+            <h1 th:text="${post} ? '제보 고치기' : '제보하기'">제보하기</h1>
+            <p>별표(<span class="req">*</span>)가 있는 칸은 꼭 채워 주세요. 연락처는 로그인한 사람에게만 보여요.</p>
+        </div>
+    </div>
+
+    <form class="form-layout" id="post-form" novalidate
+          th:data-mode="${post} ? 'edit' : 'create'"
+          th:data-id="${post?.id}"
+          th:data-max-images="${maxImages}">
+        <nav class="form-toc" aria-label="입력 순서">
+            <a href="#sec-kind">무엇을 올리나요</a>
+            <a href="#sec-place">언제, 어디서</a>
+            <a href="#sec-dog">강아지 정보</a>
+            <a href="#sec-photo">사진</a>
+            <a href="#sec-contact">연락처</a>
+        </nav>
+        <div>
+            <div class="form-alert" id="form-alert" role="alert" hidden></div>
+
+            <section class="form-card" id="sec-kind">
+                <h2>무엇을 올리나요</h2>
+                <div class="kind-picker" role="radiogroup" aria-label="제보 종류">
+                    <label><input type="radio" name="kind" value="분실" th:checked="${kind == '분실'}"><strong style="color:var(--lost)">찾습니다</strong><span>우리 강아지를 잃어버렸어요</span></label>
+                    <label><input type="radio" name="kind" value="발견" th:checked="${kind == '발견'}"><strong style="color:var(--found)">보호하고 있어요</strong><span>길 잃은 강아지를 보거나 데리고 있어요</span></label>
+                </div>
+                <div class="field">
+                    <label for="title">제목<span class="req">*</span></label>
+                    <input class="input" id="title" name="title" maxlength="100" required th:value="${post?.title}" placeholder="예) 망원동에서 흰색 말티즈를 잃어버렸어요">
+                </div>
+            </section>
+
+            <section class="form-card" id="sec-place">
+                <h2>언제, 어디서<small>지도를 눌러 잃어버리거나 발견한 곳을 정확히 찍어 주세요.</small></h2>
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="lostDate">일시<span class="req">*</span></label>
+                        <input class="input" type="datetime-local" id="lostDate" name="lostDate" required
+                               th:value="${c != null} ? ${#temporals.format(c.lostDate, 'yyyy-MM-dd''T''HH:mm')} : ''">
+                    </div>
+                    <div class="field">
+                        <label for="landmark">근처 건물이나 장소</label>
+                        <input class="input" id="landmark" name="landmark" maxlength="100" th:value="${c?.landmark}" placeholder="예) 망원시장 입구">
+                    </div>
+                </div>
+                <div class="map-picker">
+                    <div class="map-picker__search">
+                        <label class="visually-hidden" for="place-q">장소 검색</label>
+                        <input class="input" id="place-q" type="search" placeholder="동네, 공원, 건물 이름으로 찾기">
+                        <button class="btn btn--outline" type="button" id="place-search">찾기</button>
+                        <button class="btn btn--ghost" type="button" id="my-location">내 위치</button>
+                    </div>
+                    <ul class="place-results" id="place-results" hidden></ul>
+                    <div class="map-box" id="pick-map"><div class="map-fallback">지도를 불러오는 중이에요.</div></div>
+                    <p class="map-picked" id="picked">
+                        <th:block th:if="${c}">선택한 곳: <b th:text="${c.address ?: '지도에 표시된 곳'}"></b></th:block>
+                        <th:block th:unless="${c}">아직 위치를 고르지 않았어요.</th:block>
+                    </p>
+                    <p class="error" data-error-for="latitude" hidden></p>
+                    <input type="hidden" id="latitude" name="latitude" th:value="${c?.latitude}">
+                    <input type="hidden" id="longitude" name="longitude" th:value="${c?.longitude}">
+                    <input type="hidden" id="address" name="address" th:value="${c?.address}">
+                </div>
+            </section>
+
+            <section class="form-card" id="sec-dog">
+                <h2>강아지 정보</h2>
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="breed">품종<span class="req">*</span></label>
+                        <input class="input" id="breed" name="breed" maxlength="50" required th:value="${c?.breed}" placeholder="예) 말티즈, 모르면 믹스견" list="breed-list">
+                        <datalist id="breed-list"><option>믹스견</option><option>말티즈</option><option>푸들</option><option>포메라니안</option><option>시츄</option><option>비숑 프리제</option><option>진돗개</option><option>치와와</option><option>요크셔 테리어</option><option>웰시 코기</option><option>골든 리트리버</option><option>시베리안 허스키</option></datalist>
+                    </div>
+                    <div class="field">
+                        <label for="color">색상<span class="req">*</span></label>
+                        <input class="input" id="color" name="color" maxlength="30" required th:value="${c?.color}" placeholder="예) 흰색, 갈색 얼룩">
+                    </div>
+                    <div class="field">
+                        <label for="pname">이름</label>
+                        <input class="input" id="pname" name="pname" maxlength="30" th:value="${c?.pname}" placeholder="부르면 반응하는 이름">
+                    </div>
+                    <div class="field">
+                        <label for="age">나이 (살)</label>
+                        <input class="input" type="number" id="age" name="age" min="0" max="30" inputmode="numeric" th:value="${c?.age}" placeholder="모르면 비워 두세요">
+                    </div>
+                </div>
+                <div class="field">
+                    <span class="label">성별</span>
+                    <div class="chips" role="radiogroup" aria-label="성별">
+                        <label><input type="radio" name="gender" value="암컷" th:checked="${c?.gender == '암컷'}"><span>암컷</span></label>
+                        <label><input type="radio" name="gender" value="수컷" th:checked="${c?.gender == '수컷'}"><span>수컷</span></label>
+                        <label><input type="radio" name="gender" value="모름" th:checked="${c == null or c.gender == null or c.gender == '모름'}"><span>모름</span></label>
+                    </div>
+                </div>
+                <div class="field">
+                    <span class="label">내장칩</span>
+                    <div class="chips" role="radiogroup" aria-label="내장칩">
+                        <label><input type="radio" name="hasMicrochip" value="true" th:checked="${c?.hasMicrochip}"><span>있어요</span></label>
+                        <label><input type="radio" name="hasMicrochip" value="false" th:checked="${c == null or !c.hasMicrochip}"><span>없거나 몰라요</span></label>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="features">특징</label>
+                    <textarea class="textarea" id="features" name="features" maxlength="1000" th:text="${c?.features}" placeholder="옷, 목줄, 겁이 많은지, 다친 곳 같은 알아보기 쉬운 특징을 적어 주세요"></textarea>
+                </div>
+            </section>
+
+            <section class="form-card" id="sec-photo">
+                <h2>사진<span class="req">*</span><small th:text="|얼굴과 몸 전체가 잘 보이는 사진을 ${maxImages}장까지 올려 주세요. 첫 번째 사진이 대표 사진이 돼요.|"></small></h2>
+                <div class="uploader">
+                    <label class="dropzone" for="images" id="dropzone">
+                        <strong th:text="${post} ? '새 사진으로 바꾸기' : '사진 고르기'">사진 고르기</strong>
+                        <span>JPG, PNG 한 장에 10MB까지. 끌어다 놓아도 돼요.</span>
+                    </label>
+                    <input class="visually-hidden" type="file" id="images" name="images" accept="image/jpeg,image/png" multiple>
+                    <div class="thumbs" id="thumbs">
+                        <figure th:each="image, s : ${post?.images}" data-existing>
+                            <img th:src="@{/images/{n}(n=${image.storedFileName})}" alt="">
+                            <figcaption th:if="${s.first}">대표</figcaption>
+                        </figure>
+                    </div>
+                    <p class="hint" th:if="${post}">새 사진을 고르면 지금 사진은 모두 바뀌어요.</p>
+                    <p class="error" data-error-for="images" hidden></p>
+                </div>
+            </section>
+
+            <section class="form-card" id="sec-contact">
+                <h2>연락처<small>제보를 본 이웃이 연락할 번호예요.</small></h2>
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="reporterName">이름<span class="req">*</span></label>
+                        <input class="input" id="reporterName" name="reporterName" maxlength="30" required th:value="${c?.reporterName} ?: ${loginUser?.name}">
+                    </div>
+                    <div class="field">
+                        <label for="contact">전화번호<span class="req">*</span></label>
+                        <input class="input" type="tel" id="contact" name="contact" required inputmode="tel" th:value="${c?.contact}" placeholder="010-1234-5678">
+                    </div>
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <a class="btn btn--ghost" th:href="${post} ? @{/posts/{id}(id=${post.id})} : @{/posts}">취소</a>
+                <button class="btn btn--primary btn--lg" type="submit" id="submit" th:text="${post} ? '고친 내용 저장하기' : '제보 올리기'">제보 올리기</button>
+            </div>
+        </div>
+    </form>
+</main>
+<th:block layout:fragment="scripts">
+    <script th:replace="~{fragments/kakao :: sdk}"></script>
+    <script th:src="@{/js/post-form.js}"></script>
+</th:block>
+</body>
+</html>

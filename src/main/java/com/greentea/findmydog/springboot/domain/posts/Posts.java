@@ -15,7 +15,13 @@ import java.util.List;
 @Entity
 public class Posts extends BaseTimeEntity {
 
+    public static final String KIND_LOST = "분실";
+    public static final String KIND_FOUND = "발견";
+    public static final String STATUS_LOOKING = "L";  // 찾고 있어요
+    public static final String STATUS_REUNITED = "F"; // 가족을 찾았어요
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
     private List<Image> images = new ArrayList<>();
 
     @Id
@@ -30,7 +36,7 @@ public class Posts extends BaseTimeEntity {
 
     private String author;
 
-    private String status = "L";
+    private String status = STATUS_LOOKING;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "content_id")
@@ -47,12 +53,27 @@ public class Posts extends BaseTimeEntity {
         this.content = content;
         this.author = author;
         this.user = user;
-        this.status="L"; // 상태 유무 기본설정 Lost / Find
-
+        this.status = STATUS_LOOKING;
     }
 
-    public void update(String title) {
+    public void update(String kind, String title) {
+        this.kind = kind;
         this.title = title;
+    }
+
+    public void changeStatus(String status) {
+        if (!STATUS_LOOKING.equals(status) && !STATUS_REUNITED.equals(status)) {
+            throw new IllegalArgumentException("알 수 없는 상태입니다: " + status);
+        }
+        this.status = status;
+    }
+
+    public boolean isOwnedBy(Long userId) {
+        return user != null && userId != null && user.getId().equals(userId);
+    }
+
+    public boolean isReunited() {
+        return STATUS_REUNITED.equals(status);
     }
 
     public void addImage(Image image) {

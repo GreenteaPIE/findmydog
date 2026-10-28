@@ -1,84 +1,34 @@
-<!-- header.html -->
-<th:block th:fragment="header">
-    <title>Board List</title>
-    <meta charset="UTF-8">
-    <header class="header-area header-sticky">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <nav class="main-nav">
-                        <!-- ***** Logo Start ***** -->
-                        <a href="/" class="logo">
-                            <img src="/img/toplogo.png">
-                        </a>
-                        <!-- ***** Logo End ***** -->
-                        <!-- ***** Menu Start ***** -->
-                        <ul class="nav">
-                            <li class="scroll-to-section"><a href="/" class="active">Home</a></li>
-                            <li class="scroll-to-section"><a th:href="@{/find/map}" role="button">제보 지도</a></li>
-                            <li class="submenu">
-                                <a href="javascript:;">게시판</a>
-                                <ul>
-                                    <li class="scroll-to-section"><a th:href="@{/posts/notice}">공지 사항</a></li>
-                                    <li class="scroll-to-section"><a th:href="@{/posts/paging(kind='분실')}" role="button">분실 제보</a></li>
-                                    <li class="scroll-to-section"><a th:href="@{/posts/paging(kind='발견')}" role="button">발견 제보</a></li>
-                                </ul>
-                            </li>
-                            <li class="scroll-to-section"><a th:href="@{/adoption}">입양 공고</a></li>
-                            <li class="scroll-to-section"><a th:href="@{/about}">About</a></li>
-                            <li class="scroll-to-section" th:unless="${userName}"><a role="button" th:href="@{/loginPage}">로그인</a></li>
-                            <li class="submenu" th:if="${userName}">
-                                <a href="javascript:;" id="userName" th:text="${userName + '님'}"></a>
-                                <ul>
-                                    <li><a th:href="@{/user/posts}">내가 쓴 글</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a href="/logout" role="button">로그아웃</a></li>
-                                    <li><a href="#" id="deleteAccount">회원 탈퇴</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <a class='menu-trigger'>
-                            <span>Menu</span>
-                        </a>
-                        <!-- ***** Menu End ***** -->
-                    </nav>
+<header class="site-header" th:fragment="header">
+    <div class="container">
+        <a class="brand" href="/" aria-label="Find My Dog 처음으로">
+            <span class="brand__mark"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="14" cy="24" rx="6" ry="8"/><ellipse cx="25" cy="12" rx="6" ry="8"/><ellipse cx="39" cy="12" rx="6" ry="8"/><ellipse cx="50" cy="24" rx="6" ry="8"/><path d="M32 30c-9 0-17 10-17 18 0 5 4 8 9 8 4 0 5-2 8-2s4 2 8 2c5 0 9-3 9-8 0-8-8-18-17-18z"/></svg></span>
+            <span class="brand__name">Find My Dog</span>
+        </a>
+        <nav class="nav" id="site-nav" aria-label="주요 메뉴">
+            <a href="/posts" th:aria-current="${#strings.startsWith(currentPath, '/posts') and currentPath != '/posts/new'} ? 'page' : null">제보 목록</a>
+            <a href="/map" th:aria-current="${currentPath == '/map'} ? 'page' : null">제보 지도</a>
+            <a href="/adoption" th:aria-current="${currentPath == '/adoption'} ? 'page' : null">입양 공고</a>
+            <a href="/guide" th:aria-current="${currentPath == '/guide'} ? 'page' : null">찾는 방법</a>
+            <a th:unless="${loginUser}" href="/login" class="nav__login" th:aria-current="${currentPath == '/login'} ? 'page' : null">로그인</a>
+        </nav>
+        <div class="header-actions">
+            <a href="/posts/new" class="btn btn--primary btn--sm btn--report">제보하기</a>
+            <div class="user-menu" th:if="${loginUser}">
+                <button type="button" aria-haspopup="true" aria-expanded="false" aria-controls="user-menu-panel">
+                    <img th:if="${loginUser.picture}" th:src="${loginUser.picture}" alt="" referrerpolicy="no-referrer">
+                    <span th:text="${loginUser.name}">이름</span>
+                </button>
+                <div class="user-menu__panel" id="user-menu-panel" hidden>
+                    <a href="/my/posts">내가 쓴 제보</a>
+                    <a href="/posts/new">제보하기</a>
+                    <hr>
+                    <form th:action="@{/logout}" method="post"><button type="submit">로그아웃</button></form>
+                    <button type="button" class="danger" data-delete-account>회원 탈퇴</button>
                 </div>
             </div>
+            <button class="menu-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="메뉴 열기">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
         </div>
-        <!-- Global Init -->
-        <script src="/js/custom.js"></script>
-    </header>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var userNameElement = document.getElementById('userName');
-            if (userNameElement) {
-                var userName = userNameElement.textContent.slice(0, -1); // Remove the "님"
-                if (userName.length > 4) {
-                    userNameElement.textContent = userName.slice(0, 3) + '.. 님';
-                }
-            }
-
-            document.getElementById('deleteAccount').addEventListener('click', function() {
-                if (confirm('정말로 회원 탈퇴를 하시겠습니까?')) {
-                    fetch('/api/v1/user/delete', {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    }).then(response => {
-                        if (response.ok) {
-                            alert('회원 탈퇴가 완료되었습니다.');
-                            window.location.href = '/';
-                        } else {
-                            alert('회원 탈퇴에 실패했습니다.');
-                        }
-                    }).catch(error => {
-                        alert('오류가 발생했습니다.');
-                        console.error('Error:', error);
-                    });
-                }
-            });
-        });
-    </script>
-</th:block>
+    </div>
+</header>

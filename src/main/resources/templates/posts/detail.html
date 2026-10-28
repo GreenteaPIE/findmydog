@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+<head>
+    <title th:text="${post.title}">제보</title>
+    <th:block layout:fragment="head">
+        <meta property="og:title" th:content="${post.title}">
+        <meta property="og:description" th:content="|${post.kind == '발견' ? '발견' : '실종'} 제보: ${post.content.breed}, ${post.content.address ?: post.content.landmark ?: ''}|">
+        <meta property="og:image" th:if="${post.thumbnail}" th:content="${siteUrl} + '/images/' + ${post.thumbnail}">
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content" class="container"
+      th:with="kindLabel=${post.kind == '발견'} ? '발견' : '실종', head=${post.reunited} ? '가족을 찾았어요' : (${post.kind == '발견'} ? '보호하고 있어요' : '찾습니다')">
+    <div class="detail">
+        <div>
+            <div class="gallery" data-gallery>
+                <div class="gallery__main" th:if="${!#lists.isEmpty(post.images)}">
+                    <img th:src="@{/images/{n}(n=${post.images[0].storedFileName})}" th:alt="|${post.content.breed} 사진 1|" data-gallery-main>
+                    <span class="stamp" th:if="${post.reunited}">찾았어요</span>
+                </div>
+                <div class="gallery__thumbs" th:if="${#lists.size(post.images) > 1}">
+                    <button type="button" th:each="image, s : ${post.images}" th:aria-current="${s.first}" th:aria-label="|사진 ${s.count} 보기|"
+                            th:data-src="@{/images/{n}(n=${image.storedFileName})}">
+                        <img th:src="@{/images/{n}(n=${image.storedFileName})}" alt="">
+                    </button>
+                </div>
+            </div>
+
+            <section class="detail-section" th:if="${post.content.features}">
+                <h2>특징</h2>
+                <p class="features" style="white-space:pre-line" th:text="${post.content.features}"></p>
+            </section>
+
+            <section class="detail-section">
+                <h2 th:text="|${kindLabel}된 곳|">실종된 곳</h2>
+                <div class="map-box" id="detail-map" th:data-lat="${post.content.latitude}" th:data-lng="${post.content.longitude}" th:data-kind="${post.kind}">
+                    <div class="map-fallback">지도를 불러오는 중이에요.</div>
+                </div>
+                <p class="map-picked" style="margin-top:8px">
+                    <b th:text="${post.content.address ?: '지도에 표시된 곳'}"></b>
+                    <th:block th:if="${post.content.landmark}" th:text="| (근처: ${post.content.landmark})|"></th:block>
+                </p>
+            </section>
+        </div>
+
+        <aside>
+            <article class="poster" th:classappend="${post.reunited} ? 'poster--home' : (${post.kind == '발견'} ? 'poster--found' : '')">
+                <div class="poster__head" th:text="${head}">찾습니다</div>
+                <h1 class="poster__title" th:text="${post.title}">제목</h1>
+                <p class="poster__meta">
+                    <span th:text="${post.author}">작성자</span>님이
+                    <time th:datetime="${post.createdDate}" th:text="${#temporals.format(post.createdDate, 'yyyy년 M월 d일')}"></time>에 올림
+                </p>
+                <dl class="facts">
+                    <dt th:text="|${kindLabel} 일시|">실종 일시</dt>
+                    <dd th:text="${#temporals.format(post.content.lostDate, 'yyyy년 M월 d일 a h시 m분')}"></dd>
+                    <dt>품종</dt><dd th:text="${post.content.breed}"></dd>
+                    <th:block th:if="${post.content.pname}"><dt>이름</dt><dd th:text="${post.content.pname}"></dd></th:block>
+                    <dt>색상</dt><dd th:text="${post.content.color}"></dd>
+                    <dt>성별</dt><dd th:text="${post.content.gender ?: '모름'}"></dd>
+                    <dt>나이</dt><dd th:text="${post.content.age != null} ? |${post.content.age}살| : '모름'"></dd>
+                    <dt>내장칩</dt><dd th:text="${post.content.hasMicrochip} ? '있어요' : '없거나 몰라요'"></dd>
+                    <dt>신고자</dt><dd th:text="${post.content.reporterName}"></dd>
+                </dl>
+
+                <th:block th:if="${!post.reunited}">
+                    <div class="tear-tabs" th:if="${loginUser}" aria-label="연락처">
+                        <a th:each="i : ${#numbers.sequence(1, 7)}" th:href="|tel:${post.content.contact}|" th:text="${post.content.contact}"></a>
+                    </div>
+                    <div class="contact-box" th:if="${loginUser}">
+                        <a class="btn btn--primary" th:href="|tel:${post.content.contact}|" th:text="|${post.content.contact} 전화하기|"></a>
+                        <p class="contact-note">비슷한 아이를 봤다면 본 시간과 장소를 함께 알려 주세요.</p>
+                    </div>
+                    <div class="tear-tabs tear-tabs--locked" th:unless="${loginUser}" aria-hidden="true">
+                        <span th:each="i : ${#numbers.sequence(1, 7)}">010-••••-••••</span>
+                    </div>
+                    <div class="contact-box" th:unless="${loginUser}">
+                        <a class="btn btn--ink" th:href="@{/login}">로그인하고 연락처 보기</a>
+                        <p class="contact-note">연락처가 무분별하게 수집되지 않도록 로그인한 사람에게만 보여 줘요.</p>
+                    </div>
+                </th:block>
+                <div class="contact-box" th:if="${post.reunited}">
+                    <p class="contact-note">가족을 찾은 제보라 연락처를 숨겼어요.</p>
+                </div>
+            </article>
+
+            <div class="share-row">
+                <button type="button" class="btn btn--outline btn--sm" data-share th:data-title="${post.title}">링크 공유하기</button>
+                <a class="btn btn--ghost btn--sm" href="/posts">목록으로</a>
+            </div>
+
+            <section class="owner-tools" th:if="${isOwner}" aria-label="내 제보 관리">
+                <h2>내 제보 관리</h2>
+                <div class="row">
+                    <button type="button" class="btn btn--primary btn--sm" th:if="${!post.reunited}" th:data-status-url="@{/api/v1/posts/{id}/status(id=${post.id})}" data-status="F">가족을 찾았어요</button>
+                    <button type="button" class="btn btn--outline btn--sm" th:if="${post.reunited}" th:data-status-url="@{/api/v1/posts/{id}/status(id=${post.id})}" data-status="L">다시 찾는 중으로</button>
+                    <a class="btn btn--outline btn--sm" th:href="@{/posts/{id}/edit(id=${post.id})}">고치기</a>
+                    <button type="button" class="btn btn--danger btn--sm" th:data-delete-url="@{/api/v1/posts/{id}(id=${post.id})}">지우기</button>
+                </div>
+            </section>
+        </aside>
+    </div>
+</main>
+<th:block layout:fragment="scripts">
+    <script th:replace="~{fragments/kakao :: sdk}"></script>
+    <script th:src="@{/js/post-detail.js}"></script>
+</th:block>
+</body>
+</html>

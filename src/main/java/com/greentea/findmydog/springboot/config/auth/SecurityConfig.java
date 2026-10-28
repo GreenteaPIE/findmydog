@@ -4,55 +4,67 @@ import com.greentea.findmydog.springboot.domain.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig{
+public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
 
+    private static final PathPatternRequestMatcher.Builder PATH = PathPatternRequestMatcher.withDefaults();
+
+    // 로그인 없이 볼 수 있는 화면과 API (읽기 전용)
+    private static final String[] PUBLIC_GET = {
+            "/", "/posts", "/posts/{id:\\d+}", "/map", "/adoption", "/guide", "/about", "/login",
+            "/images/**", "/css/**", "/js/**", "/img/**", "/favicon.ico", "/favicon.svg", "/robots.txt",
+            "/api/map/**", "/api/adoption/**", "/actuator/health", "/error",
+            "/demo/login", // demo 프로필에서만 있는 주소
+            // 예전 주소 (새 주소로 돌려보낸다)
+            "/posts/paging", "/posts/detail/**", "/find/map", "/posts/notice", "/loginPage"
+    };
+
+    private static RequestMatcher get(String... patterns) {
+        return new OrRequestMatcher(Arrays.stream(patterns).map(p -> (RequestMatcher) PATH.matcher(HttpMethod.GET, p)).toList());
+    }
+
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
+        RequestMatcher h2Console = PATH.matcher("/h2-console/**");
+        RequestMatcher api = PATH.matcher("/api/**");
 
-                .headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+        http
+                // 화면은 <meta name="_csrf"> 의 토큰을 X-CSRF-TOKEN 헤더로 보낸다
+                .csrf(csrf -> csrf.ignoringRequestMatchers(h2Console))
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                new AntPathRequestMatcher("/"),
-                                new AntPathRequestMatcher("/css/**"),
-                                new AntPathRequestMatcher("/images/**"),
-                                new AntPathRequestMatcher("/img/**"),
-                                new AntPathRequestMatcher("/js/**"),
-                                new AntPathRequestMatcher("/h2-console/**"),
-                                new AntPathRequestMatcher("/profile"),
-                                new AntPathRequestMatcher("/posts/paging**"),
-                                new AntPathRequestMatcher("/posts/detail/**"),
-                                new AntPathRequestMatcher("/loginPage"),
-                                new AntPathRequestMatcher("/find/map"),
-                                new AntPathRequestMatcher("/about"),
-                                new AntPathRequestMatcher("/adoption"),
-                                new AntPathRequestMatcher("/adoption/*"),
-                                new AntPathRequestMatcher("/posts/notice")
-                        ).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/**")).hasRole(Role.USER.name())
+                        .requestMatchers(get(PUBLIC_GET)).permitAll()
+                        .requestMatchers(h2Console).permitAll()
+                        .requestMatchers(PATH.matcher("/api/v1/**")).hasRole(Role.USER.name())
                         .anyRequest().authenticated())
 
-                .logout((logout) -> logout
-                        .logoutSuccessUrl("/"))
+                // API 는 로그인 화면으로 보내지 않고 401 을 돌려준다
+                .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), api))
 
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-                                .userService(customOAuth2UserService))
-                        .defaultSuccessUrl("/", true));
+                .logout(logout -> logout.logoutSuccessUrl("/"))
+
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(customOAuth2UserService))
+                        // 로그인 전에 보려던 화면(예: 글쓰기)으로 돌아간다
+                        .defaultSuccessUrl("/"));
 
         return http.build();
     }

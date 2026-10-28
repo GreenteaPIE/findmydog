@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /api/
+Disallow: /my/
+Disallow: /posts/new
