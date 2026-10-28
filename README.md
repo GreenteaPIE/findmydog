@@ -33,11 +33,20 @@
 
 ## 로컬에서 실행하기
 
-키 없이 예시 데이터로 둘러보기 (데모 계정 로그인 포함):
+**Java 17 이상**이 필요합니다. 키 없이 예시 데이터로 둘러보기 (데모 계정 로그인 포함):
 
 ```bash
-SPRING_PROFILES_ACTIVE=demo ./gradlew bootRun
+./gradlew bootRun --args='--spring.profiles.active=demo'
 ```
+
+Windows 명령 프롬프트:
+
+```bat
+gradlew.bat bootRun --args="--spring.profiles.active=demo"
+```
+
+> `Find My Dog needs Java 17 or newer` 가 나오면 Gradle 이 예전 Java 로 실행된 것입니다.
+> JDK 17 을 설치하고 `JAVA_HOME` 을 그 폴더로 바꾼 뒤 `gradlew --stop` 으로 예전 Gradle 데몬을 끄고 다시 실행하세요.
 
 http://localhost:8080 접속 후 로그인 화면의 **데모 계정으로 둘러보기**를 누르면 글쓰기·수정·삭제, 목격 제보, 신고 관리(/admin)까지 해 볼 수 있어요. (`demo` 프로필에서만 켜집니다)
 

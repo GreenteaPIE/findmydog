@@ -1,1 +1,13 @@
+// Spring Boot 3.5 needs Java 17+ to run Gradle itself. Fail early with a readable message
+// instead of the long "No matching variant of spring-boot-gradle-plugin" error.
+if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+    throw new GradleException("""
+        |Find My Dog needs Java 17 or newer, but Gradle is running on Java ${JavaVersion.current()}
+        |  (java.home = ${System.getProperty('java.home')})
+        |Install JDK 17 (https://adoptium.net) and point JAVA_HOME to it, then run:
+        |  gradlew --stop
+        |  gradlew bootRun --args="--spring.profiles.active=demo"
+        |""".stripMargin())
+}
+
 rootProject.name = 'findmydog'
