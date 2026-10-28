@@ -21,6 +21,7 @@
                 <div class="user-menu__panel" id="user-menu-panel" hidden>
                     <a href="/my/posts">내가 쓴 제보</a>
                     <a href="/posts/new">제보하기</a>
+                    <a href="/admin" th:if="${loginUser.admin}">신고 관리</a>
                     <hr>
                     <form th:action="@{/logout}" method="post"><button type="submit">로그아웃</button></form>
                     <button type="button" class="danger" data-delete-account>회원 탈퇴</button>

@@ -5,6 +5,7 @@ import com.greentea.findmydog.springboot.config.auth.dto.SessionUser;
 import com.greentea.findmydog.springboot.domain.posts.Posts;
 import com.greentea.findmydog.springboot.sevice.adoption.AdoptionService;
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
+import com.greentea.findmydog.springboot.sevice.posts.SightingService;
 import com.greentea.findmydog.springboot.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import java.util.List;
 public class IndexController {
 
     private final PostsService postsService;
+    private final SightingService sightingService;
     private final AdoptionService adoptionService;
 
     // 메인: 최근 제보와 현황
@@ -41,12 +43,17 @@ public class IndexController {
     public String list(@RequestParam(required = false) String kind,
                        @RequestParam(required = false) String status,
                        @RequestParam(required = false) String q,
+                       @RequestParam(required = false) Double lat,
+                       @RequestParam(required = false) Double lng,
                        @RequestParam(defaultValue = "1") int page, Model model) {
-        Page<PostsResponseDto> posts = postsService.search(kind, status, q, page);
+        Page<PostsResponseDto> posts = postsService.search(kind, status, q, lat, lng, page);
         model.addAttribute("posts", posts);
         model.addAttribute("kind", kind);
         model.addAttribute("status", status);
         model.addAttribute("q", q);
+        model.addAttribute("lat", lat);
+        model.addAttribute("lng", lng);
+        model.addAttribute("nearKm", (int) PostsService.NEAR_KM);
         model.addAttribute("page", Math.max(page, 1));
         // 페이지 번호는 지금 페이지 앞뒤로 2개씩
         model.addAttribute("startPage", Math.max(1, page - 2));
@@ -55,13 +62,28 @@ public class IndexController {
         return "posts/list";
     }
 
-    // 제보 상세
+    // 제보 상세: 목격 제보와 비슷한 제보를 함께 보여 준다
     @GetMapping("/posts/{id:\\d+}")
     public String detail(@PathVariable Long id, @LoginUser SessionUser user, Model model) {
-        PostsResponseDto post = postsService.findById(id);
+        Long viewerId = user == null ? null : user.getId();
+        boolean admin = user != null && user.isAdmin();
+        PostsResponseDto post = postsService.findVisible(id, viewerId, admin);
         model.addAttribute("post", post);
-        model.addAttribute("isOwner", user != null && post.getUser_id() != null && post.getUser_id() == user.getId());
+        model.addAttribute("isOwner", viewerId != null && viewerId.equals(post.getUser_id()));
+        model.addAttribute("isAdmin", admin);
+        model.addAttribute("sightings", sightingService.list(id, viewerId, admin));
+        model.addAttribute("similar", post.isReunited() ? List.of() : postsService.findSimilar(id, 4));
         return "posts/detail";
+    }
+
+    // 인쇄용 A4 전단지. 연락처는 글쓴이가 볼 때만 들어간다
+    @GetMapping("/posts/{id:\\d+}/flyer")
+    public String flyer(@PathVariable Long id, @LoginUser SessionUser user, Model model) {
+        Long viewerId = user == null ? null : user.getId();
+        PostsResponseDto post = postsService.findVisible(id, viewerId, user != null && user.isAdmin());
+        model.addAttribute("post", post);
+        model.addAttribute("isOwner", viewerId != null && viewerId.equals(post.getUser_id()));
+        return "posts/flyer";
     }
 
     // 제보 쓰기

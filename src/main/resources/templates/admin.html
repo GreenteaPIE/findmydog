@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+<head><title>신고 관리</title></head>
+<body>
+<main layout:fragment="content" class="container">
+    <div class="page-head">
+        <div>
+            <h1>신고 관리</h1>
+            <p>신고가 3건 쌓인 글은 자동으로 숨겨져 있어요. 문제없으면 다시 보이게 하고, 문제가 있으면 지워 주세요.</p>
+        </div>
+    </div>
+    <div class="empty" th:if="${#lists.isEmpty(reported)}">
+        <img src="/img/dog-bandana.png" alt="">
+        <strong>신고된 제보가 없어요</strong>
+    </div>
+    <div class="admin-list" th:unless="${#lists.isEmpty(reported)}">
+        <article class="admin-row" th:each="r : ${reported}" th:with="p=${r.post}">
+            <img th:if="${p.thumbnail}" th:src="@{/images/{n}(n=${p.thumbnail})}" alt="">
+            <div>
+                <p>
+                    <span class="badge" th:classappend="${p.hidden} ? 'badge--lost' : ''" th:text="${p.hidden} ? '숨김' : '보이는 중'"></span>
+                    <span class="badge" th:text="|신고 ${r.reportCount}건|"></span>
+                </p>
+                <h2><a th:href="@{/posts/{id}(id=${p.id})}" th:text="${p.title}"></a></h2>
+                <p class="hint" th:text="|${p.author}님, ${#temporals.format(p.createdDate, 'M월 d일')} 작성|"></p>
+                <ul><li th:each="reason : ${r.reasons}" th:text="${reason}"></li></ul>
+            </div>
+            <div class="admin-row__actions">
+                <button type="button" class="btn btn--outline btn--sm" th:data-admin-url="@{/api/admin/posts/{id}/dismiss(id=${p.id})}">문제없음</button>
+                <button type="button" class="btn btn--outline btn--sm" th:unless="${p.hidden}" th:data-admin-url="@{/api/admin/posts/{id}/hide(id=${p.id})}">숨기기</button>
+                <button type="button" class="btn btn--danger btn--sm" th:data-admin-delete="@{/api/admin/posts/{id}(id=${p.id})}">지우기</button>
+            </div>
+        </article>
+    </div>
+    <div style="height:64px"></div>
+</main>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/admin.js}"></script>
+</th:block>
+</body>
+</html>

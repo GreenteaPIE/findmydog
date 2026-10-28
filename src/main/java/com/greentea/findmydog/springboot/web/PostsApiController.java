@@ -3,6 +3,8 @@ package com.greentea.findmydog.springboot.web;
 import com.greentea.findmydog.springboot.config.auth.LoginUser;
 import com.greentea.findmydog.springboot.config.auth.dto.SessionUser;
 import com.greentea.findmydog.springboot.sevice.posts.PostsService;
+import com.greentea.findmydog.springboot.sevice.posts.ReportService;
+import com.greentea.findmydog.springboot.sevice.posts.SightingService;
 import com.greentea.findmydog.springboot.web.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ import java.util.Map;
 public class PostsApiController {
 
     private final PostsService postsService;
+    private final SightingService sightingService;
+    private final ReportService reportService;
 
     private static Long userId(SessionUser user) {
         if (user == null) throw new AccessDeniedException("로그인이 필요해요");
@@ -56,6 +60,27 @@ public class PostsApiController {
     @GetMapping("/api/v1/posts/{id}")
     public PostsResponseDto findById(@PathVariable Long id) {
         return postsService.findById(id);
+    }
+
+    // 목격 제보 남기기 (로그인한 누구나)
+    @PostMapping("/api/v1/posts/{id}/sightings")
+    public Map<String, Long> addSighting(@LoginUser SessionUser user, @PathVariable Long id,
+                                         @Valid @RequestBody SightingRequestDto request) {
+        return Map.of("id", sightingService.add(id, request, userId(user)));
+    }
+
+    // 목격 제보 지우기 (목격자 본인, 제보 글쓴이, 관리자)
+    @DeleteMapping("/api/v1/sightings/{id}")
+    public ResponseEntity<Void> deleteSighting(@LoginUser SessionUser user, @PathVariable Long id) {
+        sightingService.delete(id, userId(user), user.isAdmin());
+        return ResponseEntity.noContent().build();
+    }
+
+    // 신고. 3명이 신고하면 관리자가 볼 때까지 숨긴다
+    @PostMapping("/api/v1/posts/{id}/reports")
+    public Map<String, Boolean> report(@LoginUser SessionUser user, @PathVariable Long id,
+                                       @Valid @RequestBody ReportRequestDto request) {
+        return Map.of("hidden", reportService.report(id, request, userId(user)));
     }
 
     // 제보 지도의 핀 (누구나 볼 수 있고, 연락처는 빠져 있다)

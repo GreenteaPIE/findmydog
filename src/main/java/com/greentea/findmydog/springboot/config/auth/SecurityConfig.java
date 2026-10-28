@@ -27,8 +27,8 @@ public class SecurityConfig {
 
     // 로그인 없이 볼 수 있는 화면과 API (읽기 전용)
     private static final String[] PUBLIC_GET = {
-            "/", "/posts", "/posts/{id:\\d+}", "/map", "/adoption", "/guide", "/about", "/login",
-            "/images/**", "/css/**", "/js/**", "/img/**", "/favicon.ico", "/favicon.svg", "/robots.txt",
+            "/", "/posts", "/posts/{id:\\d+}", "/posts/{id:\\d+}/flyer", "/posts/{id:\\d+}/qr.svg", "/map", "/adoption", "/guide", "/about", "/login",
+            "/images/**", "/css/**", "/js/**", "/img/**", "/favicon.ico", "/favicon.svg", "/robots.txt", "/sitemap.xml",
             "/api/map/**", "/api/adoption/**", "/actuator/health", "/error",
             "/demo/login", // demo 프로필에서만 있는 주소
             // 예전 주소 (새 주소로 돌려보낸다)
@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(get(PUBLIC_GET)).permitAll()
                         .requestMatchers(h2Console).permitAll()
+                        .requestMatchers(PATH.matcher("/admin"), PATH.matcher("/api/admin/**")).hasRole(Role.ADMIN.name())
                         .requestMatchers(PATH.matcher("/api/v1/**")).hasRole(Role.USER.name())
                         .anyRequest().authenticated())
 

@@ -10,6 +10,23 @@ public final class PostsSpecs {
     private PostsSpecs() {
     }
 
+    public static Specification<Posts> visible() {
+        return (root, query, cb) -> cb.isFalse(root.get("hidden"));
+    }
+
+    /** (lat, lng) 에서 km 안쪽의 사각형. 정확한 거리는 Geo.distanceKm 으로 다시 거른다 */
+    public static Specification<Posts> near(Double lat, Double lng, double km) {
+        return (root, query, cb) -> {
+            if (lat == null || lng == null) return null;
+            double dLat = km / 111.0;
+            double dLng = km / (111.0 * Math.cos(Math.toRadians(lat)));
+            Join<Posts, Content> content = root.join("content");
+            return cb.and(
+                    cb.between(content.get("latitude"), lat - dLat, lat + dLat),
+                    cb.between(content.get("longitude"), lng - dLng, lng + dLng));
+        };
+    }
+
     public static Specification<Posts> kind(String kind) {
         return (root, query, cb) -> StringUtils.hasText(kind) ? cb.equal(root.get("kind"), kind) : null;
     }

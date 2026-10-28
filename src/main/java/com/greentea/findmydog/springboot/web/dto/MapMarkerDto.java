@@ -2,6 +2,7 @@ package com.greentea.findmydog.springboot.web.dto;
 
 import com.greentea.findmydog.springboot.domain.posts.Content;
 import com.greentea.findmydog.springboot.domain.posts.Posts;
+import com.greentea.findmydog.springboot.storage.ImageNames;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +12,7 @@ public record MapMarkerDto(Long id, String kind, boolean reunited, String title,
 
     public static MapMarkerDto from(Posts post) {
         Content c = post.getContent();
-        String thumbnail = post.getImages().isEmpty() ? null : "/images/" + post.getImages().get(0).getStoredFileName();
+        String thumbnail = post.getImages().isEmpty() ? null : "/images/" + ImageNames.thumbnailOf(post.getImages().get(0).getStoredFileName());
         return new MapMarkerDto(post.getId(), post.getKind(), post.isReunited(), post.getTitle(), c.getBreed(), c.getPname(),
                 c.getAddress(), c.getLatitude(), c.getLongitude(), thumbnail, c.getLostDate());
     }

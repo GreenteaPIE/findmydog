@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /** 게시글 이미지를 저장소에서 읽어 /images/{name} 으로 내준다. 이름이 바뀌지 않으므로 오래 캐시해도 된다. */
@@ -23,7 +24,12 @@ public class ImageController {
     @GetMapping("/images/{name}")
     public ResponseEntity<byte[]> image(@PathVariable String name) throws IOException {
         if (!ImageNames.isSafe(name)) return ResponseEntity.notFound().build();
-        return imageStorage.load(name)
+        Optional<byte[]> image = imageStorage.load(name);
+        // 작은 사진이 없는 예전 사진은 원본을 대신 준다
+        if (image.isEmpty() && name.contains("_t.")) {
+            image = imageStorage.load(name.replace("_t.", "."));
+        }
+        return image
                 .map(bytes -> ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(ImageNames.contentType(name)))
                         .cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).cachePublic())

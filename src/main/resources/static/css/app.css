@@ -427,3 +427,46 @@ ol.steps { margin: 0; padding: 0; }
 .site-footer a { color: #e3e7ee; text-decoration: none; }
 .site-footer a:hover { text-decoration: underline; }
 .site-footer p { margin-top: 10px; max-width: 46ch; }
+
+/* ---------- 목격 제보 ---------- */
+.sightings { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 10px; }
+.sightings li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-ui); padding: 14px 16px; scroll-margin-top: 88px; }
+.sightings li:target { border-color: var(--signal); box-shadow: 0 0 0 3px rgba(255, 210, 26, .35); }
+.sightings__no, .sighting-pin { width: 28px; height: 28px; border-radius: 50%; background: var(--signal); color: var(--ink); display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+.sighting-pin { border: 2px solid var(--ink); text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,.25); }
+.sightings__when { font-size: 15px; }
+.sightings__note { margin-top: 4px; color: #343c4b; white-space: pre-line; }
+.sightings__meta { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--ink-2); }
+.sightings__meta a { font-weight: 700; color: var(--ink); }
+.link-button { border: 0; background: none; padding: 0; color: var(--ink-3); font-size: 13px; text-decoration: underline; cursor: pointer; }
+.sighting-form > summary { list-style: none; display: inline-flex; }
+.sighting-form > summary::-webkit-details-marker { display: none; }
+.sighting-form[open] > summary { display: none; }
+.sighting-form form { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-ui); padding: 20px; display: grid; gap: 14px; }
+.sighting-form .hint { color: var(--ink-3); font-size: 13px; }
+
+/* ---------- 카드 위 거리·목격 표시 ---------- */
+.flyer__tag { position: absolute; left: 8px; bottom: 8px; background: rgba(27, 34, 48, .82); color: #fff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
+.flyer__sightings { justify-self: start; font-size: 12.5px; font-weight: 700; color: var(--ink); background: #fff3b8; padding: 2px 8px; border-radius: 999px; }
+
+/* ---------- 신고 ---------- */
+.report-dialog { border: 0; border-radius: var(--radius-ui); padding: 0; width: min(440px, calc(100% - 32px)); box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+.report-dialog::backdrop { background: rgba(15, 19, 27, .55); }
+.report-dialog form { padding: 24px; display: grid; gap: 14px; }
+.report-dialog h2 { font-size: 19px; }
+.report-dialog .hint { color: var(--ink-2); font-size: 14px; }
+
+/* ---------- 관리자 ---------- */
+.admin-list { display: grid; gap: 12px; }
+.admin-row { display: grid; grid-template-columns: 96px 1fr auto; gap: 16px; align-items: start; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-ui); padding: 16px; }
+.admin-row img { width: 96px; height: 96px; object-fit: cover; border-radius: 6px; }
+.admin-row h2 { font-size: 17px; margin: 6px 0 2px; }
+.admin-row p { display: flex; gap: 6px; flex-wrap: wrap; }
+.admin-row .hint { color: var(--ink-3); font-size: 13px; }
+.admin-row ul { margin: 8px 0 0; padding-left: 18px; font-size: 14px; color: #343c4b; }
+.admin-row__actions { display: grid; gap: 6px; }
+@media (max-width: 640px) {
+  .admin-row { grid-template-columns: 64px 1fr; }
+  .admin-row img { width: 64px; height: 64px; }
+  .admin-row__actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; }
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|전단지 - ${post.title}|">전단지</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap">
+    <style>
+        /* A4 한 장에 맞춘 인쇄용 전단지. 화면에서는 종이처럼 보여 준다 */
+        @page { size: A4; margin: 0; }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #e9edf1; font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; color: #111; word-break: keep-all; }
+        .toolbar { display: flex; gap: 8px; justify-content: center; padding: 16px; }
+        .toolbar button, .toolbar a { font: 700 15px/1 inherit; padding: 12px 18px; border-radius: 10px; border: 1px solid #c9d0d8; background: #fff; color: #111; text-decoration: none; cursor: pointer; }
+        .toolbar button { background: #ffd21a; border-color: #e9bd00; }
+        .sheet { width: 210mm; height: 297mm; margin: 0 auto 32px; background: #fff; padding: 14mm 14mm 0; display: flex; flex-direction: column; box-shadow: 0 10px 30px -10px rgba(0,0,0,.3); overflow: hidden; }
+        h1 { font-family: "Black Han Sans", sans-serif; font-weight: 400; font-size: 36mm; line-height: .95; text-align: center; margin: 0 0 3mm; color: #d0302a; letter-spacing: -.02em; }
+        .found h1 { color: #1f66c9; font-size: 26mm; }
+        .title { text-align: center; font-size: 6.4mm; font-weight: 800; margin: 0 0 4mm; }
+        .photo { height: 84mm; display: flex; gap: 3mm; }
+        .photo img { flex: 1; min-width: 0; height: 100%; object-fit: cover; border: .6mm solid #111; }
+        .info { display: grid; grid-template-columns: 1fr 34mm; gap: 6mm; margin-top: 4mm; flex: 1; min-height: 0; overflow: hidden; }
+        dl { display: grid; grid-template-columns: auto 1fr; gap: 2mm 5mm; margin: 0; font-size: 5.2mm; align-content: start; }
+        dt { font-weight: 800; }
+        dd { margin: 0; }
+        .features { font-size: 4.6mm; line-height: 1.5; border-top: .3mm solid #999; padding-top: 3mm; margin-top: 1mm; }
+        .qr { text-align: center; font-size: 3.2mm; font-weight: 700; }
+        .qr img { width: 34mm; height: 34mm; display: block; margin-bottom: 1.5mm; }
+        .call { flex: none; margin: 0; text-align: center; font-size: 8mm; font-weight: 900; padding: 2.5mm 0; border-top: .8mm solid #111; }
+        .tabs { display: grid; grid-template-columns: repeat(8, 1fr); border-top: .5mm dashed #111; height: 40mm; flex: none; }
+        .tabs span { writing-mode: vertical-rl; display: grid; place-items: center; font-size: 4.2mm; font-weight: 800; letter-spacing: .03em; }
+        .tabs span + span { border-left: .3mm dashed #111; }
+        .tabs.no-contact span { font-size: 3.6mm; }
+        @media print {
+            body { background: #fff; }
+            .toolbar { display: none; }
+            .sheet { margin: 0; box-shadow: none; }
+        }
+        @media screen and (max-width: 820px) {
+            .sheet { transform: scale(.45); transform-origin: top center; margin-bottom: -150mm; }
+        }
+    </style>
+</head>
+<body>
+<div class="toolbar">
+    <button type="button" onclick="print()">인쇄하기</button>
+    <a th:href="@{/posts/{id}(id=${post.id})}">제보로 돌아가기</a>
+</div>
+<article class="sheet" th:classappend="${post.kind == '발견'} ? 'found'"
+         th:with="c=${post.content}, label=${post.kind == '발견'} ? '발견' : '실종'">
+    <h1 th:text="${post.kind == '발견'} ? '주인을 찾습니다' : '찾습니다'">찾습니다</h1>
+    <p class="title" th:text="${post.title}">제목</p>
+    <div class="photo">
+        <img th:each="image, s : ${post.images}" th:if="${s.index < 2}" th:src="@{/images/{n}(n=${image.storedFileName})}" alt="">
+    </div>
+    <div class="info">
+        <div>
+        <dl>
+            <dt>품종</dt><dd th:text="${c.breed}"></dd>
+            <th:block th:if="${c.pname}"><dt>이름</dt><dd th:text="${c.pname}"></dd></th:block>
+            <dt>색상</dt><dd th:text="${c.color}"></dd>
+            <dt>성별</dt><dd th:text="|${c.gender ?: '모름'}${c.age != null ? ', ' + c.age + '살' : ''}|"></dd>
+            <dt th:text="|${label} 일시|"></dt><dd th:text="${#temporals.format(c.lostDate, 'M월 d일 a h시쯤')}"></dd>
+            <dt th:text="|${label} 장소|"></dt><dd th:text="${c.landmark ?: c.address}"></dd>
+        </dl>
+        <p class="features" th:if="${c.features}" th:text="${c.features}"></p>
+        </div>
+        <div class="qr">
+            <img th:src="@{/posts/{id}/qr.svg(id=${post.id})}" alt="제보 페이지 QR 코드">
+            사진과 지도를<br>QR로 확인하세요
+        </div>
+    </div>
+    <th:block th:if="${isOwner}">
+        <p class="call" th:text="|보셨다면 연락 주세요 ${c.contact}|">연락처</p>
+        <div class="tabs"><span th:each="i : ${#numbers.sequence(1, 8)}" th:text="${c.contact}"></span></div>
+    </th:block>
+    <th:block th:unless="${isOwner}">
+        <p class="call">보셨다면 QR로 제보 페이지에 알려 주세요</p>
+        <div class="tabs no-contact"><span th:each="i : ${#numbers.sequence(1, 8)}">Find My Dog</span></div>
+    </th:block>
+</article>
+</body>
+</html>

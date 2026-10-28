@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,5 +54,20 @@ public class Users extends BaseTimeEntity {
 
     public String getRoleKey(){
         return this.role.getKey();
+    }
+
+    public boolean isAdmin() {
+        return role == Role.ADMIN;
+    }
+
+    public void changeRole(Role role) {
+        this.role = role;
+    }
+
+    /** 관리자도 일반 사용자 기능을 쓸 수 있도록 ROLE_USER 를 함께 준다 */
+    public List<SimpleGrantedAuthority> authorities() {
+        return isAdmin()
+                ? List.of(new SimpleGrantedAuthority(Role.USER.getKey()), new SimpleGrantedAuthority(Role.ADMIN.getKey()))
+                : List.of(new SimpleGrantedAuthority(getRoleKey()));
     }
 }

@@ -6,6 +6,7 @@
     <div class="flyer__photo">
         <img th:if="${post.thumbnail}" th:src="@{/images/{n}(n=${post.thumbnail})}" th:alt="${post.content.breed + ' 사진'}" loading="lazy">
         <span class="stamp" th:if="${post.reunited}">찾았어요</span>
+        <span class="flyer__tag" th:if="${post.distanceLabel}" th:text="${post.distanceLabel}">1.2km</span>
     </div>
     <div class="flyer__body">
         <h3 class="flyer__title" th:text="${post.title}">제목</h3>
@@ -19,6 +20,7 @@
             <span><th:block th:text="${post.content.address ?: post.content.landmark}">주소</th:block><br>
                 <th:block th:if="${post.content.lostDate}" th:text="${#temporals.format(post.content.lostDate, 'M월 d일')} + (${post.kind == '발견'} ? ' 발견' : ' 실종')"></th:block></span>
         </div>
+        <span class="flyer__sightings" th:if="${post.sightingCount > 0 and !post.reunited}" th:text="|목격 제보 ${post.sightingCount}건|"></span>
     </div>
     <div class="flyer__tabs" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
 </a>

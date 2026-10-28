@@ -15,17 +15,21 @@
         <form class="filters" method="get" action="/posts" role="search">
             <div class="filter-row">
                 <nav class="segmented" aria-label="제보 종류">
-                    <a th:href="@{/posts(status=${status}, q=${q})}" th:aria-current="${kind == null or kind == ''}">전체</a>
-                    <a th:href="@{/posts(kind='분실', status=${status}, q=${q})}" th:aria-current="${kind == '분실'}">실종</a>
-                    <a th:href="@{/posts(kind='발견', status=${status}, q=${q})}" th:aria-current="${kind == '발견'}">발견</a>
+                    <a th:href="@{/posts(status=${status}, q=${q}, lat=${lat}, lng=${lng})}" th:aria-current="${kind == null or kind == ''}">전체</a>
+                    <a th:href="@{/posts(kind='분실', status=${status}, q=${q}, lat=${lat}, lng=${lng})}" th:aria-current="${kind == '분실'}">실종</a>
+                    <a th:href="@{/posts(kind='발견', status=${status}, q=${q}, lat=${lat}, lng=${lng})}" th:aria-current="${kind == '발견'}">발견</a>
                 </nav>
                 <nav class="segmented" aria-label="찾은 상태">
-                    <a th:href="@{/posts(kind=${kind}, q=${q})}" th:aria-current="${status == null or status == ''}">모두</a>
-                    <a th:href="@{/posts(kind=${kind}, status='L', q=${q})}" th:aria-current="${status == 'L'}">찾는 중</a>
-                    <a th:href="@{/posts(kind=${kind}, status='F', q=${q})}" th:aria-current="${status == 'F'}">찾았어요</a>
+                    <a th:href="@{/posts(kind=${kind}, q=${q}, lat=${lat}, lng=${lng})}" th:aria-current="${status == null or status == ''}">모두</a>
+                    <a th:href="@{/posts(kind=${kind}, status='L', q=${q}, lat=${lat}, lng=${lng})}" th:aria-current="${status == 'L'}">찾는 중</a>
+                    <a th:href="@{/posts(kind=${kind}, status='F', q=${q}, lat=${lat}, lng=${lng})}" th:aria-current="${status == 'F'}">찾았어요</a>
                 </nav>
             </div>
             <div class="search">
+                <button class="btn btn--outline" type="button" id="near-me" th:unless="${lat}" th:text="|내 주변 ${nearKm}km|">내 주변</button>
+                <a class="btn btn--ink" th:if="${lat}" th:href="@{/posts(kind=${kind}, status=${status}, q=${q})}" th:text="|내 주변 ${nearKm}km ✕|" aria-label="내 주변 보기 끄기">내 주변</a>
+                <input type="hidden" name="lat" th:value="${lat}">
+                <input type="hidden" name="lng" th:value="${lng}">
                 <input type="hidden" name="kind" th:value="${kind}">
                 <input type="hidden" name="status" th:value="${status}">
                 <label class="visually-hidden" for="q">검색어</label>
@@ -35,7 +39,7 @@
         </form>
 
         <p class="result-count" th:if="${posts.totalElements > 0}">
-            <th:block th:text="${posts.totalElements}">0</th:block>건<th:block th:if="${q}" th:text="| ‘${q}’ 검색 결과|"></th:block>
+            <th:block th:text="${posts.totalElements}">0</th:block>건<th:block th:if="${q}" th:text="| ‘${q}’ 검색 결과|"></th:block><th:block th:if="${lat}" th:text="|, 내 주변 ${nearKm}km|"></th:block>
         </p>
 
         <div class="flyer-grid" th:if="${posts.totalElements > 0}">
@@ -44,22 +48,39 @@
 
         <div class="empty" th:if="${posts.totalElements == 0}" style="margin-top:24px">
             <img src="/img/dog-poodle.png" alt="">
-            <strong th:text="${q} ? '찾는 제보가 없어요' : '아직 올라온 제보가 없어요'">아직 올라온 제보가 없어요</strong>
+            <strong th:text="${q != null or lat != null} ? '찾는 제보가 없어요' : '아직 올라온 제보가 없어요'">아직 올라온 제보가 없어요</strong>
             <p th:if="${q}">검색어를 줄이거나 동네 이름만 넣어 보세요.</p>
+            <p th:if="${lat}">내 주변에는 아직 제보가 없어요. 제보 지도에서 넓게 찾아보세요.</p>
             <a class="btn btn--primary" th:href="@{/posts/new(kind=${kind})}">첫 제보 올리기</a>
         </div>
 
         <nav class="pagination" aria-label="페이지" th:if="${posts.totalPages > 1}">
-            <a th:if="${page > 1}" th:href="@{/posts(kind=${kind}, status=${status}, q=${q}, page=${page - 1})}" aria-label="이전 페이지">‹</a>
+            <a th:if="${page > 1}" th:href="@{/posts(kind=${kind}, status=${status}, q=${q}, lat=${lat}, lng=${lng}, page=${page - 1})}" aria-label="이전 페이지">‹</a>
             <span th:unless="${page > 1}" class="is-disabled" aria-hidden="true">‹</span>
             <th:block th:each="n : ${#numbers.sequence(startPage, endPage)}">
-                <a th:href="@{/posts(kind=${kind}, status=${status}, q=${q}, page=${n})}" th:text="${n}" th:aria-current="${n == page} ? 'page' : null">1</a>
+                <a th:href="@{/posts(kind=${kind}, status=${status}, q=${q}, lat=${lat}, lng=${lng}, page=${n})}" th:text="${n}" th:aria-current="${n == page} ? 'page' : null">1</a>
             </th:block>
-            <a th:if="${page < posts.totalPages}" th:href="@{/posts(kind=${kind}, status=${status}, q=${q}, page=${page + 1})}" aria-label="다음 페이지">›</a>
+            <a th:if="${page < posts.totalPages}" th:href="@{/posts(kind=${kind}, status=${status}, q=${q}, lat=${lat}, lng=${lng}, page=${page + 1})}" aria-label="다음 페이지">›</a>
             <span th:unless="${page < posts.totalPages}" class="is-disabled" aria-hidden="true">›</span>
         </nav>
         <div style="height:56px"></div>
     </div>
 </main>
+<th:block layout:fragment="scripts">
+    <script>
+        // 내 주변: 위치 권한을 받아 위경도를 붙여 다시 찾는다
+        document.getElementById('near-me')?.addEventListener('click', (e) => {
+            if (!navigator.geolocation) return FMD.toast('이 브라우저는 현재 위치를 지원하지 않아요.', 'error');
+            e.currentTarget.disabled = true;
+            navigator.geolocation.getCurrentPosition((p) => {
+                const url = new URL(location.href);
+                url.searchParams.set('lat', p.coords.latitude.toFixed(5));
+                url.searchParams.set('lng', p.coords.longitude.toFixed(5));
+                url.searchParams.delete('page');
+                location.href = url;
+            }, () => { e.currentTarget.disabled = false; FMD.toast('현재 위치를 가져오지 못했어요. 위치 권한을 확인해 주세요.', 'error'); }, { timeout: 10000 });
+        });
+    </script>
+</th:block>
 </body>
 </html>

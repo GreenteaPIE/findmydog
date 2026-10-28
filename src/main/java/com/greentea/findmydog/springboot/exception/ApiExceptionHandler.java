@@ -50,6 +50,11 @@ public class ApiExceptionHandler {
         return body(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Map<String, Object>> conflict(ConflictException e) {
+        return body(HttpStatus.CONFLICT, e.getMessage());
+    }
+
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<Map<String, Object>> tooLarge() {
         return body(HttpStatus.PAYLOAD_TOO_LARGE, "사진은 한 장에 10MB, 합쳐서 30MB 까지 올릴 수 있어요");

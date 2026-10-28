@@ -11,6 +11,9 @@
 <body>
 <main layout:fragment="content" class="container"
       th:with="kindLabel=${post.kind == '발견'} ? '발견' : '실종', head=${post.reunited} ? '가족을 찾았어요' : (${post.kind == '발견'} ? '보호하고 있어요' : '찾습니다')">
+    <p class="notice-bar" style="margin-top:24px" th:if="${post.hidden}">
+        신고가 쌓였거나 관리자가 숨긴 제보예요. 지금은 글쓴이와 관리자에게만 보여요.
+    </p>
     <div class="detail">
         <div>
             <div class="gallery" data-gallery>
@@ -39,7 +42,53 @@
                 <p class="map-picked" style="margin-top:8px">
                     <b th:text="${post.content.address ?: '지도에 표시된 곳'}"></b>
                     <th:block th:if="${post.content.landmark}" th:text="| (근처: ${post.content.landmark})|"></th:block>
+                    <th:block th:unless="${#lists.isEmpty(sightings)}"> 노란 번호는 목격 제보예요.</th:block>
                 </p>
+            </section>
+
+            <section class="detail-section" id="sightings">
+                <div class="section__head" style="margin-bottom:12px">
+                    <h2 style="margin:0" th:text="|목격 제보 ${#lists.size(sightings)}건|">목격 제보</h2>
+                </div>
+                <ol class="sightings" th:unless="${#lists.isEmpty(sightings)}">
+                    <li th:each="s, st : ${sightings}" th:id="|sighting-${s.id}|">
+                        <span class="sightings__no" th:text="${#lists.size(sightings) - st.index}">1</span>
+                        <div>
+                            <p class="sightings__when">
+                                <time th:datetime="${s.seenAt}" th:text="${#temporals.format(s.seenAt, 'M월 d일 a h시 m분')}"></time>,
+                                <b th:text="${s.place}">장소</b>
+                            </p>
+                            <p th:if="${s.note}" th:text="${s.note}" class="sightings__note"></p>
+                            <p class="sightings__meta">
+                                <span th:text="|${s.authorName}님|"></span>
+                                <a th:if="${s.contact}" th:href="|tel:${s.contact}|" th:text="${s.contact}"></a>
+                                <button th:if="${s.deletable}" type="button" class="link-button" th:data-delete-sighting="${s.id}">지우기</button>
+                            </p>
+                        </div>
+                    </li>
+                </ol>
+                <p class="hint" th:if="${#lists.isEmpty(sightings) and !post.reunited}" style="color:var(--ink-2);margin-bottom:12px">
+                    아직 목격 제보가 없어요. 이 아이를 봤다면 본 시간과 장소를 남겨 주세요.
+                </p>
+
+                <th:block th:if="${!post.reunited}">
+                    <a class="btn btn--outline" th:unless="${loginUser}" th:href="@{/login}">로그인하고 목격 제보 남기기</a>
+                    <details class="sighting-form" th:if="${loginUser}" th:open="${#lists.isEmpty(sightings) and !isOwner}">
+                        <summary class="btn btn--primary">여기서 봤어요</summary>
+                        <form id="sighting-form" th:data-url="@{/api/v1/posts/{id}/sightings(id=${post.id})}" novalidate>
+                            <div class="grid-2">
+                                <div class="field"><label for="s-seenAt">본 시간<span class="req">*</span></label><input class="input" type="datetime-local" id="s-seenAt" required></div>
+                                <div class="field"><label for="s-place">본 곳<span class="req">*</span></label><input class="input" id="s-place" maxlength="100" required placeholder="예) 망원시장 입구 편의점 앞"></div>
+                            </div>
+                            <p class="hint" id="s-picked">위 지도를 누르면 본 곳이 지도에도 표시돼요. (선택)</p>
+                            <div class="field"><label for="s-note">메모</label><textarea class="textarea" id="s-note" maxlength="500" placeholder="어느 쪽으로 갔는지, 상태는 어땠는지 알려 주세요"></textarea></div>
+                            <div class="field"><label for="s-contact">내 연락처</label><input class="input" type="tel" id="s-contact" placeholder="010-1234-5678"><span class="hint">글쓴이에게만 보여요. 비워 둬도 돼요.</span></div>
+                            <input type="hidden" id="s-lat"><input type="hidden" id="s-lng">
+                            <div class="form-alert" id="s-alert" role="alert" hidden></div>
+                            <button class="btn btn--primary" type="submit">목격 제보 남기기</button>
+                        </form>
+                    </details>
+                </th:block>
             </section>
         </div>
 
@@ -86,7 +135,8 @@
 
             <div class="share-row">
                 <button type="button" class="btn btn--outline btn--sm" data-share th:data-title="${post.title}">링크 공유하기</button>
-                <a class="btn btn--ghost btn--sm" href="/posts">목록으로</a>
+                <a class="btn btn--outline btn--sm" th:href="@{/posts/{id}/flyer(id=${post.id})}" target="_blank" rel="noopener">전단지 인쇄</a>
+                <button type="button" class="btn btn--ghost btn--sm" th:if="${loginUser != null and !isOwner}" data-open-report>신고</button>
             </div>
 
             <section class="owner-tools" th:if="${isOwner}" aria-label="내 제보 관리">
@@ -98,12 +148,51 @@
                     <button type="button" class="btn btn--danger btn--sm" th:data-delete-url="@{/api/v1/posts/{id}(id=${post.id})}">지우기</button>
                 </div>
             </section>
+
+            <section class="owner-tools" th:if="${isAdmin}" aria-label="관리자 도구">
+                <h2>관리자</h2>
+                <div class="row">
+                    <button type="button" class="btn btn--outline btn--sm" th:unless="${post.hidden}" th:data-admin-url="@{/api/admin/posts/{id}/hide(id=${post.id})}">숨기기</button>
+                    <button type="button" class="btn btn--outline btn--sm" th:if="${post.hidden}" th:data-admin-url="@{/api/admin/posts/{id}/dismiss(id=${post.id})}">다시 보이기</button>
+                    <a class="btn btn--ghost btn--sm" href="/admin">신고 목록</a>
+                </div>
+            </section>
         </aside>
     </div>
+
+    <section class="section" style="padding-top:0" th:unless="${#lists.isEmpty(similar)}">
+        <div class="section__head">
+            <h2 th:text="${post.kind == '발견'} ? '근처에서 이 아이를 찾고 있는 글' : '근처에서 발견된 강아지'">근처에서 발견된 강아지</h2>
+            <span class="hint" style="color:var(--ink-2)">5km 안, 품종이 같은 글부터</span>
+        </div>
+        <div class="flyer-grid">
+            <th:block th:each="p : ${similar}"><a th:replace="~{fragments/post :: card(${p})}"></a></th:block>
+        </div>
+    </section>
+
+    <dialog class="report-dialog" id="report-dialog" th:if="${loginUser != null and !isOwner}">
+        <form method="dialog" id="report-form" th:data-url="@{/api/v1/posts/{id}/reports(id=${post.id})}">
+            <h2>이 제보 신고하기</h2>
+            <p class="hint">신고가 3건 쌓이면 관리자가 확인할 때까지 숨겨져요.</p>
+            <div class="chips" role="radiogroup" aria-label="신고 이유">
+                <label th:each="r : ${ {'광고·도배','사실이 아닌 글','부적절한 사진','개인정보 노출','기타'} }"><input type="radio" name="reason" th:value="${r}"><span th:text="${r}"></span></label>
+            </div>
+            <label class="visually-hidden" for="report-detail">자세한 내용</label>
+            <textarea class="textarea" id="report-detail" maxlength="300" placeholder="자세한 내용 (선택)"></textarea>
+            <div class="row" style="display:flex;gap:8px;justify-content:flex-end">
+                <button class="btn btn--ghost" value="cancel" type="button" data-close-report>취소</button>
+                <button class="btn btn--danger" type="submit">신고하기</button>
+            </div>
+        </form>
+    </dialog>
 </main>
 <th:block layout:fragment="scripts">
     <script th:replace="~{fragments/kakao :: sdk}"></script>
+    <script th:inline="javascript">
+        window.SIGHTINGS = /*[[${sightings}]]*/ [];
+    </script>
     <script th:src="@{/js/post-detail.js}"></script>
+    <script th:if="${isAdmin}" th:src="@{/js/admin.js}"></script>
 </th:block>
 </body>
 </html>

@@ -7,7 +7,12 @@ import com.greentea.findmydog.springboot.domain.posts.PostsRepository;
 import com.greentea.findmydog.springboot.domain.user.Role;
 import com.greentea.findmydog.springboot.domain.user.UserRepository;
 import com.greentea.findmydog.springboot.domain.user.Users;
+import com.greentea.findmydog.springboot.domain.posts.Report;
+import com.greentea.findmydog.springboot.domain.posts.ReportRepository;
+import com.greentea.findmydog.springboot.domain.posts.Sighting;
+import com.greentea.findmydog.springboot.domain.posts.SightingRepository;
 import com.greentea.findmydog.springboot.storage.ImageNames;
+import com.greentea.findmydog.springboot.storage.ImageProcessor;
 import com.greentea.findmydog.springboot.storage.ImageStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +46,9 @@ public class DemoDataLoader implements ApplicationRunner {
     private final UserRepository userRepository;
     private final PostsRepository postsRepository;
     private final ImageStorage imageStorage;
+    private final ImageProcessor imageProcessor;
+    private final SightingRepository sightingRepository;
+    private final ReportRepository reportRepository;
 
     private record Sample(String kind, String title, String breed, String color, String gender, Integer age, String pname,
                           String address, String landmark, double lat, double lng, int daysAgo, String dog, String bg,
@@ -51,7 +59,7 @@ public class DemoDataLoader implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws IOException {
         if (postsRepository.count() > 0) return;
-        Users demo = userRepository.save(Users.builder().name("데모 사용자").email(DEMO_EMAIL).role(Role.USER).build());
+        Users demo = userRepository.save(Users.builder().name("데모 사용자").email(DEMO_EMAIL).role(Role.ADMIN).build());
         Users neighbor = userRepository.save(Users.builder().name("망원동 이웃").email("neighbor@findmydog.local").role(Role.USER).build());
 
         Sample[] samples = {
@@ -65,6 +73,8 @@ public class DemoDataLoader implements ApplicationRunner {
                 new Sample("분실", "망원시장에서 말티즈 콩이가 집을 나갔어요", "말티즈", "흰색", "수컷", 9, "콩이", "서울특별시 마포구 망원동", "망원시장 입구", 37.5560, 126.9060, 9, "dog-bandana", "#f6efc4", true, true, "가족을 찾았어요!"),
         };
 
+        Posts first = null;
+        Posts reported = null;
         for (Sample s : samples) {
             Content content = Content.builder()
                     .reporterName(s.mine() ? "데모 사용자" : "망원동 이웃").contact("010-1234-5678")
@@ -76,10 +86,27 @@ public class DemoDataLoader implements ApplicationRunner {
             Posts post = Posts.builder().kind(s.kind()).title(s.title()).content(content).author(owner.getName()).user(owner).build();
             if (s.reunited()) post.changeStatus(Posts.STATUS_REUNITED);
             String name = ImageNames.newName("jpg");
-            imageStorage.save(name, photo(s.dog(), s.bg()));
+            byte[] jpeg = photo(s.dog(), s.bg());
+            imageStorage.save(name, jpeg);
+            imageStorage.save(ImageNames.thumbnailOf(name), imageProcessor.thumbnailOf(jpeg));
             post.addImage(Image.builder().originalFileName(s.dog() + ".png").storedFileName(name).post(post).build());
             postsRepository.save(post);
+            if (first == null) first = post;
+            if (s.title().startsWith("서교동")) reported = post;
         }
+
+        // 신고 관리 화면을 볼 수 있도록 신고 한 건
+        reportRepository.save(Report.builder().post(reported).user(demo).reason("사실이 아닌 글")
+                .detail("같은 사진이 다른 동네 글에도 올라와 있어요").build());
+
+        // 첫 번째 실종 글(루시)에 이웃의 목격 제보 두 건
+        sightingRepository.save(Sighting.builder().post(first).user(neighbor)
+                .seenAt(LocalDateTime.now().minusHours(20)).place("망원유수지 체육공원 입구")
+                .latitude(37.5578).longitude(126.8986).note("분홍색 하네스를 한 흰 강아지가 혼자 걷고 있었어요. 부르니까 도망갔어요.")
+                .contact("010-2222-3333").build());
+        sightingRepository.save(Sighting.builder().post(first).user(neighbor)
+                .seenAt(LocalDateTime.now().minusHours(6)).place("망원동 성미산로 편의점 앞")
+                .latitude(37.5590).longitude(126.9032).note("편의점 사장님이 물을 줬다고 해요.").build());
         log.info("데모 데이터 {}건을 만들었어요. /demo/login 으로 데모 사용자로 로그인할 수 있어요.", samples.length);
     }
 

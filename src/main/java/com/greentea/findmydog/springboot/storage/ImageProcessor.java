@@ -23,9 +23,30 @@ import java.io.InputStream;
 public class ImageProcessor {
 
     static final int MAX_SIDE = 1280;
+    static final int THUMB_SIDE = 480;
+
+    /** 원본 크기(긴 변 1280px)와 목록용 작은 사진(긴 변 480px) */
+    public record Processed(byte[] full, byte[] thumbnail) {
+    }
     private static final float QUALITY = 0.85f;
 
-    public byte[] toJpeg(MultipartFile file) {
+    public Processed process(MultipartFile file) {
+        BufferedImage source = read(file);
+        return new Processed(encode(resize(source, MAX_SIDE)), encode(resize(source, THUMB_SIDE)));
+    }
+
+    /** 이미 저장된 JPEG 로 작은 사진을 만든다 (예전 글이나 예시 데이터용) */
+    public byte[] thumbnailOf(byte[] jpeg) {
+        try {
+            BufferedImage source = ImageIO.read(new java.io.ByteArrayInputStream(jpeg));
+            if (source == null) throw new InvalidImageException("사진을 읽을 수 없어요");
+            return encode(resize(source, THUMB_SIDE));
+        } catch (IOException e) {
+            throw new InvalidImageException("사진을 읽을 수 없어요");
+        }
+    }
+
+    private BufferedImage read(MultipartFile file) {
         if (ImageNames.extensionOf(file.getOriginalFilename()).isEmpty()) {
             throw new InvalidImageException("사진은 JPG, PNG 파일만 올릴 수 있어요");
         }
@@ -38,11 +59,11 @@ public class ImageProcessor {
         if (source == null) {
             throw new InvalidImageException("사진 파일이 아니에요: " + file.getOriginalFilename());
         }
-        return encode(resize(source));
+        return source;
     }
 
-    private BufferedImage resize(BufferedImage source) {
-        double scale = Math.min(1.0, (double) MAX_SIDE / Math.max(source.getWidth(), source.getHeight()));
+    private BufferedImage resize(BufferedImage source, int maxSide) {
+        double scale = Math.min(1.0, (double) maxSide / Math.max(source.getWidth(), source.getHeight()));
         int width = Math.max(1, (int) Math.round(source.getWidth() * scale));
         int height = Math.max(1, (int) Math.round(source.getHeight() * scale));
 

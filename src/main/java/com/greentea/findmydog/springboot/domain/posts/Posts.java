@@ -38,6 +38,17 @@ public class Posts extends BaseTimeEntity {
 
     private String status = STATUS_LOOKING;
 
+    // 신고가 쌓이거나 관리자가 숨긴 글. 목록·지도·검색에서 빠진다
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean hidden = false;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("seenAt DESC")
+    private List<Sighting> sightings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Report> reports = new ArrayList<>();
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "content_id")
     private Content content;
@@ -70,6 +81,14 @@ public class Posts extends BaseTimeEntity {
 
     public boolean isOwnedBy(Long userId) {
         return user != null && userId != null && user.getId().equals(userId);
+    }
+
+    public void hide() {
+        this.hidden = true;
+    }
+
+    public void restore() {
+        this.hidden = false;
     }
 
     public boolean isReunited() {

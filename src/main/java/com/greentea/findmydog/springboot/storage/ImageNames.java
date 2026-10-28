@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 /** 저장 파일 이름 규칙. 사용자가 올린 파일 이름은 쓰지 않고 UUID 로 만든다. */
 public final class ImageNames {
 
-    private static final Pattern SAFE = Pattern.compile("^[A-Za-z0-9-]{1,64}\\.(jpg|jpeg|png)$");
+    private static final Pattern SAFE = Pattern.compile("^[A-Za-z0-9_-]{1,64}\\.(jpg|jpeg|png)$");
     private static final Map<String, String> CONTENT_TYPES = Map.of("jpg", "image/jpeg", "jpeg", "image/jpeg", "png", "image/png");
 
     private ImageNames() {
@@ -24,6 +24,12 @@ public final class ImageNames {
 
     public static String newName(String extension) {
         return UUID.randomUUID() + "." + extension;
+    }
+
+    /** 목록·지도에 쓰는 작은 사진의 이름: abc.jpg → abc_t.jpg */
+    public static String thumbnailOf(String name) {
+        int dot = name.lastIndexOf('.');
+        return name.substring(0, dot) + "_t" + name.substring(dot);
     }
 
     public static boolean isSafe(String name) {
